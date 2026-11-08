@@ -478,7 +478,7 @@ button.card:hover{border-color:var(--teal)}
 
       <!-- PO -->
       <section class="screen" data-screen="po">
-        <div class="scr-head"><div><h2>Pemesanan Pembelian (pemesanan_pembelian)</h2><p>PO dibuat dari pengajuan_pengadaan yang Disetujui — harga_satuan pada detail_pemesanan_pembelian adalah hasil tawar-menawar di detail pengajuan (langkah 4 — komunikasi supplier) dan terisi otomatis di form PO, masih bisa diubah sebelum disimpan. Penerimaan mengisi jumlah_diterima, kondisi, dan catatan_pemeriksaan — stok_saat_ini bahan_baku bertambah sesuai jumlah_diterima. <b>status_pembayaran</b> (Belum Bayar / Lunas) hanya bisa diubah dari detail PO oleh peran Inventory <b>setelah status_po = Diterima</b> dan status_pembayaran masih Belum Bayar — selama status_po masih Diproses, kontrolnya terkunci dan tidak bisa dipakai. Hasilnya langsung tercermin di tabel ini dan di Laporan. Satu pengajuan hanya boleh punya satu PO aktif.</p></div></div>
+        <div class="scr-head"><div><h2>Pemesanan Pembelian (pemesanan_pembelian)</h2><p>PO dibuat dari pengajuan_pengadaan yang Disetujui — harga_satuan pada detail_pemesanan_pembelian adalah hasil tawar-menawar di detail pengajuan (langkah 4 — komunikasi supplier) dan terisi otomatis di form PO, masih bisa diubah sebelum disimpan. Penerimaan mengisi jumlah_diterima, kondisi, dan catatan_pemeriksaan — stok_saat_ini bahan_baku bertambah sesuai jumlah_diterima. <b>status_pembayaran</b> (Belum Bayar / Lunas) hanya bisa diubah dari detail PO <b>setelah status_po = Diterima</b>: peran Inventory satu arah lewat tombol Tandai Lunas (Belum Bayar → Lunas), sedangkan peran <b>Owner</b> bisa mengatur status_pembayaran dua arah (Lunas ↔ Belum Bayar) lewat pilihan + tombol Simpan setelah PO Diterima — selama status_po masih Diproses, kontrolnya terkunci untuk semua peran dan tidak bisa dipakai. Hasilnya langsung tercermin di tabel ini dan di Laporan. Satu pengajuan hanya boleh punya satu PO aktif.</p></div></div>
         <div id="poList"></div>
       </section>
 
@@ -1217,7 +1217,7 @@ function renderPO(){
 /* Satu-satunya penulis status_pembayaran: mutasi data, catatan aktivitas,
    dan refresh SEMUA permukaan yang menampilkannya (tabel PO + Laporan)
    selalu terjadi bersama — lihat AU-2 di catatan audit. Dipakai tombol
-   Tandai Lunas.
+   Tandai Lunas (Inventory) dan select + Simpan status_pembayaran (Owner).
    ATURAN DEPLOY (pay_po): pembayaran hanya boleh dicatat SETELAH barang
    diterima — perubahan apa pun ditolak bila status_po belum Diterima,
    dari jalur mana pun (AU-6). */
@@ -1242,15 +1242,23 @@ function openPODetail(id){
   }).join("");
   var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>id_detail_po</th><th>id_bahan_baku</th><th>jumlah_dipesan</th><th>jumlah_diterima</th><th>kondisi</th><th>harga_satuan</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
   var isCancelled = p.status_po==="Dibatalkan";
-  /* ATURAN DEPLOY (pay_po): pembayaran dicatat LEWAT TOMBOL Tandai Lunas,
-     dan tombol itu HANYA aktif bila status_po = Diterima DAN
-     status_pembayaran masih Belum Bayar DAN peran = Inventory. Di luar
-     syarat itu kontrolnya tampil TERKUNCI (disabled) atau hanya catatan —
-     tidak ada jalur untuk membayar PO yang masih Diproses (AU-6). */
+  /* ATURAN DEPLOY (pay_po): pembayaran hanya bisa dicatat SETELAH
+     status_po = Diterima. Inventory: satu arah lewat tombol Tandai Lunas
+     (Belum Bayar → Lunas), hanya saat masih Belum Bayar. Owner: dua arah
+     (Lunas ↔ Belum Bayar) lewat select + tombol Simpan status_pembayaran.
+     Produksi: hanya catatan. Selama status_po masih Diproses kontrolnya
+     terkunci untuk semua peran — tidak ada jalur mengubah pembayaran
+     PO yang masih Diproses (AU-6). */
   var canPay = p.status_po==="Diterima" && p.status_pembayaran==="Belum Bayar" && state.role==="Inventory";
+  var ownerCanSet = p.status_po==="Diterima" && state.role==="Owner";
   var payPanel = "";
   if(isCancelled){
     payPanel = '<div class="note-box">pemesanan_pembelian ini <b>Dibatalkan</b> — stok_saat_ini tidak berubah, dan id_pengajuan '+p.id_pengajuan+' dapat dibuatkan pemesanan_pembelian baru.</div>';
+  } else if(ownerCanSet){
+    payPanel = '<h4 style="margin:16px 0 4px">status_pembayaran — atur pembayaran</h4>'
+      + '<p class="sheet-sub">status_po sudah <b>Diterima</b>. Sebagai <b>Owner</b>, status_pembayaran bisa diatur dua arah — pilih <b>Belum Bayar</b> atau <b>Lunas</b>, lalu simpan. Hasilnya langsung tampil di tabel Pemesanan dan di Laporan.</p>'
+      + '<div class="field" style="margin-top:10px;max-width:280px"><label for="selStatusBayar">status_pembayaran</label><select id="selStatusBayar"><option value="Belum Bayar"'+(p.status_pembayaran==="Belum Bayar" ? " selected" : "")+'>Belum Bayar</option><option value="Lunas"'+(p.status_pembayaran==="Lunas" ? " selected" : "")+'>Lunas</option></select></div>'
+      + '<div class="sheet-actions" style="justify-content:flex-start;margin-top:8px"><button class="btn btn-primary" id="btnSimpanBayar">Simpan status_pembayaran</button></div>';
   } else if(p.status_pembayaran==="Lunas"){
     payPanel = '<h4 style="margin:16px 0 4px">status_pembayaran</h4>'
       + '<div class="note-box">status_pembayaran PO ini sudah <b>Lunas</b> — tidak ada pembayaran yang perlu dicatat lagi.</div>';
@@ -1265,8 +1273,13 @@ function openPODetail(id){
     payPanel = '<h4 style="margin:16px 0 4px">status_pembayaran — tandai lunas</h4>'
       + '<div class="sheet-actions" style="justify-content:flex-start;margin-top:0"><button class="btn btn-primary" id="btnTandaiLunas" disabled style="opacity:.5;cursor:not-allowed">Tandai Lunas</button></div>'
       + '<p class="sheet-sub">Terkunci: pembayaran hanya bisa dicatat <b>setelah status_po = Diterima</b>. PO ini masih <b>'+p.status_po+'</b> — terima &amp; periksa barangnya dulu lewat Konfirmasi Penerimaan di bawah, setelah itu tombol ini aktif.</p>';
+  } else if(state.role==="Owner"){
+    /* Owner, tapi status_po masih Diproses: gate waktu tetap berlaku —
+       select pengaturan hanya tampil setelah Diterima; di sini catatan
+       terkunci, sama seperti peran lain. */
+    payPanel = '<div class="note-box">status_pembayaran saat ini: <b>'+p.status_pembayaran+'</b>. Sebagai <b>Owner</b>, status_pembayaran baru bisa diatur <b>setelah status_po = Diterima</b> — PO ini masih <b>'+p.status_po+'</b>, jadi pengaturannya masih terkunci.</div>';
   } else {
-    payPanel = '<div class="note-box">status_pembayaran saat ini: <b>'+p.status_pembayaran+'</b>.'+(p.status_po!=="Diterima" ? ' Pembayaran hanya bisa dicatat <b>setelah status_po = Diterima</b> — PO ini masih <b>'+p.status_po+'</b>.' : '')+' Hanya peran <b>Inventory</b> yang bisa menandai Lunas, dari detail PO ini.</div>';
+    payPanel = '<div class="note-box">status_pembayaran saat ini: <b>'+p.status_pembayaran+'</b>.'+(p.status_po!=="Diterima" ? ' Pembayaran hanya bisa dicatat <b>setelah status_po = Diterima</b> — PO ini masih <b>'+p.status_po+'</b>.' : '')+' Peran <b>Inventory</b> menandainya Lunas lewat tombol Tandai Lunas, dan peran <b>Owner</b> dapat mengaturnya dua arah dari detail PO ini setelah status_po = Diterima.</div>';
   }
   var canReceive = isOpen && state.role==="Inventory";
   var actions = canReceive
@@ -1301,6 +1314,19 @@ function openPODetail(id){
     if(!setStatusPembayaran(p, "Lunas", "tombol Tandai Lunas")){ toast("status_pembayaran id_po "+p.id_po+" tidak berubah — sudah "+p.status_pembayaran+"."); return; }
     openPODetail(p.id_po);
     toast("id_po "+p.id_po+": status_pembayaran = Lunas.");
+  });
+  var bs = $("#btnSimpanBayar");
+  if(bs) bs.addEventListener("click", function(){
+    /* Penjaga kedua di pemicu: select Simpan hanya melayani peran Owner
+       pada PO yang status_po-nya sudah Diterima (dua arah). */
+    if(!(p.status_po==="Diterima" && state.role==="Owner")){
+      toast("status_pembayaran id_po "+p.id_po+" ditolak — hanya peran Owner yang bisa mengaturnya, dan hanya setelah status_po = Diterima."); return;
+    }
+    var sel = $("#selStatusBayar"); if(!sel) return;
+    if(guardAction("bayar:" + p.id_po)) return;
+    if(!setStatusPembayaran(p, sel.value, "select status_pembayaran (Owner)")){ toast("status_pembayaran id_po "+p.id_po+" tidak berubah — sudah "+p.status_pembayaran+"."); return; }
+    openPODetail(p.id_po);
+    toast("id_po "+p.id_po+": status_pembayaran = "+p.status_pembayaran+".");
   });
   var b = $("#btnTerimaPO");
   if(b) b.addEventListener("click", function(){
@@ -1443,10 +1469,13 @@ function nextId(arr, key){ return arr.reduce(function(a,x){ return Math.max(a, x
    AU-6 status_pembayaran mengikuti ATURAN DEPLOY (endpoint pay_po):
         pembayaran hanya setelah penerimaan — tombol Tandai Lunas hanya
         aktif bila status_po = Diterima + status_pembayaran = Belum Bayar
-        + peran Inventory; setStatusPembayaran() sendiri menolak perubahan
-        apa pun selama status_po belum Diterima, dan form penerimaan tidak
-        lagi mengubah status_pembayaran. Sebelumnya prototipe mengizinkan
-        pembayaran kapan pun, termasuk PO yang masih Diproses. */
+        + peran Inventory; Owner mengatur dua arah (Lunas ↔ Belum Bayar)
+        lewat select + tombol Simpan status_pembayaran, juga hanya bila
+        status_po = Diterima; setStatusPembayaran() sendiri menolak
+        perubahan apa pun selama status_po belum Diterima, dan form
+        penerimaan tidak lagi mengubah status_pembayaran. Sebelumnya
+        prototipe mengizinkan pembayaran kapan pun, termasuk PO yang
+        masih Diproses. */
 /* Kunci anti-double PERSISTEN per nama aksi: aksi yang sama dalam 1,5 detik
    dianggap pengiriman ulang dan diabaikan — walau elemen pemicunya sudah
    diganti oleh render ulang. Ini penutup celah penyebab input pengajuan
