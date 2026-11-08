@@ -477,7 +477,7 @@ button.card:hover{border-color:var(--teal)}
 
       <!-- PO -->
       <section class="screen" data-screen="po">
-        <div class="scr-head"><div><h2>Pemesanan Pembelian (pemesanan_pembelian)</h2><p>PO dibuat dari pengajuan_pengadaan yang Disetujui — harga_satuan pada detail_pemesanan_pembelian diketik bebas saat PO dibuat, hasil negosiasi dengan supplier. Penerimaan mengisi jumlah_diterima, kondisi, dan catatan_pemeriksaan — stok_saat_ini bahan_baku bertambah sesuai jumlah_diterima.</p></div></div>
+        <div class="scr-head"><div><h2>Pemesanan Pembelian (pemesanan_pembelian)</h2><p>PO dibuat dari pengajuan_pengadaan yang Disetujui — harga_satuan pada detail_pemesanan_pembelian adalah hasil tawar-menawar di detail pengajuan (langkah 4 — komunikasi supplier) dan terisi otomatis di form PO, masih bisa diubah sebelum disimpan. Penerimaan mengisi jumlah_diterima, kondisi, dan catatan_pemeriksaan — stok_saat_ini bahan_baku bertambah sesuai jumlah_diterima.</p></div></div>
         <div id="poList"></div>
       </section>
 
@@ -539,8 +539,8 @@ button.card:hover{border-color:var(--teal)}
           <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Login &amp; peran</span></td><td data-label="Tabel ERD">pengguna (peran: Inventory, Produksi, Owner)</td><td data-label="Proses">—</td></tr>
           <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Dashboard</span></td><td data-label="Tabel ERD">bahan_baku · barang_jadi · pengajuan_pengadaan</td><td data-label="Proses">Langkah 1 — cek stok bahan baku</td></tr>
           <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Bahan Baku · Barang Jadi · Supplier</span></td><td data-label="Tabel ERD">bahan_baku · barang_jadi · supplier</td><td data-label="Proses">Langkah 1 &amp; 6 — cek dan catat stok</td></tr>
-          <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Pengajuan Pengadaan</span></td><td data-label="Tabel ERD">pengajuan_pengadaan · detail_pengajuan</td><td data-label="Proses">Langkah 2–3 — pengajuan &amp; persetujuan</td></tr>
-          <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Pemesanan (PO)</span></td><td data-label="Tabel ERD">pemesanan_pembelian · detail_pemesanan_pembelian</td><td data-label="Proses">Langkah 4–6 — pesan, terima &amp; periksa, catat stok</td></tr>
+          <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Pengajuan Pengadaan</span></td><td data-label="Tabel ERD">pengajuan_pengadaan · detail_pengajuan</td><td data-label="Proses">Langkah 2–4 — pengajuan, persetujuan &amp; tawar-menawar harga (komunikasi supplier)</td></tr>
+          <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Pemesanan (PO)</span></td><td data-label="Tabel ERD">pemesanan_pembelian · detail_pemesanan_pembelian</td><td data-label="Proses">Langkah 5–6 — terima &amp; periksa barang, catat stok</td></tr>
           <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Pengeluaran Bahan Baku</span></td><td data-label="Tabel ERD">pengeluaran_bahan_baku · detail_pengeluaran_bahan_baku</td><td data-label="Proses">Langkah 7–8 — keluarkan bahan, simpan barang jadi</td></tr>
           <tr style="cursor:default"><td class="td-main" data-label="Halaman"><span class="t-title">Laporan Stok</span></td><td data-label="Tabel ERD">Rekap bahan_baku · barang_jadi · pemesanan_pembelian</td><td data-label="Proses">—</td></tr>
         </tbody></table></div>
@@ -1069,12 +1069,36 @@ function renderPengajuan(){
     + '</tbody></table></div>';
   $$("#pengajuanList [data-pgj]").forEach(function(el){ el.addEventListener("click", function(){ openPengajuanDetail(+el.getAttribute("data-pgj")); }); });
 }
+/* Tawar-menawar harga — langkah 4 proses bisnis (komunikasi supplier).
+   detail_pengajuan tidak punya kolom harga di ERD, jadi harga nego disimpan
+   sementara per id_pengajuan; yang tersimpan permanen adalah
+   detail_pemesanan_pembelian.harga_satuan saat PO dibuat. */
+function getNego(idPengajuan){
+  try { return JSON.parse(localStorage.getItem("nego_" + idPengajuan)) || {}; } catch(e){ return {}; }
+}
+function saveNego(idPengajuan, obj){
+  try { localStorage.setItem("nego_" + idPengajuan, JSON.stringify(obj)); } catch(e){}
+}
 function openPengajuanDetail(id){
   var p = state.pengajuan.filter(function(x){ return x.id_pengajuan===id; })[0]; if(!p) return;
   var canDecide = p.status_pengajuan==="Menunggu" && state.role==="Owner";
   var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>id_detail_pengajuan</th><th>id_bahan_baku</th><th>jumlah</th></tr></thead><tbody>'
     + p.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return '<tr style="cursor:default"><td data-label="id_detail_pengajuan"><span class="num">'+d.id_detail_pengajuan+'</span></td><td data-label="id_bahan_baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="jumlah"><span class="num">'+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</span></td></tr>'; }).join("")
     + '</tbody></table></div>';
+  var negoPanel = "";
+  if(p.status_pengajuan==="Disetujui"){
+    var exPO = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; })[0];
+    var negoSaved = getNego(p.id_pengajuan);
+    if(!exPO && state.role==="Inventory"){
+      negoPanel = '<h4 style="margin:16px 0 4px">Tawar-menawar harga dengan supplier (langkah 4 — komunikasi supplier)</h4>'
+        + '<div class="note-box" style="margin-top:4px">harga_satuan hasil negosiasi per baris — diketik bebas, bukan daftar harga paten. Harga ini dipakai otomatis saat <b>Buat pemesanan_pembelian</b>.</div>'
+        + p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); var v = negoSaved[d.id_bahan_baku]; return '<div class="field" style="margin-top:10px"><label for="negoHarga'+idx+'">harga_satuan — id_bahan_baku '+d.id_bahan_baku+' ('+(b ? b.nama_bahan_baku : "")+') · jumlah '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="negoHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(v ? v : "")+'" placeholder="Ketik harga hasil negosiasi" /></div>'; }).join("")
+        + '<div class="sheet-actions" style="justify-content:flex-start;margin-top:4px"><button class="btn btn-primary" id="btnSimpanNego">Simpan harga negosiasi</button></div>';
+    } else if(exPO){
+      negoPanel = '<h4 style="margin:16px 0 4px">harga_satuan (hasil negosiasi, dari id_po '+exPO.id_po+')</h4>'
+        + exPO.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return '<div class="kv"><span>id_bahan_baku '+d.id_bahan_baku+' — '+(b ? b.nama_bahan_baku : "")+'</span><b>'+rp(d.harga_satuan)+'</b></div>'; }).join("");
+    }
+  }
   var actions = "";
   if(p.status_pengajuan==="Menunggu"){
     actions = canDecide
@@ -1097,7 +1121,7 @@ function openPengajuanDetail(id){
     + '<div class="kv"><span>tanggal_pengajuan</span><b>'+p.tanggal_pengajuan+'</b></div>'
     + '<div class="kv"><span>status_pengajuan</span><b>'+p.status_pengajuan+'</b></div>'
     + '<div class="kv"><span>created_at</span><b>'+p.created_at+'</b></div>'
-    + '<h4 style="margin:16px 0 4px">Baris detail_pengajuan</h4>' + items
+    + '<h4 style="margin:16px 0 4px">Baris detail_pengajuan</h4>' + items + negoPanel
     + (p.catatan ? '<div class="note-box"><b>Catatan peninjau:</b> '+p.catatan+'</div>' : '')
     + actions);
   var bs = $("#btnSetuju"), bt = $("#btnTolak");
@@ -1105,6 +1129,14 @@ function openPengajuanDetail(id){
   if(bt) bt.addEventListener("click", function(){ p.status_pengajuan="Ditolak"; p.id_penyetuju = roleUserId[state.role]; p.catatan="Ditolak dari prototipe — konfirmasi ulang kebutuhan ke id_pengaju."; closeSheet(); renderPengajuan(); updateBadges(); toast("id_pengajuan "+p.id_pengajuan+": status_pengajuan = Ditolak."); });
   var bp = $("#btnBuatPO");
   if(bp) bp.addEventListener("click", function(){ openPOForm(p.id_pengajuan); });
+  var bn = $("#btnSimpanNego");
+  if(bn) bn.addEventListener("click", function(){
+    var obj = {};
+    p.detail.forEach(function(d, idx){ var hv = $("#negoHarga"+idx); var v = hv ? parseFloat(hv.value) : NaN; if(v > 0) obj[d.id_bahan_baku] = v; });
+    saveNego(p.id_pengajuan, obj);
+    toast("Harga negosiasi disimpan — dipakai otomatis saat Buat PO.");
+    openPengajuanDetail(p.id_pengajuan);
+  });
   var bl = $("#btnLihatPO");
   if(bl) bl.addEventListener("click", function(){ var ex = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; })[0]; closeSheet(); if(ex) openPODetail(ex.id_po); });
 }
@@ -1112,8 +1144,9 @@ function openPOForm(pengajuanId){
   var p = state.pengajuan.filter(function(x){ return x.id_pengajuan===pengajuanId; })[0]; if(!p) return;
   var newPoId = nextId(state.po, "id_po");
   var supOpts = state.supplier.map(function(s){ return '<option value="'+s.id_supplier+'">'+s.id_supplier+' — '+s.nama_supplier+'</option>'; }).join("");
-  var hargaRows = p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); return '<div class="field"><label for="poHarga'+idx+'">harga_satuan — id_bahan_baku '+d.id_bahan_baku+' ('+(b ? b.nama_bahan_baku : "")+') · jumlah_dipesan '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="poHarga'+idx+'" type="number" min="0.01" step="0.01" placeholder="Ketik harga hasil negosiasi" required /></div>'; }).join("");
-  openSheet('<h3>Buat pemesanan_pembelian</h3><p class="sheet-sub">Baris baru di pemesanan_pembelian + detail_pemesanan_pembelian dari pengajuan_pengadaan id_pengajuan '+p.id_pengajuan+'. status_po awal: Diproses · status_pembayaran: Belum Bayar · tanggal_terima: null · id_karyawan_inventory: '+(state.role==="Inventory" ? roleUserId[state.role] : 1)+'. harga_satuan diketik bebas per baris — hasil tawar-menawar (negosiasi) dengan supplier, tidak ada daftar harga paten; kolom yang kosong tidak bisa disimpan.</p>'
+  var nego = getNego(p.id_pengajuan);
+  var hargaRows = p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); return '<div class="field"><label for="poHarga'+idx+'">harga_satuan — id_bahan_baku '+d.id_bahan_baku+' ('+(b ? b.nama_bahan_baku : "")+') · jumlah_dipesan '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="poHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(nego[d.id_bahan_baku] ? nego[d.id_bahan_baku] : "")+'" placeholder="Ketik harga hasil negosiasi" required /></div>'; }).join("");
+  openSheet('<h3>Buat pemesanan_pembelian</h3><p class="sheet-sub">Baris baru di pemesanan_pembelian + detail_pemesanan_pembelian dari pengajuan_pengadaan id_pengajuan '+p.id_pengajuan+'. status_po awal: Diproses · status_pembayaran: Belum Bayar · tanggal_terima: null · id_karyawan_inventory: '+(state.role==="Inventory" ? roleUserId[state.role] : 1)+'. harga_satuan diketik bebas per baris — hasil tawar-menawar (negosiasi) dengan supplier, tidak ada daftar harga paten; kalau harga negosiasi sudah disimpan di detail pengajuan, kolomnya terisi otomatis dan masih bisa diubah. Kolom yang kosong tidak bisa disimpan.</p>'
     + '<form id="formPO" style="margin-top:14px"><div class="form-grid"><div class="field"><label for="poSupplier">id_supplier (nama_supplier)</label><select id="poSupplier">'+supOpts+'</select></div><div class="field"><label for="poNota">no_nota_supplier</label><input id="poNota" type="text" value="INV/DEMO/'+newPoId+'" required /></div></div>'
     + hargaRows
     + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Simpan — status_po: Diproses</button></div></form>');
@@ -1127,6 +1160,7 @@ function openPOForm(pengajuanId){
       return {id_detail_po: detBase + idx, id_bahan_baku: d.id_bahan_baku, jumlah_dipesan: d.jumlah, jumlah_diterima: 0, harga_satuan: hargaVals[idx], kondisi: null};
     });
     state.po.unshift({id_po:newPoId, id_pengajuan:p.id_pengajuan, id_supplier:+$("#poSupplier").value, id_karyawan_inventory:(state.role==="Inventory" ? roleUserId[state.role] : 1), no_nota_supplier:$("#poNota").value, tanggal_terima:null, status_po:"Diproses", status_pembayaran:"Belum Bayar", catatan_pemeriksaan:"", created_at:"2026-11-08 (hari ini)", detail:details});
+    try { localStorage.removeItem("nego_" + p.id_pengajuan); } catch(e){}
     state.aktivitas.unshift({t:"pemesanan_pembelian id_po "+newPoId+" dibuat", s:"id_pengajuan "+p.id_pengajuan+" · id_supplier "+$("#poSupplier").value+" · status_po: Diproses", c:"blue"});
     closeSheet(); go("po"); toast("id_po "+newPoId+" dibuat dari id_pengajuan "+p.id_pengajuan+" — status_po: Diproses.");
   });
