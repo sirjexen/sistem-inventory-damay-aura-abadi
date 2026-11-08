@@ -441,9 +441,10 @@ button.card:hover{border-color:var(--teal)}
             <div style="display:flex;flex-direction:column;gap:0">
               <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">1</div><div><b>Cek stok_saat_ini bahan_baku</b><span>Dibandingkan dengan stok_minimal</span></div></div>
               <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">2</div><div><b>pengajuan_pengadaan dibuat</b><span>status_pengajuan disetujui Owner (id_penyetuju)</span></div></div>
-              <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">3</div><div><b>pemesanan_pembelian ke supplier</b><span>jumlah_diterima &amp; kondisi diperiksa saat barang tiba</span></div></div>
-              <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">4</div><div><b>pengeluaran_bahan_baku per no_batch_produksi</b><span>stok_saat_ini bahan_baku berkurang otomatis</span></div></div>
-              <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">5</div><div><b>barang_jadi tersimpan</b><span>stok_saat_ini barang_jadi bertambah sejumlah jumlah_target_produksi</span></div></div>
+              <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">3</div><div><b>Tawar-menawar harga dengan supplier</b><span>harga_satuan hasil negosiasi diisi di detail pengajuan yang Disetujui (langkah 4 proses bisnis — komunikasi supplier)</span></div></div>
+              <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">4</div><div><b>pemesanan_pembelian ke supplier</b><span>jumlah_diterima &amp; kondisi diperiksa saat barang tiba</span></div></div>
+              <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">5</div><div><b>pengeluaran_bahan_baku per no_batch_produksi</b><span>stok_saat_ini bahan_baku berkurang otomatis</span></div></div>
+              <div class="act-item"><div class="ic" style="background:var(--teal-soft);color:var(--teal);font-weight:800;font-size:12px">6</div><div><b>barang_jadi tersimpan</b><span>stok_saat_ini barang_jadi bertambah sejumlah jumlah_target_produksi</span></div></div>
             </div>
           </div>
         </div>
@@ -465,7 +466,7 @@ button.card:hover{border-color:var(--teal)}
 
       <!-- PENGAJUAN -->
       <section class="screen" data-screen="pengajuan">
-        <div class="scr-head"><div><h2>Pengajuan Pengadaan</h2><p>Sumber: tabel pengajuan_pengadaan + detail_pengajuan. status_pengajuan hanya diubah Owner (id_penyetuju) sebelum dibuatkan PO. Klik baris untuk meninjau.</p></div><button class="btn btn-primary page-action" id="btnAddPengajuan">+ Buat pengajuan_pengadaan</button></div>
+        <div class="scr-head"><div><h2>Pengajuan Pengadaan</h2><p>Sumber: tabel pengajuan_pengadaan + detail_pengajuan. status_pengajuan hanya diubah Owner (id_penyetuju) sebelum dibuatkan PO. Klik baris untuk meninjau. Pengajuan yang sudah <b>Disetujui</b> dan belum ada PO-nya dibuka untuk <b>tawar-menawar harga dengan supplier</b> (langkah 4 — komunikasi supplier): peran Inventory mengisi harga_satuan hasil negosiasi di detail pengajuan, dan harga itu terisi otomatis saat Buat pemesanan_pembelian.</p></div><button class="btn btn-primary page-action" id="btnAddPengajuan">+ Buat pengajuan_pengadaan</button></div>
         <div class="toolbar"><div class="tabs" id="pengajuanFilter">
           <button class="tab" data-f="Semua" aria-selected="true">Semua</button>
           <button class="tab" data-f="Menunggu" aria-selected="false">Menunggu</button>
@@ -801,6 +802,7 @@ var state = {
     {id_supplier:4, nama_supplier:"Toko Alat Jahit Sinar", kontak:"0821-6655-9034", alamat:"Pasar Baru Lt. 2, Jakarta Pusat", created_at:"2026-09-25 13:05"}
   ],
   pengajuan: [
+    {id_pengajuan:15, id_pengaju:1, id_penyetuju:4, tanggal_pengajuan:"2026-11-08", status_pengajuan:"Disetujui", created_at:"2026-11-08 09:05", detail:[{id_detail_pengajuan:33, id_bahan_baku:7, jumlah:120},{id_detail_pengajuan:34, id_bahan_baku:2, jumlah:40}]},
     {id_pengajuan:14, id_pengaju:2, id_penyetuju:null, tanggal_pengajuan:"2026-11-07", status_pengajuan:"Menunggu", created_at:"2026-11-07 14:22", detail:[{id_detail_pengajuan:31, id_bahan_baku:2, jumlah:30},{id_detail_pengajuan:32, id_bahan_baku:7, jumlah:100}]},
     {id_pengajuan:13, id_pengaju:1, id_penyetuju:null, tanggal_pengajuan:"2026-11-06", status_pengajuan:"Menunggu", created_at:"2026-11-06 09:41", detail:[{id_detail_pengajuan:30, id_bahan_baku:3, jumlah:25}]},
     {id_pengajuan:12, id_pengaju:1, id_penyetuju:4, tanggal_pengajuan:"2026-11-04", status_pengajuan:"Disetujui", created_at:"2026-11-04 10:15", detail:[{id_detail_pengajuan:28, id_bahan_baku:1, jumlah:150},{id_detail_pengajuan:29, id_bahan_baku:4, jumlah:200}]},
@@ -1065,7 +1067,7 @@ function renderPengajuan(){
   var list = state.pengajuan.filter(function(p){ return state.pengajuanFilter==="Semua" || p.status_pengajuan===state.pengajuanFilter; });
   if(!list.length){ $("#pengajuanList").innerHTML = '<div class="empty">Tidak ada pengajuan pada filter ini.</div>'; return; }
   $("#pengajuanList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>id_pengajuan</th><th>id_pengaju</th><th>id_penyetuju</th><th>tanggal_pengajuan</th><th>status_pengajuan</th><th>created_at</th><th>detail_pengajuan</th></tr></thead><tbody>'
-    + list.map(function(p){ return '<tr data-pgj="'+p.id_pengajuan+'"><td data-label="id_pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="id_pengaju">'+idCell(p.id_pengaju, namaPengguna(p.id_pengaju))+'</td><td data-label="id_penyetuju">'+(p.id_penyetuju==null ? '<span style="color:var(--muted)">— (null)</span>' : idCell(p.id_penyetuju, namaPengguna(p.id_penyetuju)))+'</td><td data-label="tanggal_pengajuan">'+p.tanggal_pengajuan+'</td><td data-label="status_pengajuan">'+chip(p.status_pengajuan)+'</td><td data-label="created_at">'+p.created_at+'</td><td data-label="detail_pengajuan">'+p.detail.map(function(d){ return "id_bahan_baku "+d.id_bahan_baku+" ("+namaBahan(d.id_bahan_baku)+") · jumlah "+fmt(d.jumlah); }).join("<br />")+'</td></tr>'; }).join("")
+    + list.map(function(p){ var hasPO = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; }).length>0; var negoChip = (p.status_pengajuan==="Disetujui" && !hasPO) ? '<div style="margin-top:5px"><span class="chip chip-info">Tawar-menawar harga · klik baris</span></div>' : ""; return '<tr data-pgj="'+p.id_pengajuan+'"><td data-label="id_pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="id_pengaju">'+idCell(p.id_pengaju, namaPengguna(p.id_pengaju))+'</td><td data-label="id_penyetuju">'+(p.id_penyetuju==null ? '<span style="color:var(--muted)">— (null)</span>' : idCell(p.id_penyetuju, namaPengguna(p.id_penyetuju)))+'</td><td data-label="tanggal_pengajuan">'+p.tanggal_pengajuan+'</td><td data-label="status_pengajuan">'+chip(p.status_pengajuan)+negoChip+'</td><td data-label="created_at">'+p.created_at+'</td><td data-label="detail_pengajuan">'+p.detail.map(function(d){ return "id_bahan_baku "+d.id_bahan_baku+" ("+namaBahan(d.id_bahan_baku)+") · jumlah "+fmt(d.jumlah); }).join("<br />")+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   $$("#pengajuanList [data-pgj]").forEach(function(el){ el.addEventListener("click", function(){ openPengajuanDetail(+el.getAttribute("data-pgj")); }); });
 }
@@ -1094,6 +1096,12 @@ function openPengajuanDetail(id){
         + '<div class="note-box" style="margin-top:4px">harga_satuan hasil negosiasi per baris — diketik bebas, bukan daftar harga paten. Harga ini dipakai otomatis saat <b>Buat pemesanan_pembelian</b>.</div>'
         + p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); var v = negoSaved[d.id_bahan_baku]; return '<div class="field" style="margin-top:10px"><label for="negoHarga'+idx+'">harga_satuan — id_bahan_baku '+d.id_bahan_baku+' ('+(b ? b.nama_bahan_baku : "")+') · jumlah '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="negoHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(v ? v : "")+'" placeholder="Ketik harga hasil negosiasi" /></div>'; }).join("")
         + '<div class="sheet-actions" style="justify-content:flex-start;margin-top:4px"><button class="btn btn-primary" id="btnSimpanNego">Simpan harga negosiasi</button></div>';
+    } else if(!exPO){
+      var savedKeys = Object.keys(negoSaved);
+      negoPanel = '<h4 style="margin:16px 0 4px">Tawar-menawar harga dengan supplier (langkah 4 — komunikasi supplier)</h4>'
+        + (savedKeys.length
+          ? savedKeys.map(function(k){ var b = bahanById(+k); return '<div class="kv"><span>id_bahan_baku '+k+' — '+(b ? b.nama_bahan_baku : "")+' · harga_satuan hasil negosiasi</span><b>'+rp(negoSaved[k])+'</b></div>'; }).join("") + '<div class="note-box" style="margin-top:8px">Harga di atas diisi peran <b>Inventory</b> dan dipakai otomatis saat Buat pemesanan_pembelian.</div>'
+          : '<div class="note-box" style="margin-top:4px">Harga negosiasi untuk pengajuan ini diisi oleh peran <b>Inventory</b> di panel ini (langkah 4 — komunikasi supplier), sebelum dibuatkan pemesanan_pembelian.</div>');
     } else if(exPO){
       negoPanel = '<h4 style="margin:16px 0 4px">harga_satuan (hasil negosiasi, dari id_po '+exPO.id_po+')</h4>'
         + exPO.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return '<div class="kv"><span>id_bahan_baku '+d.id_bahan_baku+' — '+(b ? b.nama_bahan_baku : "")+'</span><b>'+rp(d.harga_satuan)+'</b></div>'; }).join("");
