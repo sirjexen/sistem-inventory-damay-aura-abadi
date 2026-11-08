@@ -478,7 +478,7 @@ button.card:hover{border-color:var(--teal)}
 
       <!-- PO -->
       <section class="screen" data-screen="po">
-        <div class="scr-head"><div><h2>Pemesanan Pembelian (pemesanan_pembelian)</h2><p>PO dibuat dari pengajuan_pengadaan yang Disetujui — harga_satuan pada detail_pemesanan_pembelian adalah hasil tawar-menawar di detail pengajuan (langkah 4 — komunikasi supplier) dan terisi otomatis di form PO, masih bisa diubah sebelum disimpan. Penerimaan mengisi jumlah_diterima, kondisi, dan catatan_pemeriksaan — stok_saat_ini bahan_baku bertambah sesuai jumlah_diterima.</p></div></div>
+        <div class="scr-head"><div><h2>Pemesanan Pembelian (pemesanan_pembelian)</h2><p>PO dibuat dari pengajuan_pengadaan yang Disetujui — harga_satuan pada detail_pemesanan_pembelian adalah hasil tawar-menawar di detail pengajuan (langkah 4 — komunikasi supplier) dan terisi otomatis di form PO, masih bisa diubah sebelum disimpan. Penerimaan mengisi jumlah_diterima, kondisi, dan catatan_pemeriksaan — stok_saat_ini bahan_baku bertambah sesuai jumlah_diterima. <b>status_pembayaran</b> (Belum Bayar / Lunas) diubah dari detail PO oleh peran Inventory — kapan pun, tanpa menunggu penerimaan — dan langsung tercermin di tabel ini dan di Laporan. Satu pengajuan hanya boleh punya satu PO aktif.</p></div></div>
         <div id="poList"></div>
       </section>
 
@@ -681,7 +681,7 @@ CREATE TABLE detail_pemesanan_pembelian (
   jumlah_dipesan DECIMAL(12,2) NOT NULL,
   jumlah_diterima DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   harga_satuan DECIMAL(12,2) NOT NULL,
-  kondisi ENUM('Sesuai','Rusak','Kurang') NOT NULL DEFAULT 'Sesuai',
+  kondisi ENUM('Sesuai','Rusak','Kurang') NULL DEFAULT NULL,
   FOREIGN KEY (id_po) REFERENCES pemesanan_pembelian (id_po),
   FOREIGN KEY (id_bahan_baku) REFERENCES bahan_baku (id_bahan_baku)
 );
@@ -721,50 +721,80 @@ CREATE TABLE detail_pengeluaran_bahan_baku (
 -- ============================================================================
 
 INSERT INTO pengguna (id_pengguna, nama, peran, telepon) VALUES
-(1, 'Rina', 'Inventory', '081200000001'),
-(2, 'Budi', 'Produksi', '081200000002'),
-(3, 'Sari', 'Inventory', '081200000003'),
-(4, 'Damay Saputra', 'Owner', '081200000004');
+(1, 'Rani Prameswari', 'Inventory', '0812-3001-4401'),
+(2, 'Bima Aditama', 'Produksi', '0857-2201-7782'),
+(4, 'Damay Saputra', 'Owner', '0811-7000-2210'),
+(5, 'Dedi Kurnia', 'Produksi', '0821-4455-9031');
 
 INSERT INTO supplier (id_supplier, nama_supplier, kontak, alamat) VALUES
-(1, 'PT Kain Jaya Tekstil', '021-5550101', 'Tangerang'),
-(2, 'CV Dakron Nusantara', '021-5550102', 'Tangerang');
+(1, 'CV Tekstil Nusantara', '0812-9001-2233', 'Jl. Raya Cikampek No. 88, Karawang'),
+(2, 'PT Herbalindo Sejahtera', '0857-4410-8890', 'Jl. Jamu Raya No. 12, Sukoharjo'),
+(3, 'UD Busa Jaya Abadi', '0813-7782-0011', 'Kawasan Industri MM2100, Bekasi'),
+(4, 'Toko Alat Jahit Sinar', '0821-6655-9034', 'Pasar Baru Lt. 2, Jakarta Pusat');
 
 INSERT INTO bahan_baku (id_bahan_baku, nama_bahan_baku, satuan, stok_saat_ini, stok_minimal) VALUES
-(1, 'Kain Katun Premium', 'Meter', 120.00, 150.00),
-(2, 'Dakron Silikon', 'Kg', 85.00, 100.00),
-(3, 'Benang Jahit', 'Gulung', 40.00, 20.00),
-(4, 'Resleting Bantal', 'Buah', 20.00, 50.00),
-(5, 'Label Merek', 'Buah', 800.00, 300.00),
-(6, 'Plastik Kemasan', 'Buah', 450.00, 200.00);
+(1, 'Kain Katun Premium', 'meter', 120.00, 50.00),
+(2, 'Busa Memory Foam 5 cm', 'lembar', 18.00, 30.00),
+(3, 'Herbal Kering (Jahe & Kunyit)', 'kg', 9.50, 15.00),
+(4, 'Resleting YKK 40 cm', 'pcs', 340.00, 100.00),
+(5, 'Benang Jahit Polyester', 'roll', 64.00, 25.00),
+(6, 'Velcro Strap 5 cm', 'meter', 42.00, 40.00),
+(7, 'Gel Packs Terapi', 'pcs', 0.00, 50.00),
+(8, 'Karet Elastis 3 cm', 'meter', 88.00, 30.00);
 
 INSERT INTO barang_jadi (id_barang_jadi, nama_barang_jadi, satuan, stok_saat_ini) VALUES
-(1, 'Bantal Standar', 'Buah', 120),
-(2, 'Bantal Guling', 'Buah', 60),
-(3, 'Bantal Terapi', 'Buah', 45);
+(1, 'Bantal Terapi Herbal Leher', 'pcs', 26),
+(2, 'Sabuk Terapi Pinggang', 'pcs', 14),
+(3, 'Kompres Herbal Mata', 'pcs', 48),
+(4, 'Bantal Duduk Terapi', 'pcs', 7),
+(5, 'Matras Terapi Lipat', 'pcs', 11),
+(6, 'Deker Lutut Terapi', 'pcs', 33);
 
 INSERT INTO pengajuan_pengadaan (id_pengajuan, id_pengaju, id_penyetuju, tanggal_pengajuan, status_pengajuan) VALUES
-(1, 1, 4, '2026-11-08', 'Disetujui'),
-(2, 1, NULL, '2026-11-08', 'Menunggu');
+(15, 1, 4, '2026-11-08', 'Disetujui'),
+(14, 1, NULL, '2026-11-07', 'Menunggu'),
+(13, 1, NULL, '2026-11-06', 'Menunggu'),
+(12, 1, 4, '2026-11-04', 'Disetujui'),
+(11, 1, 4, '2026-11-02', 'Ditolak'),
+(10, 1, 4, '2026-11-03', 'Disetujui'),
+(9, 1, 4, '2026-10-29', 'Disetujui');
 
 INSERT INTO detail_pengajuan (id_detail_pengajuan, id_pengajuan, id_bahan_baku, jumlah) VALUES
-(1, 1, 1, 50.00),
-(2, 1, 4, 30.00),
-(3, 2, 2, 100.00);
+(33, 15, 7, 120.00),
+(34, 15, 2, 40.00),
+(31, 14, 2, 30.00),
+(32, 14, 7, 100.00),
+(30, 13, 3, 25.00),
+(28, 12, 1, 150.00),
+(29, 12, 4, 200.00),
+(27, 11, 6, 80.00),
+(26, 10, 3, 20.00),
+(25, 9, 2, 40.00);
 
 INSERT INTO pemesanan_pembelian (id_po, id_pengajuan, id_supplier, id_karyawan_inventory, no_nota_supplier, tanggal_terima, status_po, status_pembayaran, catatan_pemeriksaan) VALUES
-(1, 1, 1, 1, 'NOTA-001', '2026-11-08 10:00:00', 'Diterima', 'Lunas', 'Kondisi bahan sesuai, jumlah lengkap.');
+(9, 12, 1, 1, 'INV/TN/2211', NULL, 'Diproses', 'Belum Bayar', ''),
+(8, 10, 2, 1, 'INV/HS/0871', '2026-11-05 10:24:00', 'Diterima', 'Lunas', 'Kualitas herbal bagus, kadar air sesuai.'),
+(7, 9, 3, 1, 'INV/BJ/0450', '2026-11-01 09:10:00', 'Diterima', 'Lunas', '4 lembar rusak dalam perjalanan dari supplier — sudah dikonfirmasi, diganti di PO berikutnya.');
 
 INSERT INTO detail_pemesanan_pembelian (id_detail_po, id_po, id_bahan_baku, jumlah_dipesan, jumlah_diterima, harga_satuan, kondisi) VALUES
-(1, 1, 1, 50.00, 50.00, 15000.00, 'Sesuai'),
-(2, 1, 4, 30.00, 30.00, 2500.00, 'Sesuai');
+(21, 9, 1, 150.00, 0.00, 42000.00, NULL),
+(22, 9, 4, 200.00, 0.00, 6500.00, NULL),
+(20, 8, 3, 20.00, 20.00, 95000.00, 'Sesuai'),
+(19, 7, 2, 40.00, 36.00, 78000.00, 'Kurang');
 
 INSERT INTO pengeluaran_bahan_baku (id_pengeluaran, no_batch_produksi, id_barang_jadi, jumlah_target_produksi, id_karyawan_produksi, id_karyawan_inventory, tanggal_keluar) VALUES
-(1, 'BATCH-001', 1, 20, 2, 1, '2026-11-08 14:00:00');
+(21, 'BATCH-2611-01', 1, 24, 2, 1, '2026-11-08 08:15:00'),
+(20, 'BATCH-2611-02', 4, 12, 2, 1, '2026-11-07 13:40:00'),
+(19, 'BATCH-2611-03', 2, 30, 5, 1, '2026-11-06 10:05:00');
 
 INSERT INTO detail_pengeluaran_bahan_baku (id_detail_pengeluaran, id_pengeluaran, id_bahan_baku, jumlah, harga_satuan_bahan) VALUES
-(1, 1, 1, 10.00, 15000.00),
-(2, 1, 2, 5.00, 20000.00);
+(41, 21, 1, 24.00, 42000.00),
+(42, 21, 3, 3.00, 95000.00),
+(43, 21, 4, 24.00, 6500.00),
+(39, 20, 2, 6.00, 78000.00),
+(40, 20, 1, 9.00, 42000.00),
+(37, 19, 6, 30.00, 12000.00),
+(38, 19, 8, 18.00, 9000.00);
 </script>
 
 
@@ -803,10 +833,12 @@ var state = {
   ],
   pengajuan: [
     {id_pengajuan:15, id_pengaju:1, id_penyetuju:4, tanggal_pengajuan:"2026-11-08", status_pengajuan:"Disetujui", created_at:"2026-11-08 09:05", detail:[{id_detail_pengajuan:33, id_bahan_baku:7, jumlah:120},{id_detail_pengajuan:34, id_bahan_baku:2, jumlah:40}]},
-    {id_pengajuan:14, id_pengaju:2, id_penyetuju:null, tanggal_pengajuan:"2026-11-07", status_pengajuan:"Menunggu", created_at:"2026-11-07 14:22", detail:[{id_detail_pengajuan:31, id_bahan_baku:2, jumlah:30},{id_detail_pengajuan:32, id_bahan_baku:7, jumlah:100}]},
+    {id_pengajuan:14, id_pengaju:1, id_penyetuju:null, tanggal_pengajuan:"2026-11-07", status_pengajuan:"Menunggu", created_at:"2026-11-07 14:22", detail:[{id_detail_pengajuan:31, id_bahan_baku:2, jumlah:30},{id_detail_pengajuan:32, id_bahan_baku:7, jumlah:100}]},
     {id_pengajuan:13, id_pengaju:1, id_penyetuju:null, tanggal_pengajuan:"2026-11-06", status_pengajuan:"Menunggu", created_at:"2026-11-06 09:41", detail:[{id_detail_pengajuan:30, id_bahan_baku:3, jumlah:25}]},
     {id_pengajuan:12, id_pengaju:1, id_penyetuju:4, tanggal_pengajuan:"2026-11-04", status_pengajuan:"Disetujui", created_at:"2026-11-04 10:15", detail:[{id_detail_pengajuan:28, id_bahan_baku:1, jumlah:150},{id_detail_pengajuan:29, id_bahan_baku:4, jumlah:200}]},
-    {id_pengajuan:11, id_pengaju:2, id_penyetuju:4, tanggal_pengajuan:"2026-11-02", status_pengajuan:"Ditolak", created_at:"2026-11-02 08:57", detail:[{id_detail_pengajuan:27, id_bahan_baku:6, jumlah:80}], catatan:"stok_saat_ini Velcro Strap 5 cm masih di atas stok_minimal — ajukan lagi minggu depan."}
+    {id_pengajuan:11, id_pengaju:1, id_penyetuju:4, tanggal_pengajuan:"2026-11-02", status_pengajuan:"Ditolak", created_at:"2026-11-02 08:57", detail:[{id_detail_pengajuan:27, id_bahan_baku:6, jumlah:80}], catatan:"stok_saat_ini Velcro Strap 5 cm masih di atas stok_minimal — ajukan lagi minggu depan."},
+    {id_pengajuan:10, id_pengaju:1, id_penyetuju:4, tanggal_pengajuan:"2026-11-03", status_pengajuan:"Disetujui", created_at:"2026-11-03 09:12", detail:[{id_detail_pengajuan:26, id_bahan_baku:3, jumlah:20}]},
+    {id_pengajuan:9, id_pengaju:1, id_penyetuju:4, tanggal_pengajuan:"2026-10-29", status_pengajuan:"Disetujui", created_at:"2026-10-29 08:30", detail:[{id_detail_pengajuan:25, id_bahan_baku:2, jumlah:40}]}
   ],
   po: [
     {id_po:9, id_pengajuan:12, id_supplier:1, id_karyawan_inventory:1, no_nota_supplier:"INV/TN/2211", tanggal_terima:null, status_po:"Diproses", status_pembayaran:"Belum Bayar", catatan_pemeriksaan:"", created_at:"2026-11-05 09:12", detail:[{id_detail_po:21, id_bahan_baku:1, jumlah_dipesan:150, jumlah_diterima:0, harga_satuan:42000, kondisi:null},{id_detail_po:22, id_bahan_baku:4, jumlah_dipesan:200, jumlah_diterima:0, harga_satuan:6500, kondisi:null}]},
@@ -820,7 +852,7 @@ var state = {
   ],
   aktivitas: [
     {t:"Penerimaan id_po 8 tercatat", s:"Herbal Kering (Jahe & Kunyit) · jumlah_diterima 20 kg · 2026-11-05 10:24", c:"teal"},
-    {t:"pengajuan_pengadaan id_pengajuan 14 dibuat", s:"id_pengaju 2 · status_pengajuan: Menunggu", c:"amber"},
+    {t:"pengajuan_pengadaan id_pengajuan 14 dibuat", s:"id_pengaju 1 · status_pengajuan: Menunggu", c:"amber"},
     {t:"pengeluaran_bahan_baku id_pengeluaran 21 tercatat", s:"no_batch_produksi BATCH-2611-01 · Kain Katun Premium −24 meter", c:"blue"},
     {t:"pengeluaran_bahan_baku id_pengeluaran 20 selesai", s:"no_batch_produksi BATCH-2611-02 · stok_saat_ini barang_jadi +12 (Bantal Duduk Terapi)", c:"green"},
     {t:"Penerimaan id_po 7 dicatat", s:"Busa Memory Foam 5 cm · jumlah_diterima 36 dari 40 · kondisi: Kurang", c:"teal"}
@@ -831,7 +863,7 @@ function $$(s, r){ return Array.prototype.slice.call((r||document).querySelector
 function rp(n){ return "Rp " + n.toLocaleString("id-ID"); }
 function fmt(n){ return Number(n).toLocaleString("id-ID",{maximumFractionDigits:2}); }
 function chipFor(status){
-  var map = {"Menunggu":"chip-wait","Disetujui":"chip-ok","Ditolak":"chip-bad","Diproses":"chip-info","Diterima":"chip-ok","Dibatalkan":"chip-bad","Lunas":"chip-ok","Belum Bayar":"chip-wait","Sesuai":"chip-ok","Kurang":"chip-wait","Rusak":"chip-bad","Selesai":"chip-ok"};
+  var map = {"Menunggu":"chip-wait","Disetujui":"chip-ok","Ditolak":"chip-bad","Diproses":"chip-info","Diterima":"chip-ok","Dibatalkan":"chip-bad","Lunas":"chip-ok","Belum Bayar":"chip-wait","Sesuai":"chip-ok","Kurang":"chip-wait","Rusak":"chip-bad"};
   return map[status] || "chip-mut";
 }
 function chip(status){ return '<span class="chip '+chipFor(status)+'">'+status+'</span>'; }
@@ -895,13 +927,17 @@ function applyRoleUI(){
   set("#btnAddProduksi", canAccess("produksi"));
   if(!canAccess(state.stokTab)){ var f = firstStokTab(); if(f) state.stokTab = f; }
 }
+var _openFormTimer = null;
 document.addEventListener("click", function(e){
   var g = e.target.closest("[data-goto]");
   if(g){
     if(!$("#app").classList.contains("on")){ enterApp(); }
     go(g.getAttribute("data-goto"));
-    if(g.getAttribute("data-open-form")==="pengajuan") setTimeout(function(){ openPengajuanForm(); }, 250);
-    if(g.getAttribute("data-open-form")==="produksi") setTimeout(openProduksiForm, 250);
+    /* Timer sebelumnya dibatalkan dulu: klik ganda pada tombol yang sama
+       tidak boleh membuka form dua kali (penyebab form tertumpuk / input dobel) */
+    if(g.getAttribute("data-open-form")) clearTimeout(_openFormTimer);
+    if(g.getAttribute("data-open-form")==="pengajuan") _openFormTimer = setTimeout(function(){ openPengajuanForm(); }, 250);
+    if(g.getAttribute("data-open-form")==="produksi") _openFormTimer = setTimeout(openProduksiForm, 250);
     return;
   }
   var n = e.target.closest("[data-nav]");
@@ -1067,19 +1103,24 @@ function renderPengajuan(){
   var list = state.pengajuan.filter(function(p){ return state.pengajuanFilter==="Semua" || p.status_pengajuan===state.pengajuanFilter; });
   if(!list.length){ $("#pengajuanList").innerHTML = '<div class="empty">Tidak ada pengajuan pada filter ini.</div>'; return; }
   $("#pengajuanList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>id_pengajuan</th><th>id_pengaju</th><th>id_penyetuju</th><th>tanggal_pengajuan</th><th>status_pengajuan</th><th>created_at</th><th>detail_pengajuan</th></tr></thead><tbody>'
-    + list.map(function(p){ var hasPO = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; }).length>0; var negoChip = ((p.status_pengajuan==="Disetujui" || p.status_pengajuan==="Menunggu") && !hasPO) ? '<div style="margin-top:5px"><span class="chip chip-info">Tawar-menawar harga · klik baris</span></div>' : ""; return '<tr data-pgj="'+p.id_pengajuan+'"><td data-label="id_pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="id_pengaju">'+idCell(p.id_pengaju, namaPengguna(p.id_pengaju))+'</td><td data-label="id_penyetuju">'+(p.id_penyetuju==null ? '<span style="color:var(--muted)">— (null)</span>' : idCell(p.id_penyetuju, namaPengguna(p.id_penyetuju)))+'</td><td data-label="tanggal_pengajuan">'+p.tanggal_pengajuan+'</td><td data-label="status_pengajuan">'+chip(p.status_pengajuan)+negoChip+'</td><td data-label="created_at">'+p.created_at+'</td><td data-label="detail_pengajuan">'+p.detail.map(function(d){ return "id_bahan_baku "+d.id_bahan_baku+" ("+namaBahan(d.id_bahan_baku)+") · jumlah "+fmt(d.jumlah); }).join("<br />")+'</td></tr>'; }).join("")
+    + list.map(function(p){ var hasPO = !!activePOFor(p.id_pengajuan); var negoChip = ((p.status_pengajuan==="Disetujui" || p.status_pengajuan==="Menunggu") && !hasPO) ? '<div style="margin-top:5px"><span class="chip chip-info">Tawar-menawar harga · klik baris</span></div>' : ""; return '<tr data-pgj="'+p.id_pengajuan+'"><td data-label="id_pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="id_pengaju">'+idCell(p.id_pengaju, namaPengguna(p.id_pengaju))+'</td><td data-label="id_penyetuju">'+(p.id_penyetuju==null ? '<span style="color:var(--muted)">— (null)</span>' : idCell(p.id_penyetuju, namaPengguna(p.id_penyetuju)))+'</td><td data-label="tanggal_pengajuan">'+p.tanggal_pengajuan+'</td><td data-label="status_pengajuan">'+chip(p.status_pengajuan)+negoChip+'</td><td data-label="created_at">'+p.created_at+'</td><td data-label="detail_pengajuan">'+p.detail.map(function(d){ return "id_bahan_baku "+d.id_bahan_baku+" ("+namaBahan(d.id_bahan_baku)+") · jumlah "+fmt(d.jumlah); }).join("<br />")+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   $$("#pengajuanList [data-pgj]").forEach(function(el){ el.addEventListener("click", function(){ openPengajuanDetail(+el.getAttribute("data-pgj")); }); });
 }
 /* Tawar-menawar harga — langkah 4 proses bisnis (komunikasi supplier).
    detail_pengajuan tidak punya kolom harga di ERD, jadi harga nego disimpan
-   sementara per id_pengajuan; yang tersimpan permanen adalah
+   sementara per id_pengajuan selama sesi berjalan (memori, bukan
+   localStorage — lihat AU di bawah); yang tersimpan permanen adalah
    detail_pemesanan_pembelian.harga_satuan saat PO dibuat. */
+/* Penyimpanan negosiasi di MEMORI sesi (bukan localStorage): hasil
+   tawar-menawar tidak boleh bocor lintas sesi / lintas reload — reload
+   halaman mengembalikan prototipe ke data DEMO awal yang konsisten. */
+var _negoStore = {};
 function getNego(idPengajuan){
-  try { return JSON.parse(localStorage.getItem("nego_" + idPengajuan)) || {}; } catch(e){ return {}; }
+  return _negoStore[idPengajuan] || {};
 }
 function saveNego(idPengajuan, obj){
-  try { localStorage.setItem("nego_" + idPengajuan, JSON.stringify(obj)); } catch(e){}
+  _negoStore[idPengajuan] = obj;
 }
 function openPengajuanDetail(id){
   var p = state.pengajuan.filter(function(x){ return x.id_pengajuan===id; })[0]; if(!p) return;
@@ -1092,7 +1133,7 @@ function openPengajuanDetail(id){
     + '</tbody></table></div>';
   var negoPanel = "";
   if(p.status_pengajuan==="Disetujui" || p.status_pengajuan==="Menunggu"){
-    var exPO = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; })[0];
+    var exPO = activePOFor(p.id_pengajuan);
     var negoSaved = getNego(p.id_pengajuan);
     if(!exPO && state.role==="Inventory"){
       negoPanel = '<h4 style="margin:16px 0 4px">Tawar-menawar harga dengan supplier (langkah 4 — komunikasi supplier)</h4>'
@@ -1116,7 +1157,7 @@ function openPengajuanDetail(id){
       ? '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Nanti</button><button class="btn btn-danger-ghost" id="btnTolak">Tolak</button><button class="btn btn-primary" id="btnSetuju">Setujui — ubah status_pengajuan</button></div>'
       : '<div class="note-box">status_pengajuan masih <b>Menunggu</b> dan id_penyetuju masih kosong (null). Hanya peran <b>Owner</b> yang bisa menyetujui atau menolak (acc) pengajuan ini.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>';
   } else if(p.status_pengajuan==="Disetujui"){
-    var existingPO = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; })[0];
+    var existingPO = activePOFor(p.id_pengajuan);
     actions = existingPO
       ? '<div class="note-box">Pengajuan ini sudah dibuatkan <b>pemesanan_pembelian · id_po '+existingPO.id_po+'</b> (status_po: '+existingPO.status_po+').</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button><button class="btn btn-primary" id="btnLihatPO">Buka id_po '+existingPO.id_po+'</button></div>'
       : state.role==="Inventory"
@@ -1149,32 +1190,21 @@ function openPengajuanDetail(id){
     openPengajuanDetail(p.id_pengajuan);
   });
   var bl = $("#btnLihatPO");
-  if(bl) bl.addEventListener("click", function(){ var ex = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; })[0]; closeSheet(); if(ex) openPODetail(ex.id_po); });
+  if(bl) bl.addEventListener("click", function(){ var ex = activePOFor(p.id_pengajuan); closeSheet(); if(ex) openPODetail(ex.id_po); });
 }
 function openPOForm(pengajuanId){
   var p = state.pengajuan.filter(function(x){ return x.id_pengajuan===pengajuanId; })[0]; if(!p) return;
-  var newPoId = nextId(state.po, "id_po");
+  var dupPO = activePOFor(pengajuanId);
+  if(dupPO){ toast("id_pengajuan "+pengajuanId+" sudah punya pemesanan_pembelian aktif · id_po "+dupPO.id_po+" — PO ganda dicegah."); openPODetail(dupPO.id_po); return; }
+  /* Form yang sama tidak boleh dibuka menumpuk — klik/pemicu kedua diabaikan */
+  if($("#sheetWrap").classList.contains("open") && $("#formPO")) return;
   var supOpts = state.supplier.map(function(s){ return '<option value="'+s.id_supplier+'">'+s.id_supplier+' — '+s.nama_supplier+'</option>'; }).join("");
   var nego = getNego(p.id_pengajuan);
   var hargaRows = p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); return '<div class="field"><label for="poHarga'+idx+'">harga_satuan — id_bahan_baku '+d.id_bahan_baku+' ('+(b ? b.nama_bahan_baku : "")+') · jumlah_dipesan '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="poHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(nego[d.id_bahan_baku] ? nego[d.id_bahan_baku] : "")+'" placeholder="Ketik harga hasil negosiasi" required /></div>'; }).join("");
   openSheet('<h3>Buat pemesanan_pembelian</h3><p class="sheet-sub">Baris baru di pemesanan_pembelian + detail_pemesanan_pembelian dari pengajuan_pengadaan id_pengajuan '+p.id_pengajuan+'. status_po awal: Diproses · status_pembayaran: Belum Bayar · tanggal_terima: null · id_karyawan_inventory: '+(state.role==="Inventory" ? roleUserId[state.role] : 1)+'. harga_satuan diketik bebas per baris — hasil tawar-menawar (negosiasi) dengan supplier, tidak ada daftar harga paten; kalau harga negosiasi sudah disimpan di detail pengajuan, kolomnya terisi otomatis dan masih bisa diubah. Kolom yang kosong tidak bisa disimpan.</p>'
-    + '<form id="formPO" style="margin-top:14px"><div class="form-grid"><div class="field"><label for="poSupplier">id_supplier (nama_supplier)</label><select id="poSupplier">'+supOpts+'</select></div><div class="field"><label for="poNota">no_nota_supplier</label><input id="poNota" type="text" value="INV/DEMO/'+newPoId+'" required /></div></div>'
+    + '<form id="formPO" data-pengajuan="'+p.id_pengajuan+'" style="margin-top:14px"><div class="form-grid"><div class="field"><label for="poSupplier">id_supplier (nama_supplier)</label><select id="poSupplier">'+supOpts+'</select></div><div class="field"><label for="poNota">no_nota_supplier</label><input id="poNota" type="text" placeholder="Nomor nota dari supplier" required /></div></div>'
     + hargaRows
     + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Simpan — status_po: Diproses</button></div></form>');
-  $("#formPO").addEventListener("submit", function(e){
-    e.preventDefault();
-    var hargaVals = [], hargaKosong = false;
-    p.detail.forEach(function(d, idx){ var hv = $("#poHarga"+idx); var v = hv ? parseFloat(hv.value) : NaN; if(!(v > 0)) hargaKosong = true; hargaVals.push(v); });
-    if(hargaKosong){ toast("harga_satuan wajib diisi — ketik harga hasil negosiasi dengan supplier. PO tidak disimpan."); return; }
-    var detBase = nextId(state.po.reduce(function(a,x){ return a.concat(x.detail); }, []), "id_detail_po");
-    var details = p.detail.map(function(d, idx){
-      return {id_detail_po: detBase + idx, id_bahan_baku: d.id_bahan_baku, jumlah_dipesan: d.jumlah, jumlah_diterima: 0, harga_satuan: hargaVals[idx], kondisi: null};
-    });
-    state.po.unshift({id_po:newPoId, id_pengajuan:p.id_pengajuan, id_supplier:+$("#poSupplier").value, id_karyawan_inventory:(state.role==="Inventory" ? roleUserId[state.role] : 1), no_nota_supplier:$("#poNota").value, tanggal_terima:null, status_po:"Diproses", status_pembayaran:"Belum Bayar", catatan_pemeriksaan:"", created_at:"2026-11-08 (hari ini)", detail:details});
-    try { localStorage.removeItem("nego_" + p.id_pengajuan); } catch(e){}
-    state.aktivitas.unshift({t:"pemesanan_pembelian id_po "+newPoId+" dibuat", s:"id_pengajuan "+p.id_pengajuan+" · id_supplier "+$("#poSupplier").value+" · status_po: Diproses", c:"blue"});
-    closeSheet(); go("po"); toast("id_po "+newPoId+" dibuat dari id_pengajuan "+p.id_pengajuan+" — status_po: Diproses.");
-  });
 }
 
 /* PO */
@@ -1183,6 +1213,17 @@ function renderPO(){
     + state.po.map(function(p){ var sup = supplierById(p.id_supplier); return '<tr data-po="'+p.id_po+'"><td data-label="id_po"><span class="num">'+p.id_po+'</span></td><td data-label="id_pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="id_supplier">'+idCell(p.id_supplier, sup ? sup.nama_supplier : "")+'</td><td data-label="id_karyawan_inventory">'+idCell(p.id_karyawan_inventory, namaPengguna(p.id_karyawan_inventory))+'</td><td data-label="no_nota_supplier">'+p.no_nota_supplier+'</td><td data-label="tanggal_terima">'+(p.tanggal_terima || '<span style="color:var(--muted)">— (null)</span>')+'</td><td data-label="status_po">'+chip(p.status_po)+'</td><td data-label="status_pembayaran">'+chip(p.status_pembayaran)+'</td><td data-label="created_at">'+p.created_at+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   $$("#poList [data-po]").forEach(function(el){ el.addEventListener("click", function(){ openPODetail(+el.getAttribute("data-po")); }); });
+}
+/* Satu-satunya penulis status_pembayaran: mutasi data, catatan aktivitas,
+   dan refresh SEMUA permukaan yang menampilkannya (tabel PO + Laporan)
+   selalu terjadi bersama — lihat AU-2 di catatan audit. Dipakai panel
+   pembayaran dan penerimaan barang. */
+function setStatusPembayaran(po, nilai, sumber){
+  if(po.status_pembayaran===nilai) return false;
+  po.status_pembayaran = nilai;
+  state.aktivitas.unshift({t:"status_pembayaran id_po "+po.id_po+" diubah", s:"id_supplier "+po.id_supplier+" · status_pembayaran: "+po.status_pembayaran+" · lewat "+sumber, c:"green"});
+  renderPO(); renderLaporan(); updateBadges();
+  return true;
 }
 function openPODetail(id){
   var p = state.po.filter(function(x){ return x.id_po===id; })[0]; if(!p) return;
@@ -1196,12 +1237,30 @@ function openPODetail(id){
     return '<tr style="cursor:default"><td data-label="id_detail_po"><span class="num">'+d.id_detail_po+'</span></td><td data-label="id_bahan_baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="jumlah_dipesan">'+fmt(d.jumlah_dipesan)+'</td>' + mid + '<td data-label="harga_satuan">'+rp(d.harga_satuan)+'</td></tr>';
   }).join("");
   var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>id_detail_po</th><th>id_bahan_baku</th><th>jumlah_dipesan</th><th>jumlah_diterima</th><th>kondisi</th><th>harga_satuan</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  var isCancelled = p.status_po==="Dibatalkan";
+  /* status_pembayaran SEKARANG BISA DIUBAH dari detail PO ini — sebelumnya
+     tidak ada kontrol sama sekali untuk mengubahnya, jadi nilainya tidak
+     pernah berubah dari nilai awal pembuatan PO. */
+  var payPanel = "";
+  if(isCancelled){
+    payPanel = '<div class="note-box">pemesanan_pembelian ini <b>Dibatalkan</b> — stok_saat_ini tidak berubah, dan id_pengajuan '+p.id_pengajuan+' dapat dibuatkan pemesanan_pembelian baru.</div>';
+  } else if(state.role==="Inventory"){
+    payPanel = '<h4 style="margin:16px 0 4px">status_pembayaran — ubah di sini</h4>'
+      + '<div class="form-grid"><div class="field"><label for="poBayar">status_pembayaran (pemesanan_pembelian.status_pembayaran)</label><select id="poBayar"><option value="Belum Bayar"'+(p.status_pembayaran==="Belum Bayar" ? " selected" : "")+'>Belum Bayar</option><option value="Lunas"'+(p.status_pembayaran==="Lunas" ? " selected" : "")+'>Lunas</option></select></div></div>'
+      + '<div class="sheet-actions" style="justify-content:flex-start;margin-top:0"><button class="btn btn-primary" id="btnSimpanBayar">Simpan status_pembayaran</button></div>'
+      + '<p class="sheet-sub">status_pembayaran berdiri sendiri — bisa diubah kapan pun oleh peran Inventory, tidak harus menunggu status_po berubah. Hasilnya langsung tampil di tabel Pemesanan dan di Laporan.</p>';
+  } else {
+    payPanel = '<div class="note-box">status_pembayaran saat ini: <b>'+p.status_pembayaran+'</b> — hanya peran <b>Inventory</b> yang bisa mengubahnya, dari detail PO ini.</div>';
+  }
   var canReceive = isOpen && state.role==="Inventory";
   var actions = canReceive
-    ? '<div class="field" style="margin-top:14px"><label for="rcvCatatan">catatan_pemeriksaan</label><textarea id="rcvCatatan" rows="2" placeholder="Hasil pemeriksaan barang saat diterima…"></textarea></div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Nanti Saja</button><button class="btn btn-primary" id="btnTerimaPO">Konfirmasi Penerimaan</button></div>'
+    ? '<div class="field" style="margin-top:14px"><label for="rcvBayar">status_pembayaran setelah penerimaan</label><select id="rcvBayar"><option value="Belum Bayar"'+(p.status_pembayaran==="Belum Bayar" ? " selected" : "")+'>Belum Bayar</option><option value="Lunas"'+(p.status_pembayaran==="Lunas" ? " selected" : "")+'>Lunas</option></select></div><div class="field"><label for="rcvCatatan">catatan_pemeriksaan</label><textarea id="rcvCatatan" rows="2" placeholder="Hasil pemeriksaan barang saat diterima…"></textarea></div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Nanti Saja</button><button class="btn btn-primary" id="btnTerimaPO">Konfirmasi Penerimaan</button></div>'
     : isOpen
       ? '<div class="note-box">status_po masih <b>Diproses</b> — penerimaan barang dicatat oleh peran Inventory (id_karyawan_inventory). Peran '+state.role+' hanya melihat rincian, status_po, dan status_pembayaran.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>'
       : '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>';
+  var cancelRow = (isOpen && state.role==="Inventory")
+    ? '<div class="sheet-actions" style="justify-content:flex-start"><button class="btn btn-danger-ghost" id="btnBatalPO">Batalkan pemesanan_pembelian (status_po: Dibatalkan)</button></div>'
+    : "";
   openSheet('<div class="sheet-head"><h3>pemesanan_pembelian · id_po '+p.id_po+'</h3>'+chip(p.status_po)+'</div>'
     + '<div class="kv" style="margin-top:10px"><span>id_po</span><b>'+p.id_po+'</b></div>'
     + '<div class="kv"><span>id_pengajuan</span><b>'+p.id_pengajuan+'</b></div>'
@@ -1214,19 +1273,51 @@ function openPODetail(id){
     + '<div class="kv"><span>created_at</span><b>'+p.created_at+'</b></div>'
     + '<h4 style="margin:16px 0 4px">Baris detail_pemesanan_pembelian</h4>' + items
     + (p.catatan_pemeriksaan ? '<div class="note-box"><b>catatan_pemeriksaan:</b> '+p.catatan_pemeriksaan+'</div>' : '')
-    + actions);
+    + payPanel + actions + cancelRow);
+  var bb2 = $("#btnSimpanBayar");
+  if(bb2) bb2.addEventListener("click", function(){
+    var sel = $("#poBayar"); if(!sel) return;
+    if(guardAction("bayar:" + p.id_po)) return;
+    if(!setStatusPembayaran(p, sel.value, "panel status_pembayaran")){ toast("status_pembayaran id_po "+p.id_po+" tidak berubah — sudah "+p.status_pembayaran+"."); return; }
+    openPODetail(p.id_po);
+    toast("id_po "+p.id_po+": status_pembayaran = "+p.status_pembayaran+".");
+  });
   var b = $("#btnTerimaPO");
   if(b) b.addEventListener("click", function(){
+    if(b._done) return;
+    if(guardAction("terima:" + p.id_po)) return;
+    /* Validasi dulu, ubah data belakangan: jumlah_diterima tidak boleh
+       melebihi jumlah_dipesan, dan bila kurang, kondisi tidak boleh Sesuai.
+       Bila tidak valid, TIDAK ADA data yang berubah sama sekali. */
+    var vals = [], valid = true, errMsg = "";
     p.detail.forEach(function(d, idx){
       var qv = $("#rcvQty"+idx), kv2 = $("#rcvKondisi"+idx);
-      d.jumlah_diterima = qv ? +qv.value : d.jumlah_dipesan;
-      d.kondisi = kv2 ? kv2.value : "Sesuai";
-      var bhn = bahanById(d.id_bahan_baku); if(bhn){ bhn.stok_saat_ini += d.jumlah_diterima; bhn.updated_at = "2026-11-08 (hari ini)"; }
+      var q = qv ? parseFloat(qv.value) : NaN;
+      var k = kv2 ? kv2.value : "Sesuai";
+      if(!(q >= 0) || q > d.jumlah_dipesan){ valid = false; errMsg = "jumlah_diterima id_bahan_baku "+d.id_bahan_baku+" harus antara 0 dan jumlah_dipesan "+fmt(d.jumlah_dipesan)+" — penerimaan dibatalkan, tidak ada data yang berubah."; }
+      else if(q < d.jumlah_dipesan && k==="Sesuai"){ valid = false; errMsg = "jumlah_diterima id_bahan_baku "+d.id_bahan_baku+" kurang dari jumlah_dipesan — pilih kondisi Kurang atau Rusak. Penerimaan dibatalkan, tidak ada data yang berubah."; }
+      vals.push({q:q, k:k});
+    });
+    if(!valid){ toast(errMsg); return; }
+    b._done = true; b.disabled = true; b.style.opacity = ".65";
+    p.detail.forEach(function(d, idx){
+      d.jumlah_diterima = vals[idx].q;
+      d.kondisi = vals[idx].k;
+      var bhn = bahanById(d.id_bahan_baku); if(bhn && vals[idx].q > 0){ bhn.stok_saat_ini += vals[idx].q; bhn.updated_at = "2026-11-08 (hari ini)"; }
     });
     var ct = $("#rcvCatatan"); if(ct && ct.value.trim()) p.catatan_pemeriksaan = ct.value.trim();
+    var rb = $("#rcvBayar"); if(rb) setStatusPembayaran(p, rb.value, "penerimaan barang");
     p.status_po="Diterima"; p.tanggal_terima="2026-11-08 (hari ini)";
-    state.aktivitas.unshift({t:"Penerimaan id_po "+p.id_po+" dikonfirmasi", s:"id_supplier "+p.id_supplier+" · status_po: Diterima · stok_saat_ini bahan_baku bertambah", c:"teal"});
-    closeSheet(); renderPO(); toast("id_po "+p.id_po+": status_po = Diterima — stok_saat_ini diperbarui.");
+    state.aktivitas.unshift({t:"Penerimaan id_po "+p.id_po+" dikonfirmasi", s:"id_supplier "+p.id_supplier+" · status_po: Diterima · status_pembayaran: "+p.status_pembayaran+" · stok_saat_ini bahan_baku bertambah", c:"teal"});
+    closeSheet(); renderPO(); renderLaporan(); toast("id_po "+p.id_po+": status_po = Diterima · status_pembayaran = "+p.status_pembayaran+" — stok_saat_ini diperbarui.");
+  });
+  var bc = $("#btnBatalPO");
+  if(bc) bc.addEventListener("click", function(){
+    if(bc._done) return; bc._done = true; bc.disabled = true;
+    if(guardAction("batalpo:" + p.id_po)) return;
+    p.status_po = "Dibatalkan";
+    state.aktivitas.unshift({t:"pemesanan_pembelian id_po "+p.id_po+" dibatalkan", s:"status_po: Dibatalkan · stok_saat_ini tidak berubah · id_pengajuan "+p.id_pengajuan+" dapat dibuatkan PO baru", c:"red"});
+    closeSheet(); renderPO(); renderLaporan(); toast("id_po "+p.id_po+": status_po = Dibatalkan — stok tidak berubah.");
   });
 }
 
@@ -1307,52 +1398,72 @@ $("#sheetBg").addEventListener("click", closeSheet);
 document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeSheet(); });
 function bahanOptions(selectedId){ return state.bahan.map(function(b){ return '<option value="'+b.id_bahan_baku+'" '+(b.id_bahan_baku===selectedId?"selected":"")+'>'+b.id_bahan_baku+' — '+b.nama_bahan_baku+'</option>'; }).join(""); }
 function nextId(arr, key){ return arr.reduce(function(a,x){ return Math.max(a, x[key]||0); }, 0) + 1; }
+/* ============ AU-1..AU-5 · audit inkonsistensi (catatan dalam kode)
+   AU-1 Input ganda: SEMUA aksi simpan/ubah status kini lewat guardAction()
+        dengan kunci PERSISTEN per aksi dalam jendela 1,5 detik — bukan lagi
+        flag per elemen yang hangus saat render ulang membuat elemen baru
+        (pola lama "jalankan → render → render ulang sheet" membuka celah
+        submit kedua masuk). Submit semua form juga diikat SATU listener
+        terpusat di document (capture), bukan addEventListener per form —
+        form yang dibuka ulang tidak pernah membawa listener ganda.
+   AU-2 status_pembayaran: satu fungsi setStatusPembayaran() dipakai panel
+        pembayaran DAN penerimaan — mutasi + aktivitas + render tabel PO +
+        render Laporan selalu sepasang, tidak bisa hanya satu yang jalan.
+        Selain itu renderLaporan() ikut dipanggil setiap renderPO(), dan
+        sebaliknya status PO (Diproses/Diterima/Dibatalkan) me-refresh
+        Laporan — tidak ada lagi permukaan yang menampilkan nilai basi.
+   AU-3 data contoh database.sql DISAMAKAN dengan state halaman (nama,
+        satuan, stok, id, status): sebelumnya SQL memakai dataset lain
+        (supplier/id/stok berbeda, pengajuan id 1–2, PO id 1) sehingga file
+        unduhan dan layar saling bertentangan.
+   AU-4 chipFor: entri yatim "Selesai" dihapus — bukan nilai ENUM mana pun.
+   AU-5 hargaTerakhirBahan melewati PO Dibatalkan: harga dari PO batal
+        tidak boleh jadi dasar harga_satuan_bahan pengeluaran baru. */
+/* Kunci anti-double PERSISTEN per nama aksi: aksi yang sama dalam 1,5 detik
+   dianggap pengiriman ulang dan diabaikan — walau elemen pemicunya sudah
+   diganti oleh render ulang. Ini penutup celah penyebab input pengajuan
+   tercatat dua kali. */
+var _actionLocks = {};
+function guardAction(key){
+  var now = Date.now();
+  if(_actionLocks[key] && now - _actionLocks[key] < 1500) return true;
+  _actionLocks[key] = now; return false;
+}
+/* Kunci anti-double per elemen form (lapis kedua): satu elemen form hanya
+   boleh tersubmit SATU kali — klik ganda / Enter berulang diabaikan. */
+function onceSubmit(form){ if(form._done) return true; form._done = true; var b = form.querySelector('[type="submit"]'); if(b){ b.disabled = true; b.style.opacity = ".65"; } return false; }
+function releaseSubmit(form){ form._done = false; var b = form.querySelector('[type="submit"]'); if(b){ b.disabled = false; b.style.opacity = ""; } }
+/* PO aktif untuk satu pengajuan: yang status_po-nya bukan Dibatalkan.
+   Satu pengajuan hanya boleh memiliki satu PO aktif — PO ganda dicegah. */
+function activePOFor(idPengajuan){ return state.po.filter(function(x){ return x.id_pengajuan===idPengajuan && x.status_po!=="Dibatalkan"; })[0] || null; }
 function openPengajuanForm(preselectId){
+  /* Form yang sama tidak boleh dibuka menumpuk — klik/pemicu kedua diabaikan */
+  if($("#sheetWrap").classList.contains("open") && $("#formPengajuan")) return;
   openSheet('<h3>Buat pengajuan_pengadaan</h3><p class="sheet-sub">Baris baru di pengajuan_pengadaan + detail_pengajuan. status_pengajuan awal: Menunggu · id_penyetuju: null · id_pengaju: '+roleUserId[state.role]+' ('+roleNames[state.role]+') · tanggal_pengajuan: hari ini. harga_satuan boleh diisi sekarang (hasil negosiasi dengan supplier) atau belakangan di panel tawar-menawar pada detail pengajuan — tampil di detail pengajuan dan dipakai otomatis saat Buat pemesanan_pembelian.</p>'
     + '<form id="formPengajuan" style="margin-top:16px"><div class="field"><label for="fpBahan">id_bahan_baku (nama_bahan_baku)</label><select id="fpBahan">'+bahanOptions(preselectId)+'</select></div>'
     + '<div class="field"><label for="fpQty">jumlah (detail_pengajuan.jumlah)</label><input id="fpQty" type="number" min="0.01" step="0.01" value="50" required /></div>'
     + '<div class="field"><label for="fpHarga">harga_satuan (hasil negosiasi — opsional, boleh kosong)</label><input id="fpHarga" type="number" min="0.01" step="0.01" placeholder="Ketik harga hasil negosiasi dengan supplier" /></div>'
     + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Kirim — status_pengajuan: Menunggu</button></div></form>');
-  $("#formPengajuan").addEventListener("submit", function(e){
-    e.preventDefault();
-    var bid = +$("#fpBahan").value, bhn = bahanById(bid);
-    var newId = nextId(state.pengajuan, "id_pengajuan");
-    var detId = nextId(state.pengajuan.reduce(function(a,p){ return a.concat(p.detail); }, []), "id_detail_pengajuan");
-    state.pengajuan.unshift({id_pengajuan:newId, id_pengaju:roleUserId[state.role], id_penyetuju:null, tanggal_pengajuan:"2026-11-08", status_pengajuan:"Menunggu", created_at:"2026-11-08 (hari ini)", detail:[{id_detail_pengajuan:detId, id_bahan_baku:bid, jumlah:+$("#fpQty").value}]});
-    var fpHarga = parseFloat($("#fpHarga").value);
-    if(fpHarga > 0){ var negoBaru = {}; negoBaru[bid] = fpHarga; saveNego(newId, negoBaru); }
-    state.aktivitas.unshift({t:"pengajuan_pengadaan id_pengajuan "+newId+" dibuat", s:"id_pengaju "+roleUserId[state.role]+" · id_bahan_baku "+bid+" ("+(bhn ? bhn.nama_bahan_baku : "")+") · status_pengajuan: Menunggu", c:"amber"});
-    closeSheet(); renderPengajuan(); updateBadges(); go("pengajuan"); toast("id_pengajuan "+newId+" dibuat — status_pengajuan: Menunggu.");
-  });
 }
 /* harga_satuan_bahan untuk detail_pengeluaran_bahan_baku diambil dari
    harga_satuan hasil negosiasi pada detail_pemesanan_pembelian TERBARU untuk
-   bahan itu (state.po terurut terbaru dulu) — tidak ada daftar harga paten. */
+   bahan itu (state.po terurut terbaru dulu) — tidak ada daftar harga paten.
+   PO yang Dibatalkan dilewati: harganya tidak pernah berlaku (AU-5). */
 function hargaTerakhirBahan(idBahan){
   for(var i=0; i<state.po.length; i++){
+    if(state.po[i].status_po==="Dibatalkan") continue;
     var det = state.po[i].detail;
     for(var j=0; j<det.length; j++){ if(det[j].id_bahan_baku===idBahan && det[j].harga_satuan>0) return det[j].harga_satuan; }
   }
   return 0;
 }
 function openProduksiForm(){
+  if($("#sheetWrap").classList.contains("open") && $("#formProduksi")) return;
   var jadiOpts = state.jadi.map(function(j){ return '<option value="'+j.id_barang_jadi+'">'+j.id_barang_jadi+' — '+j.nama_barang_jadi+'</option>'; }).join("");
-  var batchNo = "BATCH-2611-0" + (state.produksi.length + 1);
+  var batchNo = "BATCH-2611-" + String(state.produksi.length + 1).padStart(2, "0");
   openSheet('<h3>Catat pengeluaran_bahan_baku</h3><p class="sheet-sub">Baris baru di pengeluaran_bahan_baku + detail_pengeluaran_bahan_baku — stok_saat_ini bahan_baku berkurang sesuai jumlah, stok_saat_ini barang_jadi bertambah sejumlah jumlah_target_produksi. id_karyawan_produksi: '+(state.role==="Produksi" ? roleUserId[state.role] : 2)+' · id_karyawan_inventory: '+(state.role==="Inventory" ? roleUserId[state.role] : 1)+'.</p>'
     + '<form id="formProduksi" style="margin-top:14px"><div class="form-grid"><div class="field"><label for="fdBatch">no_batch_produksi</label><input id="fdBatch" type="text" value="'+batchNo+'" required /></div><div class="field"><label for="fdJadi">id_barang_jadi (nama_barang_jadi)</label><select id="fdJadi">'+jadiOpts+'</select></div><div class="field"><label for="fdTarget">jumlah_target_produksi</label><input id="fdTarget" type="number" min="1" step="1" value="20" required /></div><div class="field"><label for="fdBahan">id_bahan_baku (nama_bahan_baku)</label><select id="fdBahan">'+bahanOptions()+'</select></div></div><div class="field"><label for="fdQty">jumlah (detail_pengeluaran_bahan_baku.jumlah)</label><input id="fdQty" type="number" min="0.01" step="0.01" value="10" required /></div>'
     + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Catat Pengeluaran</button></div></form>');
-  $("#formProduksi").addEventListener("submit", function(e){
-    e.preventDefault();
-    var bid = +$("#fdBahan").value, bhn = bahanById(bid), qty = +$("#fdQty").value;
-    if(bhn){ if(bhn.stok_saat_ini < qty){ toast("stok_saat_ini "+bhn.nama_bahan_baku+" tidak cukup — sisa "+fmt(bhn.stok_saat_ini)+" "+bhn.satuan+"."); return; } bhn.stok_saat_ini -= qty; bhn.updated_at = "2026-11-08 (hari ini)"; }
-    var jid = +$("#fdJadi").value, target = +$("#fdTarget").value;
-    var jdi = jadiById(jid); if(jdi){ jdi.stok_saat_ini += target; jdi.updated_at = "2026-11-08 (hari ini)"; }
-    var newId = nextId(state.produksi, "id_pengeluaran");
-    var detId = nextId(state.produksi.reduce(function(a,p){ return a.concat(p.detail); }, []), "id_detail_pengeluaran");
-    state.produksi.unshift({id_pengeluaran:newId, no_batch_produksi:$("#fdBatch").value, id_barang_jadi:jid, jumlah_target_produksi:target, id_karyawan_produksi:(state.role==="Produksi" ? roleUserId[state.role] : 2), id_karyawan_inventory:(state.role==="Inventory" ? roleUserId[state.role] : 1), tanggal_keluar:"2026-11-08 (hari ini)", created_at:"2026-11-08 (hari ini)", detail:[{id_detail_pengeluaran:detId, id_bahan_baku:bid, jumlah:qty, harga_satuan_bahan:hargaTerakhirBahan(bid)}]});
-    state.aktivitas.unshift({t:"pengeluaran_bahan_baku id_pengeluaran "+newId+" dicatat", s:"no_batch_produksi "+$("#fdBatch").value+" · id_bahan_baku "+bid+" −"+fmt(qty)+" · jumlah_target_produksi "+target, c:"blue"});
-    closeSheet(); renderProduksi(); updateBadges(); go("produksi"); toast("id_pengeluaran "+newId+" dicatat — stok_saat_ini bahan_baku berkurang, barang_jadi +"+target+".");
-  });
 }
 function openStokForm(){
   openSheet('<h3>Tambah baris bahan_baku / barang_jadi</h3><p class="sheet-sub">Data master baru — nama kolom mengikuti ERD persis.</p>'
@@ -1361,9 +1472,92 @@ function openStokForm(){
   $("#ftJenis").value = state.stokTab==="jadi" ? "jadi" : "bahan";
   var syncMin = function(){ var isJadi = $("#ftJenis").value==="jadi"; var fm = $("#ftMin"); fm.disabled = isJadi; fm.closest(".field").style.opacity = isJadi ? ".45" : ""; };
   $("#ftJenis").addEventListener("change", syncMin); syncMin();
-  $("#formStok").addEventListener("submit", function(e){
+}
+function openSupplierForm(){
+  openSheet('<h3>Tambah baris supplier</h3><p class="sheet-sub">Data master baru di tabel supplier — nama kolom mengikuti ERD persis. Hanya peran Inventory yang bisa menambah data master.</p>'
+    + '<form id="formSupplier" style="margin-top:14px"><div class="field"><label for="fsNama">nama_supplier</label><input id="fsNama" type="text" placeholder="cth: PT Sumber Herbal Sejahtera" required /></div><div class="form-grid"><div class="field"><label for="fsKontak">kontak</label><input id="fsKontak" type="text" placeholder="08xx-xxxx-xxxx" required /></div><div class="field"><label for="fsAlamat">alamat</label><input id="fsAlamat" type="text" placeholder="Alamat supplier" required /></div></div>'
+    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Simpan Baris</button></div></form>');
+}
+/* Handler form TERPUSAT (AU-1): satu listener submit di document untuk
+   semua form modal — didaftarkan sekali di sini, bukan per form yang
+   dibuka. Urutan validasi sama untuk setiap form: guard per elemen
+   (onceSubmit) → guard persisten per aksi (guardAction) → validasi kolom
+   (gagal = releaseSubmit, form bisa diperbaiki dan dikirim ulang) → simpan. */
+document.addEventListener("submit", function(e){
+  var f = e.target;
+  if(!f || !f.id) return;
+
+  if(f.id==="formPengajuan"){
     e.preventDefault();
+    if(onceSubmit(f)) return;
+    if(guardAction("pengajuan:baru")){ closeSheet(); return; }
+    var bid = +$("#fpBahan").value, bhn = bahanById(bid);
+    var qtyVal = parseFloat($("#fpQty").value);
+    if(!(qtyVal > 0)){ toast("jumlah harus lebih dari 0 — pengajuan tidak disimpan."); releaseSubmit(f); return; }
+    if($("#fpHarga").value.trim() !== "" && !(parseFloat($("#fpHarga").value) > 0)){ toast("harga_satuan harus lebih dari 0 bila diisi — pengajuan tidak disimpan."); releaseSubmit(f); return; }
+    var newId = nextId(state.pengajuan, "id_pengajuan");
+    var detId = nextId(state.pengajuan.reduce(function(a,p){ return a.concat(p.detail); }, []), "id_detail_pengajuan");
+    state.pengajuan.unshift({id_pengajuan:newId, id_pengaju:roleUserId[state.role], id_penyetuju:null, tanggal_pengajuan:"2026-11-08", status_pengajuan:"Menunggu", created_at:"2026-11-08 (hari ini)", detail:[{id_detail_pengajuan:detId, id_bahan_baku:bid, jumlah:+$("#fpQty").value}]});
+    var fpHarga = parseFloat($("#fpHarga").value);
+    if(fpHarga > 0){ var negoBaru = {}; negoBaru[bid] = fpHarga; saveNego(newId, negoBaru); }
+    state.aktivitas.unshift({t:"pengajuan_pengadaan id_pengajuan "+newId+" dibuat", s:"id_pengaju "+roleUserId[state.role]+" · id_bahan_baku "+bid+" ("+(bhn ? bhn.nama_bahan_baku : "")+") · status_pengajuan: Menunggu", c:"amber"});
+    closeSheet(); renderPengajuan(); updateBadges(); go("pengajuan"); toast("id_pengajuan "+newId+" dibuat — status_pengajuan: Menunggu.");
+    return;
+  }
+
+  if(f.id==="formPO"){
+    e.preventDefault();
+    if(onceSubmit(f)) return;
+    var pPO = state.pengajuan.filter(function(x){ return x.id_pengajuan===+f.getAttribute("data-pengajuan"); })[0];
+    if(!pPO){ closeSheet(); return; }
+    if(guardAction("po:pengajuan:" + pPO.id_pengajuan)){ closeSheet(); return; }
+    var hargaVals = [], hargaKosong = false;
+    pPO.detail.forEach(function(d, idx){ var hv = $("#poHarga"+idx); var v = hv ? parseFloat(hv.value) : NaN; if(!(v > 0)) hargaKosong = true; hargaVals.push(v); });
+    if(hargaKosong){ toast("harga_satuan wajib diisi — ketik harga hasil negosiasi dengan supplier. PO tidak disimpan."); releaseSubmit(f); return; }
+    var dupPO2 = activePOFor(pPO.id_pengajuan);
+    if(dupPO2){ toast("id_pengajuan "+pPO.id_pengajuan+" sudah punya pemesanan_pembelian aktif · id_po "+dupPO2.id_po+" — PO ganda dicegah."); closeSheet(); openPODetail(dupPO2.id_po); return; }
+    var newPoId = nextId(state.po, "id_po");
+    var detBase = nextId(state.po.reduce(function(a,x){ return a.concat(x.detail); }, []), "id_detail_po");
+    var details = pPO.detail.map(function(d, idx){
+      return {id_detail_po: detBase + idx, id_bahan_baku: d.id_bahan_baku, jumlah_dipesan: d.jumlah, jumlah_diterima: 0, harga_satuan: hargaVals[idx], kondisi: null};
+    });
+    state.po.unshift({id_po:newPoId, id_pengajuan:pPO.id_pengajuan, id_supplier:+$("#poSupplier").value, id_karyawan_inventory:(state.role==="Inventory" ? roleUserId[state.role] : 1), no_nota_supplier:$("#poNota").value, tanggal_terima:null, status_po:"Diproses", status_pembayaran:"Belum Bayar", catatan_pemeriksaan:"", created_at:"2026-11-08 (hari ini)", detail:details});
+    delete _negoStore[pPO.id_pengajuan];
+    state.aktivitas.unshift({t:"pemesanan_pembelian id_po "+newPoId+" dibuat", s:"id_pengajuan "+pPO.id_pengajuan+" · id_supplier "+$("#poSupplier").value+" · status_po: Diproses", c:"blue"});
+    closeSheet(); go("po"); toast("id_po "+newPoId+" dibuat dari id_pengajuan "+pPO.id_pengajuan+" — status_po: Diproses.");
+    return;
+  }
+
+  if(f.id==="formProduksi"){
+    e.preventDefault();
+    if(onceSubmit(f)) return;
+    if(guardAction("produksi:baru")){ closeSheet(); return; }
+    var bid2 = +$("#fdBahan").value, bhn2 = bahanById(bid2), qty = +$("#fdQty").value;
+    var batchVal = $("#fdBatch").value.trim();
+    if(!(qty > 0)){ toast("jumlah harus lebih dari 0 — pengeluaran tidak disimpan."); releaseSubmit(f); return; }
+    if(!(+$("#fdTarget").value >= 1)){ toast("jumlah_target_produksi minimal 1 — pengeluaran tidak disimpan."); releaseSubmit(f); return; }
+    if(!batchVal || state.produksi.filter(function(x){ return x.no_batch_produksi===batchVal; }).length){ toast("no_batch_produksi "+(batchVal || "(kosong)")+" sudah dipakai — satu batch hanya boleh tercatat satu kali, pengeluaran tidak disimpan."); releaseSubmit(f); return; }
+    if(bhn2){ if(bhn2.stok_saat_ini < qty){ toast("stok_saat_ini "+bhn2.nama_bahan_baku+" tidak cukup — sisa "+fmt(bhn2.stok_saat_ini)+" "+bhn2.satuan+"."); releaseSubmit(f); return; } bhn2.stok_saat_ini -= qty; bhn2.updated_at = "2026-11-08 (hari ini)"; }
+    var jid = +$("#fdJadi").value, target = +$("#fdTarget").value;
+    var jdi = jadiById(jid); if(jdi){ jdi.stok_saat_ini += target; jdi.updated_at = "2026-11-08 (hari ini)"; }
+    var newId2 = nextId(state.produksi, "id_pengeluaran");
+    var detId2 = nextId(state.produksi.reduce(function(a,p){ return a.concat(p.detail); }, []), "id_detail_pengeluaran");
+    state.produksi.unshift({id_pengeluaran:newId2, no_batch_produksi:$("#fdBatch").value, id_barang_jadi:jid, jumlah_target_produksi:target, id_karyawan_produksi:(state.role==="Produksi" ? roleUserId[state.role] : 2), id_karyawan_inventory:(state.role==="Inventory" ? roleUserId[state.role] : 1), tanggal_keluar:"2026-11-08 (hari ini)", created_at:"2026-11-08 (hari ini)", detail:[{id_detail_pengeluaran:detId2, id_bahan_baku:bid2, jumlah:qty, harga_satuan_bahan:hargaTerakhirBahan(bid2)}]});
+    state.aktivitas.unshift({t:"pengeluaran_bahan_baku id_pengeluaran "+newId2+" dicatat", s:"no_batch_produksi "+$("#fdBatch").value+" · id_bahan_baku "+bid2+" −"+fmt(qty)+" · jumlah_target_produksi "+target, c:"blue"});
+    closeSheet(); renderProduksi(); updateBadges(); go("produksi"); toast("id_pengeluaran "+newId2+" dicatat — stok_saat_ini bahan_baku berkurang, barang_jadi +"+target+".");
+    return;
+  }
+
+  if(f.id==="formStok"){
+    e.preventDefault();
+    if(onceSubmit(f)) return;
     var jenis = $("#ftJenis").value;
+    if(guardAction("stok:baru:" + jenis)){ closeSheet(); return; }
+    var namaBaru = $("#ftNama").value.trim().toLowerCase();
+    var dupeNama = jenis==="bahan"
+      ? state.bahan.filter(function(x){ return x.nama_bahan_baku.trim().toLowerCase()===namaBaru; }).length
+      : state.jadi.filter(function(x){ return x.nama_barang_jadi.trim().toLowerCase()===namaBaru; }).length;
+    if(dupeNama){ toast("Nama itu sudah ada di tabel "+(jenis==="bahan" ? "bahan_baku" : "barang_jadi")+" — baris ganda dicegah."); releaseSubmit(f); return; }
     if(jenis==="bahan"){
       state.bahan.push({id_bahan_baku:nextId(state.bahan, "id_bahan_baku"), nama_bahan_baku:$("#ftNama").value, satuan:$("#ftSatuan").value, stok_saat_ini:+$("#ftStok").value, stok_minimal:+$("#ftMin").value, updated_at:"2026-11-08 (hari ini)"});
     } else {
@@ -1372,18 +1566,20 @@ function openStokForm(){
     state.stokTab = jenis;
     $$("#stokTabs .tab").forEach(function(x){ x.setAttribute("aria-selected", x.getAttribute("data-tab")===jenis ? "true":"false"); });
     closeSheet(); renderStok(); updateBadges(); toast("Baris baru ditambahkan ke tabel "+(jenis==="bahan" ? "bahan_baku" : "barang_jadi")+".");
-  });
-}
-function openSupplierForm(){
-  openSheet('<h3>Tambah baris supplier</h3><p class="sheet-sub">Data master baru di tabel supplier — nama kolom mengikuti ERD persis. Hanya peran Inventory yang bisa menambah data master.</p>'
-    + '<form id="formSupplier" style="margin-top:14px"><div class="field"><label for="fsNama">nama_supplier</label><input id="fsNama" type="text" placeholder="cth: PT Sumber Herbal Sejahtera" required /></div><div class="form-grid"><div class="field"><label for="fsKontak">kontak</label><input id="fsKontak" type="text" placeholder="08xx-xxxx-xxxx" required /></div><div class="field"><label for="fsAlamat">alamat</label><input id="fsAlamat" type="text" placeholder="Alamat supplier" required /></div></div>'
-    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Simpan Baris</button></div></form>');
-  $("#formSupplier").addEventListener("submit", function(e){
+    return;
+  }
+
+  if(f.id==="formSupplier"){
     e.preventDefault();
+    if(onceSubmit(f)) return;
+    if(guardAction("supplier:baru")){ closeSheet(); return; }
+    var namaSup = $("#fsNama").value.trim().toLowerCase();
+    if(state.supplier.filter(function(x){ return x.nama_supplier.trim().toLowerCase()===namaSup; }).length){ toast("nama_supplier itu sudah ada di tabel supplier — baris ganda dicegah."); releaseSubmit(f); return; }
     state.supplier.push({id_supplier:nextId(state.supplier, "id_supplier"), nama_supplier:$("#fsNama").value, kontak:$("#fsKontak").value, alamat:$("#fsAlamat").value, created_at:"2026-11-08 (hari ini)"});
     closeSheet(); renderStok(); toast("Baris baru ditambahkan ke tabel supplier.");
-  });
-}
+    return;
+  }
+}, true);
 renderDashboard(); renderStok(); renderPengajuan(); renderPO(); renderProduksi(); renderLaporan();
 </script>
 </body>
