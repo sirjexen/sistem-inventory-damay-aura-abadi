@@ -11,12 +11,11 @@
 -- atau Pengeluaran Barang Jadi — tabel-tabel itu tidak ada di ERD.
 -- Data INSERT di bawah ini HANYA CONTOH (DEMO) untuk pengujian,
 -- bukan data asli perusahaan.
--- Cara pakai: buka phpMyAdmin -> pilih tab Import -> pilih file ini -> Go.
+-- Cara pakai: buka phpMyAdmin -> BUKA database tujuan yang sudah dibuat
+-- (mis. if0_43330214_inventory) -> pilih tab Import -> pilih file ini -> Go.
+-- File ini TIDAK membuat database baru (tidak ada CREATE DATABASE / USE),
+-- supaya bisa di-import ke database hosting apa pun namanya.
 -- ============================================================================
-
-CREATE DATABASE IF NOT EXISTS inventory_damay_aura_abadi
-  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE inventory_damay_aura_abadi;
 
 -- ----------------------------------------------------------------------------
 -- pengguna
