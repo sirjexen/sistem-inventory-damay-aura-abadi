@@ -11,8 +11,8 @@
 -- atau Pengeluaran Barang Jadi — tabel-tabel itu tidak ada di ERD.
 -- PENGECUALIAN (14 Nov 2026, atas permintaan Rexha): tabel pengguna punya
 -- kolom tambahan 'password' (VARCHAR(255)) di luar ERD — Owner mengisinya
--- saat menambah pengguna dan bisa melihatnya; login belum memverifikasi
--- password. Password demo disimpan apa adanya (bukan hash).
+-- saat menambah pengguna dan bisa melihatnya; login memverifikasi password
+-- sejak revisi 14 Nov 2026. Password demo disimpan apa adanya (bukan hash).
 -- Data INSERT di bawah ini HANYA CONTOH (DEMO) untuk pengujian,
 -- bukan data asli perusahaan.
 -- Cara pakai: buka phpMyAdmin -> BUKA database tujuan yang sudah dibuat
@@ -27,7 +27,7 @@
 -- Kolom password di luar ERD (tambahan 14 Nov 2026 atas permintaan Rexha):
 -- Owner mengisinya saat menambah pengguna dan bisa melihatnya di layar
 -- Pengguna (tombol Lihat). Disimpan apa adanya (bukan hash) supaya bisa
--- dilihat Owner; login belum memverifikasi password.
+-- dilihat Owner. Login memverifikasi password sejak revisi 14 Nov 2026.
 CREATE TABLE pengguna (
   id_pengguna INT AUTO_INCREMENT PRIMARY KEY,
   nama VARCHAR(100) NOT NULL,

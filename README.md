@@ -15,7 +15,7 @@ Metode RAD, bentuk website PWA, deploy rencana hosting cPanel.
   (screenshot phpMyAdmin) + data contoh untuk pengujian.
   Kolom password di tabel pengguna adalah tambahan di luar ERD (14 Nov
   2026): Owner mengisinya saat menambah pengguna dan bisa melihatnya;
-  login belum memverifikasi password.
+  login memverifikasi password sejak revisi 14 Nov 2026.
 
 ## Database
 

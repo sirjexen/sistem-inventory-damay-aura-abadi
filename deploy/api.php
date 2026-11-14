@@ -44,8 +44,9 @@
  * KEAMANAN (pengguna kini punya kolom `password` — tambahan di luar ERD,
  *   14 Nov 2026 atas permintaan Rexha; skema ERD asli tidak punya kolom ini):
  *   Password disimpan APA ADANYA (bukan hash) supaya Owner bisa melihatnya
- *   di layar Pengguna — ini BUKAN praktik produksi. Login di prototipe
- *   masih pemilihan peran + nama dan BELUM memverifikasi password.
+ *   di layar Pengguna — ini BUKAN praktik produksi. Login memverifikasi
+ *   password lawan kolom password user peran terpilih (dicek di browser
+ *   dari data init; tanpa session/token — cukup untuk prototipe ini).
  *   Setiap mutasi WAJIB menyertakan `role` dan `user_id` di
  *   body JSON. Server memverifikasi bahwa user_id ADA di tabel pengguna
  *   DAN perannya sama dengan `role` yang diklaim, lalu memeriksa apakah
