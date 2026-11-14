@@ -783,9 +783,9 @@ function updateBadges(){
 var actColors = {teal:["var(--teal-soft)","var(--teal)"], amber:["var(--amber-soft)","var(--amber)"], blue:["var(--blue-soft)","var(--blue)"], green:["var(--green-soft)","var(--green)"], red:["var(--red-soft)","var(--red)"]};
 function renderDashboard(){
   updateBadges();
-  $("#dashLowStock").innerHTML = '<div class="table-wrap" style="box-shadow:none"><table class="data"><thead><tr><th>id_bahan_baku</th><th>nama_bahan_baku</th><th>satuan</th><th>stok_saat_ini</th><th>stok_minimal</th><th>indikator: stok_saat_ini vs stok_minimal</th></tr></thead><tbody>'
+  $("#dashLowStock").innerHTML = '<div class="table-wrap" style="box-shadow:none"><table class="data"><thead><tr><th>id_bahan_baku</th><th>nama_bahan_baku</th><th>satuan</th><th>stok_saat_ini</th><th>stok_minimal</th><th>Status</th></tr></thead><tbody>'
     + lowStockItems().map(function(it){
-      return '<tr data-goto-stok><td data-label="id_bahan_baku"><span class="num">'+it.id_bahan_baku+'</span></td><td class="td-main" data-label="nama_bahan_baku"><span class="t-title">'+it.nama_bahan_baku+'</span></td><td data-label="satuan">'+it.satuan+'</td><td data-label="stok_saat_ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span></td><td data-label="stok_minimal">'+fmt(it.stok_minimal)+'</td><td data-label="indikator: stok_saat_ini vs stok_minimal">'+stockChip(it)+'</td></tr>';
+      return '<tr data-goto-stok><td data-label="id_bahan_baku"><span class="num">'+it.id_bahan_baku+'</span></td><td class="td-main" data-label="nama_bahan_baku"><span class="t-title">'+it.nama_bahan_baku+'</span></td><td data-label="satuan">'+it.satuan+'</td><td data-label="stok_saat_ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span></td><td data-label="stok_minimal">'+fmt(it.stok_minimal)+'</td><td data-label="Status">'+stockChip(it)+'</td></tr>';
     }).join("") + '</tbody></table></div>';
   $$("#dashLowStock [data-goto-stok]").forEach(function(el){ el.addEventListener("click", function(){ go("stok"); }); });
   $("#dashActivity").innerHTML = state.aktivitas.map(function(a){
