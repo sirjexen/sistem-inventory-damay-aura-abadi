@@ -338,7 +338,7 @@ button.card:hover{border-color:var(--teal)}
         <button type="button" class="role-btn" data-role="Owner" aria-pressed="false"><b>Owner</b><span>Laporan stok semua tabel</span></button>
       </div>
       <div class="field"><label for="loginName">nama (tabel pengguna)</label><input id="loginName" type="text" value="Rani Prameswari" autocomplete="name" /></div>
-      <div class="field"><label for="loginPass">Kata sandi (harus cocok dengan password user peran ini)</label><input id="loginPass" type="password" value="" placeholder="Password user peran ini" autocomplete="current-password" required /></div>
+      <div class="field"><label for="loginPass">Kata sandi (harus cocok dengan password user peran ini)</label><input id="loginPass" type="password" value="" placeholder="Password user peran ini" autocomplete="new-password" required /></div>
       <button class="btn btn-primary btn-lg btn-block" type="submit" id="btnLogin" disabled>Memuat data dari database…</button>
       <div class="note-box" id="apiError" style="display:none;border-color:#e5484d;background:#fef2f2;text-align:left"></div>
       <p class="login-note">Password harus cocok dengan password user peran ini (diatur Owner saat tambah pengguna).</p>
@@ -784,6 +784,9 @@ $("#loginForm").addEventListener("submit", function(e){
   var u = uid===null ? null : penggunaById(uid);
   if(!u){ toast("Tidak ada pengguna dengan peran "+state.role+" — login gagal."); return; }
   if(u.password && $("#loginPass").value !== u.password){ toast("Password salah untuk peran "+state.role+" — login gagal."); return; }
+  /* Kosongkan field begitu lolos — supaya password tidak tertinggal di layar
+     login (dan tidak diisi-ulang otomatis browser saat kembali ke login). */
+  $("#loginPass").value = "";
   enterApp(); toast("Selamat datang, " + state.role + "!");
 });
 function doLogout(){
