@@ -13,6 +13,9 @@ Metode RAD, bentuk website PWA, deploy rencana hosting cPanel.
   (demo, data contoh berlabel DEMO, tanpa backend).
 - `database.sql` — skema database MySQL: 10 tabel sesuai ERD
   (screenshot phpMyAdmin) + data contoh untuk pengujian.
+  Kolom password di tabel pengguna adalah tambahan di luar ERD (14 Nov
+  2026): Owner mengisinya saat menambah pengguna dan bisa melihatnya;
+  login belum memverifikasi password.
 
 ## Database
 
@@ -43,7 +46,7 @@ Peran Keuangan dihapus; hanya Owner yang menyetujui/menolak pengajuan
   (batch produksi), Barang Jadi.
 - Owner: Dashboard, Bahan Baku (lihat saja), Barang Jadi (lihat stok di
   gudang), Pengajuan (setujui/tolak), Pemesanan (lihat), Pengguna
-  (tambah pengguna), Laporan, Tentang Proyek.
+  (tambah pengguna + lihat password), Laporan, Tentang Proyek.
 
 ## Alur bisnis
 

@@ -41,9 +41,12 @@
  *                            elemen per baris detail_pengeluaran_bahan_baku.
  *       * Pengeluaran ditolak bila stok_saat_ini bahan_baku < jumlah.
  *
- * KEAMANAN (sesuai batas ERD — tabel pengguna TIDAK punya kolom password):
- *   Login di prototipe adalah pemilihan peran + nama, bukan autentikasi
- *   kata sandi. Setiap mutasi WAJIB menyertakan `role` dan `user_id` di
+ * KEAMANAN (pengguna kini punya kolom `password` — tambahan di luar ERD,
+ *   14 Nov 2026 atas permintaan Rexha; skema ERD asli tidak punya kolom ini):
+ *   Password disimpan APA ADANYA (bukan hash) supaya Owner bisa melihatnya
+ *   di layar Pengguna — ini BUKAN praktik produksi. Login di prototipe
+ *   masih pemilihan peran + nama dan BELUM memverifikasi password.
+ *   Setiap mutasi WAJIB menyertakan `role` dan `user_id` di
  *   body JSON. Server memverifikasi bahwa user_id ADA di tabel pengguna
  *   DAN perannya sama dengan `role` yang diklaim, lalu memeriksa apakah
  *   peran itu berhak menjalankan aksi tersebut. Jadi seseorang tidak bisa
@@ -246,7 +249,7 @@ function castProduksi(array $r): array
 // ---------------------------------------------------------------------------
 if ($action === 'init') {
     try {
-        $pengguna = $pdo->query('SELECT id_pengguna, nama, peran, telepon, created_at FROM pengguna ORDER BY id_pengguna')
+        $pengguna = $pdo->query('SELECT id_pengguna, nama, peran, telepon, password, created_at FROM pengguna ORDER BY id_pengguna')
             ->fetchAll();
         foreach ($pengguna as &$u) {
             $u['id_pengguna'] = (int) $u['id_pengguna'];
@@ -859,15 +862,19 @@ switch ($action) {
     }
 
     // -- Tambah pengguna (hanya Owner) --------------------------------------
-    // Body: { role, user_id, nama, peran, telepon? }
-    // (tabel pengguna di ERD TIDAK punya kolom password — login prototipe
-    // adalah pemilihan peran + nama, lihat catatan KEAMANAN di header.)
+    // Body: { role, user_id, nama, peran, telepon?, password }
+    // Kolom password di luar ERD (lihat catatan KEAMANAN di header):
+    // disimpan apa adanya supaya Owner bisa melihatnya di layar Pengguna.
     case 'create_pengguna': {
         requireRole($pdo, $body, ['Owner'], $PERAN_VALID);
         $nama = trim((string) reqField($body, 'nama'));
         $peran = trim((string) reqField($body, 'peran'));
         if (!in_array($peran, $PERAN_VALID, true)) {
             fail('peran tidak valid. Peran yang dikenal: Inventory, Produksi, Owner.');
+        }
+        $password = (string) reqField($body, 'password');
+        if (strlen($password) < 4) {
+            fail('password minimal 4 karakter.');
         }
         $telepon = isset($body['telepon']) ? trim((string) $body['telepon']) : '';
 
@@ -878,9 +885,9 @@ switch ($action) {
         }
 
         $st = $pdo->prepare(
-            'INSERT INTO pengguna (nama, peran, telepon, created_at) VALUES (?, ?, ?, NOW())'
+            'INSERT INTO pengguna (nama, peran, telepon, password, created_at) VALUES (?, ?, ?, ?, NOW())'
         );
-        $st->execute([$nama, $peran, $telepon]);
+        $st->execute([$nama, $peran, $telepon, $password]);
         ok(['id_pengguna' => (int) $pdo->lastInsertId()]);
     }
 

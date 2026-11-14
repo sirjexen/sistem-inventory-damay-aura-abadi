@@ -9,6 +9,10 @@
 -- id_penyetuju selalu pengguna dengan peran Owner).
 -- TIDAK ADA tabel Retur Barang, Pesanan Pelanggan, Detail Pesanan,
 -- atau Pengeluaran Barang Jadi — tabel-tabel itu tidak ada di ERD.
+-- PENGECUALIAN (14 Nov 2026, atas permintaan Rexha): tabel pengguna punya
+-- kolom tambahan 'password' (VARCHAR(255)) di luar ERD — Owner mengisinya
+-- saat menambah pengguna dan bisa melihatnya; login belum memverifikasi
+-- password. Password demo disimpan apa adanya (bukan hash).
 -- Data INSERT di bawah ini HANYA CONTOH (DEMO) untuk pengujian,
 -- bukan data asli perusahaan.
 -- Cara pakai: buka phpMyAdmin -> BUKA database tujuan yang sudah dibuat
@@ -20,11 +24,16 @@
 -- ----------------------------------------------------------------------------
 -- pengguna
 -- ----------------------------------------------------------------------------
+-- Kolom password di luar ERD (tambahan 14 Nov 2026 atas permintaan Rexha):
+-- Owner mengisinya saat menambah pengguna dan bisa melihatnya di layar
+-- Pengguna (tombol Lihat). Disimpan apa adanya (bukan hash) supaya bisa
+-- dilihat Owner; login belum memverifikasi password.
 CREATE TABLE pengguna (
   id_pengguna INT AUTO_INCREMENT PRIMARY KEY,
   nama VARCHAR(100) NOT NULL,
   peran ENUM('Inventory','Produksi','Owner') NOT NULL,
   telepon VARCHAR(20),
+  password VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -156,11 +165,11 @@ CREATE TABLE detail_pengeluaran_bahan_baku (
 -- DATA CONTOH (DEMO) — hanya untuk pengujian, bukan data asli perusahaan
 -- ============================================================================
 
-INSERT INTO pengguna (id_pengguna, nama, peran, telepon) VALUES
-(1, 'Rina', 'Inventory', '081200000001'),
-(2, 'Budi', 'Produksi', '081200000002'),
-(3, 'Sari', 'Inventory', '081200000003'),
-(4, 'Damay Saputra', 'Owner', '081200000004');
+INSERT INTO pengguna (id_pengguna, nama, peran, telepon, password) VALUES
+(1, 'Rina', 'Inventory', '081200000001', 'rina1234'),
+(2, 'Budi', 'Produksi', '081200000002', 'budi1234'),
+(3, 'Sari', 'Inventory', '081200000003', 'sari1234'),
+(4, 'Damay Saputra', 'Owner', '081200000004', 'damay1234');
 
 INSERT INTO supplier (id_supplier, nama_supplier, kontak, alamat) VALUES
 (1, 'PT Kain Jaya Tekstil', '021-5550101', 'Tangerang'),
