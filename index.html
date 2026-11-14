@@ -1006,6 +1006,7 @@ function doLogout(){
   state.role = "Inventory";
   $$("#roleGrid .role-btn").forEach(function(x){ x.setAttribute("aria-pressed", x.getAttribute("data-role")==="Inventory" ? "true":"false"); });
   $("#loginName").value = roleNames[state.role];
+  $("#loginPass").value = "";
   toast("Sampai jumpa!");
 }
 $("#logoutBtn").addEventListener("click", doLogout);
