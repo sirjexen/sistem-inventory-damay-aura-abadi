@@ -636,8 +636,10 @@ button.card:hover{border-color:var(--teal)}
           <tr style="cursor:default"><td data-label="id_pengguna"><span class="num">5</span></td><td class="td-main" data-label="nama"><span class="t-title">Dedi Kurnia</span></td><td data-label="peran">Produksi</td><td data-label="telepon">0821-4455-9031</td><td data-label="created_at">2026-09-15 10:20</td></tr>
         </tbody></table></div>
         <div class="sec-title"><h3>Riwayat revisi</h3></div>
-        <details class="changelog"><summary>14 Nov 2026 · 12 perubahan</summary>
+        <details class="changelog"><summary>14 Nov 2026 · 14 perubahan</summary>
           <ul>
+            <li>Login kini memeriksa nama + peran (pengguna baru bisa login; pencatatan memakai user yang login)</li>
+            <li>Perbaikan scroll yang nge-freeze saat kursor di atas tabel</li>
             <li>Halaman Tentang dirombak: ERD jadi kartu berkelompok + alur relasi visual</li>
             <li>Deskripsi layar dipangkas, animasi berhasil login ditambah &amp; penjelasan ERD pindah ke halaman ini</li>
             <li>Label di semua layar disederhanakan (nama tabel/kolom hanya tersisa di isi tabel)</li>
@@ -909,7 +911,7 @@ INSERT INTO detail_pengeluaran_bahan_baku (id_detail_pengeluaran, id_pengeluaran
 
 <script>
 var state = {
-  role: "Inventory", stokTab: "bahan", pengajuanFilter: "Semua",
+  role: "Inventory", userId: null, stokTab: "bahan", pengajuanFilter: "Semua",
   pengguna: [
     {id_pengguna:1, nama:"Rani Prameswari", peran:"Inventory", telepon:"0812-3001-4401", password:"rani1234", created_at:"2026-09-14 09:00"},
     {id_pengguna:2, nama:"Bima Aditama", peran:"Produksi", telepon:"0857-2201-7782", password:"bima1234", created_at:"2026-09-14 09:05"},
@@ -1060,6 +1062,10 @@ document.addEventListener("click", function(e){
 /* LOGIN */
 var roleNames = {Inventory:"Rani Prameswari", Produksi:"Bima Aditama", Owner:"Damay Saputra"};
 var roleUserId = {Inventory:1, Produksi:2, Owner:4};
+/* ID pemakai yang sedang login (diset saat login dari nama yang diketik).
+   Semua pencatatan (id_pengaju, id_penyetuju, id_karyawan_*) memakai ini,
+   bukan lagi user pertama per peran; fallback ke roleUserId bila belum login. */
+function currentUserId(){ return state.userId || roleUserId[state.role]; }
 $("#roleGrid").addEventListener("click", function(e){
   var b = e.target.closest("[data-role]"); if(!b) return;
   state.role = b.getAttribute("data-role");
@@ -1079,15 +1085,20 @@ function enterApp(){
   go("dashboard"); updateBadges();
 }
 /* LOGIN: password diverifikasi lawan kolom password di tabel pengguna
-   (kolom di luar ERD, 14 Nov 2026). User yang dicek adalah user pertama
-   dengan peran terpilih — sama seperti roleUserId. Kalau user itu belum
+   (kolom di luar ERD, 14 Nov 2026). User yang dicek adalah user dengan
+   NAMA yang diketik + peran terpilih (bukan lagi user pertama per peran —
+   itu yang bikin pengguna baru tidak bisa login). Kalau user itu belum
    punya password tersimpan (kolom kosong), login tetap dibuka (kompatibel
-   dengan user lama); kalau sudah ada passwordnya, yang salah ditolak. */
+   dengan user lama); kalau sudah ada passwordnya, yang salah ditolak.
+   ID user yang login disimpan di state.userId untuk pencatatan. */
 $("#loginForm").addEventListener("submit", function(e){
   e.preventDefault();
-  var u = penggunaById(roleUserId[state.role]);
-  if(!u){ toast("Tidak ada pengguna dengan peran "+state.role+" — login gagal."); return; }
-  if(u.password && $("#loginPass").value !== u.password){ toast("Password salah untuk peran "+state.role+" — login gagal."); return; }
+  var nm = ($("#loginName").value || "").trim();
+  if(!nm){ toast("Isi nama pengguna dulu — login gagal."); return; }
+  var u = state.pengguna.find(function(p){ return p.peran === state.role && (p.nama || "").trim().toLowerCase() === nm.toLowerCase(); });
+  if(!u){ toast("Pengguna \"" + nm + "\" tidak ditemukan untuk peran " + state.role + " — login gagal."); return; }
+  if(u.password && $("#loginPass").value !== u.password){ toast("Password salah — login gagal."); return; }
+  state.userId = u.id_pengguna;
   /* Kosongkan field begitu lolos — supaya password tidak tertinggal di layar
      login (dan tidak diisi-ulang otomatis browser saat kembali ke login). */
   $("#loginPass").value = "";
@@ -1149,6 +1160,7 @@ function doLogout(){
   /* Reset pilihan peran & nama ke keadaan awal — tanpa ini, layar login
      masih menyisakan peran dan nama pemakai sebelumnya */
   state.role = "Inventory";
+  state.userId = null;
   $$("#roleGrid .role-btn").forEach(function(x){ x.setAttribute("aria-pressed", x.getAttribute("data-role")==="Inventory" ? "true":"false"); });
   $("#loginName").value = roleNames[state.role];
   $("#loginPass").value = "";
@@ -1388,8 +1400,8 @@ function openPengajuanDetail(id){
     + (p.catatan ? '<div class="note-box"><b>Catatan peninjau:</b> '+p.catatan+'</div>' : '')
     + actions);
   var bs = $("#btnSetuju"), bt = $("#btnTolak");
-  if(bs) bs.addEventListener("click", function(){ p.status_pengajuan="Disetujui"; p.id_penyetuju = roleUserId[state.role]; state.aktivitas.unshift({t:"Pengajuan #"+p.id_pengajuan+" disetujui", s:"Disetujui oleh "+namaPengguna(p.id_penyetuju)+" · siap dibuatkan PO", c:"green"}); closeSheet(); renderPengajuan(); updateBadges(); toast("Pengajuan #"+p.id_pengajuan+" disetujui — lanjut ke PO."); });
-  if(bt) bt.addEventListener("click", function(){ p.status_pengajuan="Ditolak"; p.id_penyetuju = roleUserId[state.role]; p.catatan="Ditolak — konfirmasi ulang kebutuhan ke pengaju."; closeSheet(); renderPengajuan(); updateBadges(); toast("Pengajuan #"+p.id_pengajuan+" ditolak."); });
+  if(bs) bs.addEventListener("click", function(){ p.status_pengajuan="Disetujui"; p.id_penyetuju = currentUserId(); state.aktivitas.unshift({t:"Pengajuan #"+p.id_pengajuan+" disetujui", s:"Disetujui oleh "+namaPengguna(p.id_penyetuju)+" · siap dibuatkan PO", c:"green"}); closeSheet(); renderPengajuan(); updateBadges(); toast("Pengajuan #"+p.id_pengajuan+" disetujui — lanjut ke PO."); });
+  if(bt) bt.addEventListener("click", function(){ p.status_pengajuan="Ditolak"; p.id_penyetuju = currentUserId(); p.catatan="Ditolak — konfirmasi ulang kebutuhan ke pengaju."; closeSheet(); renderPengajuan(); updateBadges(); toast("Pengajuan #"+p.id_pengajuan+" ditolak."); });
   var bp = $("#btnBuatPO");
   if(bp) bp.addEventListener("click", function(){ openPOForm(p.id_pengajuan); });
   var bn = $("#btnSimpanNego");
@@ -1781,10 +1793,10 @@ document.addEventListener("submit", function(e){
     if($("#fpHarga").value.trim() !== "" && !(parseFloat($("#fpHarga").value) > 0)){ toast("Harga satuan harus lebih dari 0 bila diisi — pengajuan tidak disimpan."); releaseSubmit(f); return; }
     var newId = nextId(state.pengajuan, "id_pengajuan");
     var detId = nextId(state.pengajuan.reduce(function(a,p){ return a.concat(p.detail); }, []), "id_detail_pengajuan");
-    state.pengajuan.unshift({id_pengajuan:newId, id_pengaju:roleUserId[state.role], id_penyetuju:null, tanggal_pengajuan:"2026-11-08", status_pengajuan:"Menunggu", created_at:"2026-11-08 (hari ini)", detail:[{id_detail_pengajuan:detId, id_bahan_baku:bid, jumlah:+$("#fpQty").value}]});
+    state.pengajuan.unshift({id_pengajuan:newId, id_pengaju:currentUserId(), id_penyetuju:null, tanggal_pengajuan:"2026-11-08", status_pengajuan:"Menunggu", created_at:"2026-11-08 (hari ini)", detail:[{id_detail_pengajuan:detId, id_bahan_baku:bid, jumlah:+$("#fpQty").value}]});
     var fpHarga = parseFloat($("#fpHarga").value);
     if(fpHarga > 0){ var negoBaru = {}; negoBaru[bid] = fpHarga; saveNego(newId, negoBaru); }
-    state.aktivitas.unshift({t:"Pengajuan #"+newId+" dibuat", s:"Diajukan oleh "+namaPengguna(roleUserId[state.role])+" · "+(bhn ? bhn.nama_bahan_baku : "")+" · Menunggu", c:"amber"});
+    state.aktivitas.unshift({t:"Pengajuan #"+newId+" dibuat", s:"Diajukan oleh "+namaPengguna(currentUserId())+" · "+(bhn ? bhn.nama_bahan_baku : "")+" · Menunggu", c:"amber"});
     closeSheet(); renderPengajuan(); updateBadges(); go("pengajuan"); toast("Pengajuan #"+newId+" dibuat — status: Menunggu.");
     return;
   }
@@ -1805,7 +1817,7 @@ document.addEventListener("submit", function(e){
     var details = pPO.detail.map(function(d, idx){
       return {id_detail_po: detBase + idx, id_bahan_baku: d.id_bahan_baku, jumlah_dipesan: d.jumlah, jumlah_diterima: 0, harga_satuan: hargaVals[idx], kondisi: null};
     });
-    state.po.unshift({id_po:newPoId, id_pengajuan:pPO.id_pengajuan, id_supplier:+$("#poSupplier").value, id_karyawan_inventory:(state.role==="Inventory" ? roleUserId[state.role] : 1), no_nota_supplier:$("#poNota").value, tanggal_terima:null, status_po:"Diproses", status_pembayaran:"Belum Bayar", catatan_pemeriksaan:"", created_at:"2026-11-08 (hari ini)", detail:details});
+    state.po.unshift({id_po:newPoId, id_pengajuan:pPO.id_pengajuan, id_supplier:+$("#poSupplier").value, id_karyawan_inventory:(state.role==="Inventory" ? currentUserId() : 1), no_nota_supplier:$("#poNota").value, tanggal_terima:null, status_po:"Diproses", status_pembayaran:"Belum Bayar", catatan_pemeriksaan:"", created_at:"2026-11-08 (hari ini)", detail:details});
     delete _negoStore[pPO.id_pengajuan];
     state.aktivitas.unshift({t:"PO #"+newPoId+" dibuat", s:"Dari pengajuan #"+pPO.id_pengajuan+" · Diproses", c:"blue"});
     closeSheet(); go("po"); toast("PO #"+newPoId+" dibuat dari pengajuan #"+pPO.id_pengajuan+" — status: Diproses.");
@@ -1846,7 +1858,7 @@ document.addEventListener("submit", function(e){
     var newId2 = nextId(state.produksi, "id_pengeluaran");
     var detBase2 = nextId(state.produksi.reduce(function(a,p){ return a.concat(p.detail); }, []), "id_detail_pengeluaran");
     var details2 = rows.map(function(rw, idx){ return {id_detail_pengeluaran:detBase2 + idx, id_bahan_baku:rw.id_bahan_baku, jumlah:rw.jumlah, harga_satuan_bahan:hargaTerakhirBahan(rw.id_bahan_baku)}; });
-    state.produksi.unshift({id_pengeluaran:newId2, no_batch_produksi:$("#fdBatch").value, id_barang_jadi:jid, jumlah_target_produksi:target, id_karyawan_produksi:(state.role==="Produksi" ? roleUserId[state.role] : 2), id_karyawan_inventory:(state.role==="Inventory" ? roleUserId[state.role] : 1), tanggal_keluar:"2026-11-08 (hari ini)", created_at:"2026-11-08 (hari ini)", detail:details2});
+    state.produksi.unshift({id_pengeluaran:newId2, no_batch_produksi:$("#fdBatch").value, id_barang_jadi:jid, jumlah_target_produksi:target, id_karyawan_produksi:(state.role==="Produksi" ? currentUserId() : 2), id_karyawan_inventory:(state.role==="Inventory" ? currentUserId() : 1), tanggal_keluar:"2026-11-08 (hari ini)", created_at:"2026-11-08 (hari ini)", detail:details2});
     state.aktivitas.unshift({t:"Pengeluaran #"+newId2+" dicatat", s:"Batch "+$("#fdBatch").value+" · "+rows.map(function(rw){ var b=state.bahan.filter(function(x){ return x.id_bahan_baku==rw.id_bahan_baku; })[0]; return (b?b.nama_bahan_baku:"Bahan #"+rw.id_bahan_baku)+" −"+fmt(rw.jumlah); }).join(" · ")+" · target produksi "+target, c:"blue"});
     closeSheet(); renderProduksi(); updateBadges(); go("produksi"); toast("Pengeluaran #"+newId2+" dicatat — "+rows.length+" bahan baku, stok berkurang, barang jadi +"+target+".");
     return;

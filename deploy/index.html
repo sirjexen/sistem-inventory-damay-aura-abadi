@@ -633,8 +633,10 @@ button.card:hover{border-color:var(--teal)}
         <div class="table-wrap"><table class="data"><thead><tr><th>id_pengguna</th><th>nama</th><th>peran</th><th>telepon</th><th>created_at</th></tr></thead><tbody id="tentangPenggunaBody">
         </tbody></table></div>
         <div class="sec-title"><h3>Riwayat revisi</h3></div>
-        <details class="changelog"><summary>14 Nov 2026 · 12 perubahan</summary>
+        <details class="changelog"><summary>14 Nov 2026 · 14 perubahan</summary>
           <ul>
+            <li>Login kini memeriksa nama + peran (pengguna baru bisa login; pencatatan memakai user yang login)</li>
+            <li>Perbaikan scroll yang nge-freeze saat kursor di atas tabel</li>
             <li>Halaman Tentang dirombak: ERD jadi kartu berkelompok + alur relasi visual</li>
             <li>Deskripsi layar dipangkas, animasi berhasil login ditambah &amp; penjelasan ERD pindah ke halaman ini</li>
             <li>Label di semua layar disederhanakan (nama tabel/kolom hanya tersisa di isi tabel)</li>
@@ -668,7 +670,7 @@ button.card:hover{border-color:var(--teal)}
    dijangkau, tampilkan pesan error yang jelas di layar login dan JANGAN
    pakai data demo sebagai fallback. */
 var state = {
-  role: "Inventory", stokTab: "bahan", pengajuanFilter: "Semua",
+  role: "Inventory", userId: null, stokTab: "bahan", pengajuanFilter: "Semua",
   pengguna: [], bahan: [], jadi: [], supplier: [],
   pengajuan: [], po: [], produksi: [], aktivitas: []
 };
@@ -697,10 +699,12 @@ function unlockBtn(btn){ if(btn) btn.disabled = false; }
 /* id_pengguna pengguna yang sedang login — dicari dari tabel pengguna
    berdasarkan peran yang dipilih, bukan angka yang di-hardcode. */
 function currentUserId(){
+  if(state.userId){ return state.userId; }
   var u = state.pengguna.filter(function(x){ return x.peran === state.role; })[0];
   return u ? u.id_pengguna : null;
 }
 function currentUserName(){
+  if(state.userId){ var me = penggunaById(state.userId); if(me) return me.nama; }
   var u = state.pengguna.filter(function(x){ return x.peran === state.role; })[0];
   return u ? u.nama : roleNames[state.role];
 }
@@ -864,17 +868,21 @@ function enterApp(){
   go("dashboard"); updateBadges();
 }
 /* LOGIN: password diverifikasi lawan kolom password di tabel pengguna
-   (kolom di luar ERD, 14 Nov 2026). User yang dicek adalah user pertama
-   dengan peran terpilih — sama seperti currentUserId(). Kalau user itu belum
+   (kolom di luar ERD, 14 Nov 2026). User yang dicek adalah user dengan
+   NAMA yang diketik + peran terpilih (bukan lagi user pertama per peran —
+   itu yang bikin pengguna baru tidak bisa login). Kalau user itu belum
    punya password tersimpan (kolom kosong), login tetap dibuka (kompatibel
-   dengan user lama); kalau sudah ada passwordnya, yang salah ditolak. */
+   dengan user lama); kalau sudah ada passwordnya, yang salah ditolak.
+   ID user yang login disimpan di state.userId untuk pencatatan. */
 $("#loginForm").addEventListener("submit", function(e){
   e.preventDefault();
   if(!dataLoaded){ toast("Data belum dimuat dari database — periksa koneksi ke api.php."); return; }
-  var uid = currentUserId();
-  var u = uid===null ? null : penggunaById(uid);
-  if(!u){ toast("Tidak ada pengguna dengan peran "+state.role+" — login gagal."); return; }
-  if(u.password && $("#loginPass").value !== u.password){ toast("Password salah untuk peran "+state.role+" — login gagal."); return; }
+  var nm = ($("#loginName").value || "").trim();
+  if(!nm){ toast("Isi nama pengguna dulu — login gagal."); return; }
+  var u = state.pengguna.find(function(p){ return p.peran === state.role && (p.nama || "").trim().toLowerCase() === nm.toLowerCase(); });
+  if(!u){ toast("Pengguna \"" + nm + "\" tidak ditemukan untuk peran " + state.role + " — login gagal."); return; }
+  if(u.password && $("#loginPass").value !== u.password){ toast("Password salah — login gagal."); return; }
+  state.userId = u.id_pengguna;
   /* Kosongkan field begitu lolos — supaya password tidak tertinggal di layar
      login (dan tidak diisi-ulang otomatis browser saat kembali ke login). */
   $("#loginPass").value = "";
@@ -936,6 +944,7 @@ function doLogout(){
   /* Reset pilihan peran & nama ke keadaan awal — tanpa ini, layar login
      masih menyisakan peran dan nama pemakai sebelumnya */
   state.role = "Inventory";
+  state.userId = null;
   $$("#roleGrid .role-btn").forEach(function(x){ x.setAttribute("aria-pressed", x.getAttribute("data-role")==="Inventory" ? "true":"false"); });
   $("#loginName").value = currentUserName();
   $("#loginPass").value = "";
