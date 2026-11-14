@@ -455,8 +455,8 @@ button.card:hover{border-color:var(--teal)}
         <div class="toolbar">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="stokSearch" type="search" placeholder="Cari bahan baku…" aria-label="Cari stok" /></div>
           <div class="tabs" role="tablist" id="stokTabs">
-            <button class="tab" role="tab" data-tab="bahan" aria-selected="true">bahan_baku</button>
-            <button class="tab" role="tab" data-tab="jadi" aria-selected="false">barang_jadi</button>
+            <button class="tab" role="tab" data-tab="bahan" aria-selected="true">Bahan Baku</button>
+            <button class="tab" role="tab" data-tab="jadi" aria-selected="false">Barang Jadi</button>
             <button class="tab" role="tab" data-tab="supplier" aria-selected="false">supplier</button>
           </div>
         </div>
@@ -924,7 +924,7 @@ function openItemDetail(key){
     + '<div class="kv"><span>Stok saat ini</span><b>'+fmt(it.stok_saat_ini)+' '+it.satuan+'</b></div>'
     + (isBahan ? '<div class="kv"><span>Stok minimal</span><b>'+fmt(it.stok_minimal)+' '+it.satuan+'</b></div>' : '')
     + '<div class="kv"><span>Terakhir diubah</span><b>'+it.updated_at+'</b></div>'
-    + '<div class="kv" style="border-bottom:none"><span>Status stok</span><b>'+(!isBahan ? (it.stok_saat_ini>0?"Tersedia — stok_saat_ini barang_jadi > 0":"Habis — stok_saat_ini barang_jadi = 0") : stockState(it)==="ok"?"Tersedia — stok_saat_ini ≥ stok_minimal":stockState(it)==="low"?"Menipis — stok_saat_ini < stok_minimal, sebaiknya diajukan pengadaan":"Habis — stok_saat_ini = 0, perlu pengadaan segera")+'</b></div>'
+    + '<div class="kv" style="border-bottom:none"><span>Status stok</span><b>'+(!isBahan ? (it.stok_saat_ini>0?"Tersedia — masih ada di gudang":"Habis — tidak ada di gudang") : stockState(it)==="ok"?"Tersedia — stok masih di atas batas minimal":stockState(it)==="low"?"Menipis — stok di bawah batas minimal, sebaiknya diajukan pengadaan":"Habis — stok kosong, perlu pengadaan segera")+'</b></div>'
     + (state.role!=="Inventory" ? '<div class="note-box">Peran <b>'+state.role+'</b> hanya melihat data master ini — tambah/ubah data hanya untuk peran Inventory.</div>' : '')
     + (isBahan && stockState(it)!=="ok" && state.role==="Inventory" ? '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button><button class="btn btn-primary" onclick="closeSheet();openPengajuanForm('+id+')">Buat pengajuan_pengadaan</button></div>' : '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>'));
 }
