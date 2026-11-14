@@ -17,6 +17,7 @@
  *   - Hanya 3 peran: Inventory, Produksi, Owner. Peran Keuangan TIDAK ADA.
  *     Hanya Owner yang bisa menyetujui/menolak pengajuan (id_penyetuju
  *     selalu Owner) — ditegakkan di server, bukan cuma di UI.
+ *     Hanya Owner yang bisa menambah pengguna (aksi create_pengguna).
  *   - Kolom status_pembayaran tetap tampil (itu kolom ERD).
  *   - harga_satuan di detail_pemesanan_pembelian adalah hasil NEGOSIASI
  *     dengan supplier — BUKAN harga paten. Tidak ada daftar harga bawaan
@@ -24,9 +25,20 @@
  *     kolom harga dan API menyimpan persis nilai yang diketik, serta
  *     menolak bila harga tidak diisi.
  *   - Logika stok SAMA PERSIS dengan prototipe:
- *       * Terima PO        : stok_saat_ini bahan_baku += jumlah_diterima.
+ *       * Terima PO        : stok_saat_ini bahan_baku += jumlah_diterima
+ *                            untuk kondisi Sesuai/Kurang; barang dengan
+ *                            kondisi Rusak TIDAK masuk stok (jumlah_diterima
+ *                            tetap tercatat sebagai jejak pemeriksaan).
+ *       * Ubah status_pembayaran: hanya lewat pay_po, hanya bila
+ *                            status_po 'Diterima'. Inventory hanya satu
+ *                            arah ('Belum Bayar' -> 'Lunas', tombol Tandai
+ *                            Lunas); Owner boleh dua arah ('Lunas' <->
+ *                            'Belum Bayar', select + Simpan).
  *       * Pengeluaran batch: stok_saat_ini bahan_baku -= jumlah,
  *                            stok_saat_ini barang_jadi += jumlah_target_produksi.
+ *                            Satu batch (satu id_barang_jadi) bisa memakai
+ *                            BANYAK bahan baku — kirim array `detail`, satu
+ *                            elemen per baris detail_pengeluaran_bahan_baku.
  *       * Pengeluaran ditolak bila stok_saat_ini bahan_baku < jumlah.
  *
  * KEAMANAN (sesuai batas ERD — tabel pengguna TIDAK punya kolom password):
@@ -415,20 +427,6 @@ switch ($action) {
             fail('detail PO wajib diisi (minimal 1 bahan).');
         }
 
-        $st = $pdo->prepare('SELECT id_pengajuan, status_pengajuan FROM pengajuan_pengadaan WHERE id_pengajuan = ?');
-        $st->execute([$idPengajuan]);
-        $pj = $st->fetch();
-        if (!$pj) {
-            fail('id_pengajuan tidak ditemukan.');
-        }
-        if ($pj['status_pengajuan'] !== 'Disetujui') {
-            fail('PO hanya bisa dibuat dari pengajuan yang sudah Disetujui (saat ini: ' . $pj['status_pengajuan'] . ').');
-        }
-        $st = $pdo->prepare('SELECT id_po FROM pemesanan_pembelian WHERE id_pengajuan = ?');
-        $st->execute([$idPengajuan]);
-        if ($st->fetch()) {
-            fail('Pengajuan ini sudah dibuatkan PO.');
-        }
         $st = $pdo->prepare('SELECT id_supplier FROM supplier WHERE id_supplier = ?');
         $st->execute([$idSupplier]);
         if (!$st->fetch()) {
@@ -452,8 +450,8 @@ switch ($action) {
             if ($jml <= 0) {
                 fail('jumlah_dipesan harus lebih dari 0.');
             }
-            if ($hrg < 0) {
-                fail('harga_satuan tidak boleh negatif.');
+            if ($hrg <= 0) {
+                fail('harga_satuan harus lebih dari 0 (harga hasil negosiasi dengan supplier).');
             }
             $st = $pdo->prepare('SELECT id_bahan_baku FROM bahan_baku WHERE id_bahan_baku = ?');
             $st->execute([$idB]);
@@ -465,6 +463,45 @@ switch ($action) {
 
         try {
             $pdo->beginTransaction();
+            // Kunci baris pengajuan agar dua PO bersamaan untuk pengajuan
+            // yang sama tidak sama-sama lolos dari pengecekan "belum ada PO".
+            $st = $pdo->prepare('SELECT id_pengajuan, status_pengajuan FROM pengajuan_pengadaan WHERE id_pengajuan = ? FOR UPDATE');
+            $st->execute([$idPengajuan]);
+            $pj = $st->fetch();
+            if (!$pj) {
+                $pdo->rollBack();
+                fail('id_pengajuan tidak ditemukan.');
+            }
+            if ($pj['status_pengajuan'] !== 'Disetujui') {
+                $pdo->rollBack();
+                fail('PO hanya bisa dibuat dari pengajuan yang sudah Disetujui (saat ini: ' . $pj['status_pengajuan'] . ').');
+            }
+            $st = $pdo->prepare('SELECT id_po FROM pemesanan_pembelian WHERE id_pengajuan = ?');
+            $st->execute([$idPengajuan]);
+            if ($st->fetch()) {
+                $pdo->rollBack();
+                fail('Pengajuan ini sudah dibuatkan PO.');
+            }
+            // Isi PO harus sama persis dengan pengajuan yang Disetujui
+            // (id_bahan_baku + jumlah_dipesan per baris): PO adalah
+            // pemenuhan pengajuan, bukan pesanan bebas — UI pun mengirim
+            // persis baris detail pengajuan.
+            $st = $pdo->prepare('SELECT id_bahan_baku, jumlah FROM detail_pengajuan WHERE id_pengajuan = ? ORDER BY id_detail_pengajuan');
+            $st->execute([$idPengajuan]);
+            $expPairs = [];
+            foreach ($st->fetchAll() as $er) {
+                $expPairs[] = [(int) $er['id_bahan_baku'], round((float) $er['jumlah'], 2)];
+            }
+            $gotPairs = [];
+            foreach ($clean as [$idB, $jml, $hrg]) {
+                $gotPairs[] = [$idB, round($jml, 2)];
+            }
+            sort($expPairs);
+            sort($gotPairs);
+            if ($expPairs !== $gotPairs) {
+                $pdo->rollBack();
+                fail('detail PO harus sama persis dengan detail pengajuan yang Disetujui (id_bahan_baku dan jumlah_dipesan).');
+            }
             $st = $pdo->prepare(
                 'INSERT INTO pemesanan_pembelian (id_pengajuan, id_supplier, id_karyawan_inventory, no_nota_supplier, '
                 . 'tanggal_terima, status_po, status_pembayaran, catatan_pemeriksaan, created_at) '
@@ -495,8 +532,10 @@ switch ($action) {
     // Body: { role, user_id, id_po, catatan_pemeriksaan?,
     //         detail: [{ id_detail_po, jumlah_diterima, kondisi }] }
     // Sama seperti prototipe: stok_saat_ini bahan_baku += jumlah_diterima
-    // (berapa pun kondisinya — Sesuai/Rusak/Kurang), status_po 'Diterima',
+    // untuk kondisi Sesuai/Kurang; barang Rusak TIDAK masuk stok
+    // (jumlah_diterima tetap tercatat). status_po 'Diterima',
     // tanggal_terima = hari ini. Hanya bila status_po masih 'Diproses'.
+    // Detail yang dikirim harus mencakup SEMUA baris detail PO.
     case 'receive_po': {
         requireRole($pdo, $body, ['Inventory'], $PERAN_VALID);
         $idPo = (int) reqField($body, 'id_po');
@@ -518,10 +557,16 @@ switch ($action) {
 
         $clean = [];
         $kondisiValid = ['Sesuai', 'Rusak', 'Kurang'];
+        $seenDetail = [];
         foreach ($details as $d) {
             if (!is_array($d) || !isset($d['id_detail_po'], $d['jumlah_diterima'], $d['kondisi'])) {
                 fail('Setiap detail penerimaan wajib berisi id_detail_po, jumlah_diterima, dan kondisi.');
             }
+            $idDet = (int) $d['id_detail_po'];
+            if (isset($seenDetail[$idDet])) {
+                fail('id_detail_po ' . $idDet . ' dikirim dua kali.');
+            }
+            $seenDetail[$idDet] = true;
             if (!in_array($d['kondisi'], $kondisiValid, true)) {
                 fail('kondisi harus Sesuai, Rusak, atau Kurang.');
             }
@@ -532,12 +577,20 @@ switch ($action) {
             $st = $pdo->prepare(
                 'SELECT id_detail_po, id_bahan_baku FROM detail_pemesanan_pembelian WHERE id_detail_po = ? AND id_po = ?'
             );
-            $st->execute([(int) $d['id_detail_po'], $idPo]);
+            $st->execute([$idDet, $idPo]);
             $row = $st->fetch();
             if (!$row) {
-                fail('id_detail_po ' . (int) $d['id_detail_po'] . ' tidak ditemukan pada PO ini.');
+                fail('id_detail_po ' . $idDet . ' tidak ditemukan pada PO ini.');
             }
             $clean[] = [(int) $row['id_detail_po'], (int) $row['id_bahan_baku'], $jml, $d['kondisi']];
+        }
+        // Penerimaan harus mencakup SEMUA baris detail PO — kalau tidak,
+        // baris yang tidak dikirim tetap jumlah_diterima 0 padahal PO sudah
+        // berstatus Diterima (inkonsisten).
+        $st = $pdo->prepare('SELECT COUNT(*) FROM detail_pemesanan_pembelian WHERE id_po = ?');
+        $st->execute([$idPo]);
+        if ((int) $st->fetchColumn() !== count($clean)) {
+            fail('detail penerimaan harus mencakup semua baris detail PO ini.');
         }
 
         try {
@@ -550,7 +603,13 @@ switch ($action) {
             );
             foreach ($clean as [$idDetail, $idBahan, $jml, $kondisi]) {
                 $stDetail->execute([$jml, $kondisi, $idDetail]);
-                $stStok->execute([$jml, $idBahan]);
+                // Barang Rusak TIDAK masuk stok_saat_ini (tidak bisa dipakai
+                // produksi); jumlah_diterima tetap tercatat sebagai jejak
+                // pemeriksaan. Barang Kurang tetap masuk stok sebesar
+                // jumlah_diterima (yang benar-benar tiba dan bisa dipakai).
+                if ($kondisi !== 'Rusak') {
+                    $stStok->execute([$jml, $idBahan]);
+                }
             }
             if ($catatan !== '') {
                 $st = $pdo->prepare(
@@ -571,6 +630,48 @@ switch ($action) {
         ok(['id_po' => $idPo, 'status_po' => 'Diterima']);
     }
 
+    // -- Ubah status_pembayaran (Inventory / Owner) ---------------------------
+    // Body: { role, user_id, id_po, status_pembayaran? }
+    // status_pembayaran hanya boleh diubah bila status_po 'Diterima'
+    // (langkah 5-6 proses bisnis: pesan, terima & periksa, lalu bayar).
+    // - Inventory: hanya satu arah, 'Belum Bayar' -> 'Lunas' (tombol
+    //   Tandai Lunas). Target 'Belum Bayar' ditolak untuk Inventory.
+    // - Owner: boleh dua arah, 'Lunas' <-> 'Belum Bayar' (select + Simpan).
+    // - Produksi: tidak boleh (ditolak requireRole).
+    // Tanpa status_pembayaran di body, target default 'Lunas' (pemanggil
+    // lama tombol Tandai Lunas tetap bekerja).
+    // Ditolak bila status_pembayaran sudah sama dengan target.
+    case 'pay_po': {
+        requireRole($pdo, $body, ['Inventory', 'Owner'], $PERAN_VALID);
+        $role = (string) $body['role'];
+        $target = isset($body['status_pembayaran']) && $body['status_pembayaran'] !== ''
+            ? (string) $body['status_pembayaran'] : 'Lunas';
+        if (!in_array($target, ['Lunas', 'Belum Bayar'], true)) {
+            fail('status_pembayaran harus Lunas atau Belum Bayar.');
+        }
+        if ($role === 'Inventory' && $target !== 'Lunas') {
+            fail('Peran Inventory hanya bisa menandai Lunas (tidak bisa mengembalikan ke Belum Bayar).');
+        }
+        $idPo = (int) reqField($body, 'id_po');
+
+        $st = $pdo->prepare('SELECT id_po, status_po, status_pembayaran FROM pemesanan_pembelian WHERE id_po = ?');
+        $st->execute([$idPo]);
+        $po = $st->fetch();
+        if (!$po) {
+            fail('id_po tidak ditemukan.');
+        }
+        if ($po['status_po'] !== 'Diterima') {
+            fail('status_pembayaran hanya bisa diubah setelah status_po Diterima (saat ini: ' . $po['status_po'] . ').');
+        }
+        if ($po['status_pembayaran'] === $target) {
+            fail('status_pembayaran PO ini sudah ' . $target . '.');
+        }
+
+        $st = $pdo->prepare('UPDATE pemesanan_pembelian SET status_pembayaran = ? WHERE id_po = ?');
+        $st->execute([$target, $idPo]);
+        ok(['id_po' => $idPo, 'status_pembayaran' => $target]);
+    }
+
     // -- Buat pengeluaran_bahan_baku batch (Inventory / Produksi) -----------
     // Body: { role, user_id, no_batch_produksi, id_barang_jadi,
     //         jumlah_target_produksi, id_bahan_baku, jumlah,
@@ -587,12 +688,45 @@ switch ($action) {
         $noBatch = trim((string) reqField($body, 'no_batch_produksi'));
         $idJadi  = (int) reqField($body, 'id_barang_jadi');
         $target  = reqNumber($body, 'jumlah_target_produksi', false);
-        $idBahan = (int) reqField($body, 'id_bahan_baku');
-        $jumlah  = reqNumber($body, 'jumlah', false);
-        $harga   = isset($body['harga_satuan_bahan']) && $body['harga_satuan_bahan'] !== ''
-            ? (float) $body['harga_satuan_bahan'] : 0;
-        if ($harga < 0) {
-            fail('harga_satuan_bahan tidak boleh negatif.');
+
+        // Detail bahan: kirim array `detail` [{id_bahan_baku, jumlah,
+        // harga_satuan_bahan?}] untuk satu barang jadi dengan BANYAK bahan
+        // baku. Bentuk lama (id_bahan_baku + jumlah tunggal) tetap diterima
+        // supaya klien lama tidak rusak.
+        $details = [];
+        if (isset($body['detail']) && is_array($body['detail'])) {
+            foreach ($body['detail'] as $d) {
+                if (!is_array($d) || !isset($d['id_bahan_baku']) || !isset($d['jumlah'])) {
+                    fail('Setiap baris detail wajib berisi id_bahan_baku dan jumlah.');
+                }
+                $idB = (int) $d['id_bahan_baku'];
+                $jml = (float) $d['jumlah'];
+                $hrg = isset($d['harga_satuan_bahan']) && $d['harga_satuan_bahan'] !== ''
+                    ? (float) $d['harga_satuan_bahan'] : 0;
+                if ($jml <= 0) {
+                    fail('jumlah setiap bahan harus lebih dari 0.');
+                }
+                if ($hrg < 0) {
+                    fail('harga_satuan_bahan tidak boleh negatif.');
+                }
+                $details[] = ['id_bahan_baku' => $idB, 'jumlah' => $jml, 'harga' => $hrg];
+            }
+        } else {
+            $idBahan = (int) reqField($body, 'id_bahan_baku');
+            $jumlah  = reqNumber($body, 'jumlah', false);
+            $harga   = isset($body['harga_satuan_bahan']) && $body['harga_satuan_bahan'] !== ''
+                ? (float) $body['harga_satuan_bahan'] : 0;
+            if ($harga < 0) {
+                fail('harga_satuan_bahan tidak boleh negatif.');
+            }
+            $details[] = ['id_bahan_baku' => $idBahan, 'jumlah' => $jumlah, 'harga' => $harga];
+        }
+        if (!$details) {
+            fail('Isi minimal satu bahan baku.');
+        }
+        $idsBahan = array_column($details, 'id_bahan_baku');
+        if (count($idsBahan) !== count(array_unique($idsBahan))) {
+            fail('Satu bahan baku tidak boleh muncul dua kali dalam satu pengeluaran — gabungkan jumlahnya dalam satu baris.');
         }
 
         $st = $pdo->prepare('SELECT id_barang_jadi, nama_barang_jadi FROM barang_jadi WHERE id_barang_jadi = ?');
@@ -621,19 +755,28 @@ switch ($action) {
 
         try {
             $pdo->beginTransaction();
-            // Kunci baris bahan agar dua pengeluaran bersamaan tidak
-            // sama-sama lolos dari cek stok.
+            // Kunci SEMUA baris bahan (urut id supaya dua transaksi bersamaan
+            // mengunci dalam urutan yang sama — menghindari deadlock), lalu
+            // cek stok semuanya SEBELUM ada yang diubah.
+            sort($idsBahan);
+            $stokMap = [];
             $st = $pdo->prepare('SELECT stok_saat_ini, nama_bahan_baku FROM bahan_baku WHERE id_bahan_baku = ? FOR UPDATE');
-            $st->execute([$idBahan]);
-            $bhn = $st->fetch();
-            if (!$bhn) {
-                $pdo->rollBack();
-                fail('id_bahan_baku tidak ditemukan.');
+            foreach ($idsBahan as $idB) {
+                $st->execute([$idB]);
+                $bhn = $st->fetch();
+                if (!$bhn) {
+                    $pdo->rollBack();
+                    fail('id_bahan_baku ' . $idB . ' tidak ditemukan.');
+                }
+                $stokMap[$idB] = $bhn;
             }
-            if ((float) $bhn['stok_saat_ini'] < $jumlah) {
-                $pdo->rollBack();
-                fail('Stok ' . $bhn['nama_bahan_baku'] . ' tidak cukup (' . $bhn['stok_saat_ini']
-                    . ' tersedia, butuh ' . $jumlah . ').');
+            foreach ($details as $d) {
+                $bhn = $stokMap[$d['id_bahan_baku']];
+                if ((float) $bhn['stok_saat_ini'] < $d['jumlah']) {
+                    $pdo->rollBack();
+                    fail('Stok ' . $bhn['nama_bahan_baku'] . ' tidak cukup (' . $bhn['stok_saat_ini']
+                        . ' tersedia, butuh ' . $d['jumlah'] . ').');
+                }
             }
 
             $st = $pdo->prepare(
@@ -644,14 +787,15 @@ switch ($action) {
             $st->execute([$noBatch, $idJadi, $target, $idProd, $idInv]);
             $idKeluar = (int) $pdo->lastInsertId();
 
-            $st = $pdo->prepare(
+            $stDet = $pdo->prepare(
                 'INSERT INTO detail_pengeluaran_bahan_baku (id_pengeluaran, id_bahan_baku, jumlah, harga_satuan_bahan) '
                 . 'VALUES (?, ?, ?, ?)'
             );
-            $st->execute([$idKeluar, $idBahan, $jumlah, $harga]);
-
-            $st = $pdo->prepare('UPDATE bahan_baku SET stok_saat_ini = stok_saat_ini - ?, updated_at = NOW() WHERE id_bahan_baku = ?');
-            $st->execute([$jumlah, $idBahan]);
+            $stUpd = $pdo->prepare('UPDATE bahan_baku SET stok_saat_ini = stok_saat_ini - ?, updated_at = NOW() WHERE id_bahan_baku = ?');
+            foreach ($details as $d) {
+                $stDet->execute([$idKeluar, $d['id_bahan_baku'], $d['jumlah'], $d['harga']]);
+                $stUpd->execute([$d['jumlah'], $d['id_bahan_baku']]);
+            }
 
             $st = $pdo->prepare('UPDATE barang_jadi SET stok_saat_ini = stok_saat_ini + ?, updated_at = NOW() WHERE id_barang_jadi = ?');
             $st->execute([$target, $idJadi]);
@@ -712,6 +856,32 @@ switch ($action) {
         );
         $st->execute([$nama, $kontak, $alamat]);
         ok(['id_supplier' => (int) $pdo->lastInsertId()]);
+    }
+
+    // -- Tambah pengguna (hanya Owner) --------------------------------------
+    // Body: { role, user_id, nama, peran, telepon? }
+    // (tabel pengguna di ERD TIDAK punya kolom password — login prototipe
+    // adalah pemilihan peran + nama, lihat catatan KEAMANAN di header.)
+    case 'create_pengguna': {
+        requireRole($pdo, $body, ['Owner'], $PERAN_VALID);
+        $nama = trim((string) reqField($body, 'nama'));
+        $peran = trim((string) reqField($body, 'peran'));
+        if (!in_array($peran, $PERAN_VALID, true)) {
+            fail('peran tidak valid. Peran yang dikenal: Inventory, Produksi, Owner.');
+        }
+        $telepon = isset($body['telepon']) ? trim((string) $body['telepon']) : '';
+
+        $st = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE LOWER(nama) = LOWER(?)');
+        $st->execute([$nama]);
+        if ($st->fetch()) {
+            fail('nama itu sudah ada di tabel pengguna — baris ganda dicegah.');
+        }
+
+        $st = $pdo->prepare(
+            'INSERT INTO pengguna (nama, peran, telepon, created_at) VALUES (?, ?, ?, NOW())'
+        );
+        $st->execute([$nama, $peran, $telepon]);
+        ok(['id_pengguna' => (int) $pdo->lastInsertId()]);
     }
 
     default:

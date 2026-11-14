@@ -41,14 +41,16 @@ Peran Keuangan dihapus; hanya Owner yang menyetujui/menolak pengajuan
   Pengeluaran, Barang Jadi, Laporan.
 - Produksi: Dashboard, Bahan Baku (lihat saja), Pengeluaran
   (batch produksi), Barang Jadi.
-- Owner: Dashboard, Bahan Baku (lihat saja), Pengajuan (setujui/tolak),
-  Pemesanan (lihat), Laporan, Tentang Proyek.
+- Owner: Dashboard, Bahan Baku (lihat saja), Barang Jadi (lihat stok di
+  gudang), Pengajuan (setujui/tolak), Pemesanan (lihat), Pengguna
+  (tambah pengguna), Laporan, Tentang Proyek.
 
 ## Alur bisnis
 
 Cek stok → ajukan pengadaan → disetujui Owner → pesan ke supplier →
 terima & periksa bahan → simpan & catat stok → keluarkan bahan baku
-untuk produksi (per batch) → simpan barang jadi.
+untuk produksi (per batch — satu barang jadi bisa memakai banyak bahan
+baku, satu baris detail per bahan) → simpan barang jadi.
 
 ## Catatan
 
