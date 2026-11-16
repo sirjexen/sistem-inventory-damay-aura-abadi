@@ -22,7 +22,7 @@
 -- Data INSERT di bawah ini HANYA CONTOH (DEMO) untuk pengujian,
 -- bukan data asli perusahaan.
 -- Cara pakai: buka phpMyAdmin -> BUKA database tujuan yang sudah dibuat
--- (mis. if0_43330214_inventory) -> pilih tab Import -> pilih file ini -> Go.
+-- (mis. nama_database_kamu) -> pilih tab Import -> pilih file ini -> Go.
 -- File ini TIDAK membuat database baru (tidak ada CREATE DATABASE / USE),
 -- supaya bisa di-import ke database hosting apa pun namanya.
 -- ============================================================================
