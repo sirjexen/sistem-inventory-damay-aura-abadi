@@ -3,42 +3,32 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="color-scheme" content="light dark" />
+<meta name="color-scheme" content="light" />
 <link rel="icon" href="data:," />
 <title>Sistem Inventory — Damay Aura Abadi</title>
-<!-- REV 2026-11-14f: login memverifikasi password -->
+<!-- REV 2026-11-16 P9: login email, lupa password, catatan tolak, tema hitam-putih -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
 :root{
-  /* Design system tunggal — keluarga biru mengikuti sidebar (#4B4BF0).
-     Nama variabel --teal* dipertahankan sebagai token "brand" agar semua
-     komponen (tombol, tab, badge, grafik) otomatis memakai biru yang sama. */
-  --bg:#EEF0F7; --surface:#FFFFFF; --surface-2:#F4F5FB; --surface-3:#E5E7F4;
-  --ink:#151531; --ink-2:#3A3D55; --muted:#62677F; --line:#D8DBEC;
-  --teal:#4545E6; --teal-bright:#6C6CF5; --teal-deep:#1D1D6B; --teal-soft:#E2E3FF;
-  --blue:#2B62C4; --blue-soft:#E1EAFB; --gold:#C79A1B; --gold-deep:#8F6E0E; --gold-soft:#F7EDCB;
+  /* Tema hitam-putih (P9, saran dosen): krom monokrom — warna hanya untuk
+     status (merah/kuning/hijau). Nama variabel --teal* dipertahankan sebagai
+     token "brand" agar semua komponen otomatis memakai hitam yang sama. */
+  --bg:#F4F4F4; --surface:#FFFFFF; --surface-2:#F0F0F0; --surface-3:#E8E8E8;
+  --ink:#111111; --ink-2:#333333; --muted:#666666; --line:#DDDDDD;
+  --teal:#111111; --teal-bright:#333333; --teal-deep:#000000; --teal-soft:#F0F0F0;
+  --blue:#333333; --blue-soft:#F0F0F0; --gold:#111111; --gold-deep:#000000; --gold-soft:#F0F0F0;
   --red:#B3372A; --red-soft:#F9E4E0; --amber:#A86A08; --amber-soft:#FBEED3;
   --green:#177245; --green-soft:#DFF2E4;
-  --shadow:0 4px 20px rgba(35,35,120,.08); --shadow-lg:0 24px 60px rgba(35,35,120,.22);
+  --shadow:0 4px 20px rgba(0,0,0,.08); --shadow-lg:0 24px 60px rgba(0,0,0,.22);
   --r-xl:16px; --r-lg:14px; --r-md:10px; --r-sm:8px;
   --sidebar-w:216px;
-  --sidebar-blue:#4B4BF0;
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#0B0B16; --surface:#14142A; --surface-2:#191930; --surface-3:#20203C;
-    --ink:#ECECF8; --ink-2:#C6C8DE; --muted:#969AB5; --line:#26264A;
-    --teal:#8B8BFF; --teal-bright:#8B8BFF; --teal-deep:#101038; --teal-soft:#23234D;
-    --blue:#7FA8E8; --blue-soft:#1B2A47; --gold:#E3BB45; --gold-deep:#E3BB45; --gold-soft:#3A3013;
-    --red:#F08A7D; --red-soft:#3D211C; --amber:#EFB95C; --amber-soft:#3A2C12;
-    --green:#6FD598; --green-soft:#173526; --shadow:0 4px 20px rgba(0,0,0,.35); --shadow-lg:0 24px 60px rgba(0,0,0,.5); --sidebar-blue:#4242D8;
-  }
+  --sidebar-blue:#111111;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:13.5px;line-height:1.45}
+body{margin:0;font-family:"Poppins",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:13.5px;line-height:1.45}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select,textarea{font:inherit;color:inherit}
 img{max-width:100%;display:block}
@@ -47,9 +37,9 @@ a{color:var(--teal)}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
 
 /* ============ LOGIN (website) ============ */
-#screen-login{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:32px 20px;background:radial-gradient(900px 500px at 15% -10%,#4b4bf02e,transparent),radial-gradient(700px 400px at 90% 110%,#d9a44122,transparent),var(--bg)}
+#screen-login{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:32px 20px;background:var(--bg)}
 .login-card{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);display:grid;grid-template-columns:1fr;overflow:hidden}
-.login-left{background:var(--teal-deep);color:#EDEEFF;padding:22px 24px;display:flex;align-items:center;gap:16px}
+.login-left{background:var(--teal-deep);color:#FFFFFF;padding:22px 24px;display:flex;align-items:center;gap:16px}
 .login-logo{background:#fff;border-radius:12px;padding:8px 12px;width:124px;flex:none}
 .login-left h1{font-size:20px;line-height:1.15;font-weight:800;margin-top:0;letter-spacing:-.02em}
 .login-body{padding:28px;display:flex;flex-direction:column;justify-content:center}
@@ -61,21 +51,21 @@ a{color:var(--teal)}
 @keyframes slam{to{opacity:1;transform:none}}
 @keyframes bar{to{width:100%}}
 @keyframes liftup{to{transform:translateY(-101%)}}
-#intro{position:fixed;inset:0;z-index:200;background:radial-gradient(800px 500px at 50% -10%,#2a2a72,transparent),linear-gradient(160deg,#0B0B16,#101038 60%,#14142A);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;color:#ECECF8;cursor:pointer}
+#intro{position:fixed;inset:0;z-index:200;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;color:var(--ink);cursor:pointer}
 .i-word{display:flex;gap:.35em;flex-wrap:wrap;justify-content:center;font-size:clamp(28px,7vw,44px);font-weight:800;letter-spacing:.01em;line-height:1.1;padding:0 20px;text-align:center}
 .i-word span{display:inline-block;opacity:0;transform:translateY(26px) scale(.94)}
 #intro.go .i-word span{animation:slam .55s cubic-bezier(.22,1,.36,1) forwards}
 #intro.go .i-word span:nth-child(1){animation-delay:.05s}
 #intro.go .i-word span:nth-child(2){animation-delay:.16s}
 #intro.go .i-word span:nth-child(3){animation-delay:.27s}
-.i-bar{width:180px;height:3px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}
+.i-bar{width:180px;height:3px;background:rgba(0,0,0,.12);border-radius:99px;overflow:hidden}
 .i-bar i{display:block;height:100%;width:0;background:var(--gold)}
 #intro.go .i-bar i{animation:bar .95s cubic-bezier(.22,1,.36,1) .1s forwards}
 .i-sub{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
 .i-skip{position:absolute;bottom:28px;font-size:11px;color:var(--muted);opacity:.8}
 #intro.lift{animation:liftup .8s cubic-bezier(.76,0,.24,1) .05s forwards}
 /* SPLASH berhasil login: centang menggambar diri + sapaan, lalu terangkat. */
-#loginSuccess{position:fixed;inset:0;z-index:160;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(800px 500px at 50% -10%,#2a2a72,transparent),linear-gradient(160deg,#0B0B16,#101038 60%,#14142A);cursor:pointer}
+#loginSuccess{position:fixed;inset:0;z-index:160;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#FFFFFF;cursor:pointer}
 #loginSuccess .check{width:84px;height:84px}
 #loginSuccess .check circle{fill:none;stroke:#6FD598;stroke-width:2.5;stroke-dasharray:151;stroke-dashoffset:151}
 #loginSuccess .check path{fill:none;stroke:#6FD598;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:36;stroke-dashoffset:36}
@@ -103,8 +93,6 @@ a{color:var(--teal)}
 #screen-login.show .login-logo{animation:logoPop .7s .28s cubic-bezier(.34,1.56,.64,1) both}
 #screen-login.show .login-body>h2{animation:riseIn .6s .18s cubic-bezier(.22,1,.36,1) both}
 #screen-login.show .login-body>.sub{animation:riseIn .6s .24s cubic-bezier(.22,1,.36,1) both}
-#screen-login.show .role-label{animation:riseIn .6s .3s cubic-bezier(.22,1,.36,1) both}
-#screen-login.show .role-grid{animation:riseIn .6s .36s cubic-bezier(.22,1,.36,1) both}
 #screen-login.show .login-body .field{animation:riseIn .6s .44s cubic-bezier(.22,1,.36,1) both}
 #screen-login.show .login-body .btn-block{animation:riseIn .6s .52s cubic-bezier(.22,1,.36,1) both}
 #screen-login.show .login-note{animation:riseIn .6s .6s cubic-bezier(.22,1,.36,1) both}
@@ -113,21 +101,18 @@ a{color:var(--teal)}
 @media (prefers-reduced-motion: reduce){ #intro,#loginSuccess{display:none!important} #screen-login *,#app.on,#app.on *{animation:none!important} }
 .login-body h2{font-size:19px;font-weight:800}
 .login-body .sub{color:var(--muted);font-size:13px;margin:5px 0 18px}
-.role-label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-.role-btn{border:1.5px solid var(--line);border-radius:var(--r-md);padding:9px 10px;text-align:left;background:var(--surface)}
-.role-btn b{font-size:13.5px;display:block}
-.role-btn[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft)}
+.link-btn{background:none;border:0;padding:0;color:var(--teal);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .field{margin-bottom:12px}
 .field label{font-size:12.5px;font-weight:700;display:block;margin-bottom:5px}
 .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:var(--r-md);padding:9px 11px;background:var(--surface-2);font-size:13.5px}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);outline:none;background:var(--surface)}
+.harga-preview{display:block;text-align:right;font-size:12px;color:var(--muted);margin-top:3px;min-height:14px}
+.fdSatuan{color:var(--muted);cursor:default}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--r-md);padding:8px 14px;font-weight:800;font-size:13.5px;transition:transform .1s,opacity .15s;white-space:nowrap}
 .btn:active{transform:scale(.98)}
 .btn-primary{background:var(--teal);color:#fff}
-@media (prefers-color-scheme: dark){.btn-primary{color:#101038}}
 .btn-lg{padding:12px 18px;font-size:14px}
-.btn-gold{background:var(--gold);color:#231a02}
+.btn-gold{background:var(--gold);color:#FFFFFF}
 .btn-ghost{border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
 .btn-danger-ghost{border:1.5px solid var(--red);background:var(--surface);color:var(--red)}
 .btn-sm{padding:6px 11px;font-size:12.5px;border-radius:var(--r-sm)}
@@ -138,7 +123,7 @@ a{color:var(--teal)}
 /* ============ APP SHELL (website) ============ */
 #app{display:none;min-height:100dvh}
 #app.on{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr)}
-.sidebar{background:var(--sidebar-blue);color:#E4E5FF;display:flex;flex-direction:column;position:sticky;top:0;height:100dvh;z-index:40}
+.sidebar{background:var(--sidebar-blue);color:#F5F5F5;display:flex;flex-direction:column;position:sticky;top:0;height:100dvh;z-index:40}
 .sidebar-brand{padding:18px 20px 4px}
 .ws-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700}
 .brand-mobile{display:none;color:#fff;font-size:14px;font-weight:800}
@@ -147,24 +132,24 @@ a{color:var(--teal)}
 .snav{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:9px 12px;border-radius:12px;font-size:13.5px;font-weight:500;color:rgba(255,255,255,.85);position:relative}
 .snav svg{width:18px;height:18px;flex:none;opacity:.9}
 .snav:hover{background:rgba(255,255,255,.13);color:#fff}
-.snav.active{background:#fff;color:var(--sidebar-blue);font-weight:700;box-shadow:0 6px 16px rgba(8,8,90,.28)}
+.snav.active{background:#fff;color:var(--sidebar-blue);font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,.28)}
 .sidebar-company{margin:2px 12px 12px;padding:14px 15px;background:rgba(255,255,255,.14);border-radius:14px;color:#fff}
 .sidebar-company svg{width:22px;height:22px}
 .sidebar-company b{display:block;font-size:12.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;margin-top:9px}
 .sidebar-company .co-sub{display:block;font-size:12px;color:rgba(255,255,255,.75);margin-top:3px}
 .sidebar-company .co-status{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#C9F7D8;margin-top:10px}
 .sidebar-company .co-status i{width:8px;height:8px;border-radius:50%;background:#4ADE80;flex:none}
-.snav .cnt{margin-left:auto;min-width:20px;height:20px;border-radius:10px;background:var(--gold);color:#231a02;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 5px}
+.snav .cnt{margin-left:auto;min-width:20px;height:20px;border-radius:10px;background:var(--gold);color:#FFFFFF;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 5px}
 .sidebar-user{padding:11px 12px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:10px;align-items:center}
-.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal-bright),var(--blue));display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex:none;border:2px solid rgba(255,255,255,.3)}
+.avatar{width:34px;height:34px;border-radius:50%;background:#333333;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex:none;border:2px solid rgba(255,255,255,.3)}
 .sidebar-user .who{min-width:0;flex:1}
 .sidebar-user .who small{display:block;font-size:11.5px;color:rgba(255,255,255,.6)}
 .sidebar-user .who b{font-size:13.5px;color:#fff;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.icon-btn{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.1);display:grid;place-items:center;position:relative;flex:none;color:#EAF6F1}
+.icon-btn{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.1);display:grid;place-items:center;position:relative;flex:none;color:#FFFFFF}
 .icon-btn:hover{background:rgba(255,255,255,.2)}
 .topbar .icon-btn{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
 .topbar .icon-btn:hover{background:var(--surface-3)}
-.badge-dot{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:var(--gold);color:#231a02;font-size:10.5px;font-weight:800;display:grid;place-items:center;padding:0 4px;border:2px solid var(--surface)}
+.badge-dot{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:var(--gold);color:#FFFFFF;font-size:10.5px;font-weight:800;display:grid;place-items:center;padding:0 4px;border:2px solid var(--surface)}
 
 .main-wrap{min-width:0;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:9px 24px;display:flex;align-items:center;gap:12px}
@@ -187,13 +172,13 @@ a{color:var(--teal)}
 /* KPI + dashboard */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--shadow)}
+.kpi[data-goto]{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+.kpi[data-goto]:hover{transform:translateY(-2px);border-color:var(--teal);box-shadow:var(--shadow-lg)}
 .kpi .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;margin-bottom:8px}
 .kpi .ic svg{width:17px;height:17px}
 .kpi b{font-size:22px;font-weight:800;display:block;line-height:1.1}
-/* Label KPI berisi nama kolom/tabel ERD (snake_case, monospace seperti header
-   tabel): TIDAK BOLEH patah di tengah kata — titik patah satu-satunya adalah
-   <wbr> yang disisipkan tepat setelah setiap underscore di labelnya */
-.kpi span{font-size:12px;color:var(--muted);display:block;margin-top:2px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:normal;word-break:normal;hyphens:none}
+/* Label KPI (bahasa formal, P9): tidak boleh patah di tengah kata. */
+.kpi span{font-size:12px;color:var(--muted);display:block;margin-top:2px;overflow-wrap:normal;word-break:normal;hyphens:none}
 .kpi.alert{border-color:var(--gold);background:var(--gold-soft)}
 .dash-cols{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:12px;align-items:start}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow)}
@@ -218,7 +203,7 @@ a{color:var(--teal)}
    kartunya sendiri, header tetap terlihat (sticky) saat kartu di-scroll */
 .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:auto;max-height:min(72dvh,680px)}
 table.data{width:100%;border-collapse:collapse;font-size:13px}
-table.data thead th{text-align:left;font-size:11.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:0;color:var(--muted);font-weight:700;background:var(--surface-2);padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;z-index:2}
+table.data thead th{text-align:left;font-size:11.5px;letter-spacing:0;color:var(--muted);font-weight:700;background:var(--surface-2);padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;z-index:2}
 @media (min-width:901px){ table.data{min-width:600px} }
 /* Tabel di dalam modal: jangan paksa lebar 600px — kolom harus muat selebar
    modal (±536px), kalau tidak kolom terakhir (jumlah, kondisi) ke-crop */
@@ -254,6 +239,7 @@ button.card:hover{border-color:var(--teal)}
 
 /* tabs, search, toolbar */
 .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.toolbar select{border:1.5px solid var(--line);border-radius:var(--r-md);padding:9px 10px;background:var(--surface)}
 .search{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:var(--r-md);padding:0 12px;background:var(--surface);flex:1;min-width:220px;max-width:440px}
 .search svg{width:16px;height:16px;color:var(--muted);flex:none}
 .search input{border:none;background:none;flex:1;padding:8px 0;font-size:13.5px;min-width:0}
@@ -261,7 +247,6 @@ button.card:hover{border-color:var(--teal)}
 .tabs{display:flex;gap:7px;flex-wrap:wrap}
 .tab{flex:none;padding:6px 13px;border-radius:999px;border:1.5px solid var(--line);font-size:12.5px;font-weight:700;color:var(--ink-2);background:var(--surface)}
 .tab[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
-@media (prefers-color-scheme: dark){.tab[aria-selected="true"]{color:#101038}}
 .empty{padding:36px 16px;text-align:center;color:var(--muted);font-size:14px;border:1.5px dashed var(--line);border-radius:var(--r-lg);background:var(--surface)}
 .fab{display:none}
 .page-action{flex:none}
@@ -295,11 +280,10 @@ button.card:hover{border-color:var(--teal)}
 @media (max-width:560px){.form-grid{grid-template-columns:1fr}}
 
 /* toast */
-.toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:26px;z-index:120;background:var(--teal-deep);color:#EDEEFF;font-size:13.5px;font-weight:700;padding:12px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center;box-shadow:var(--shadow-lg)}
+.toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:26px;z-index:120;background:var(--teal-deep);color:#FFFFFF;font-size:13.5px;font-weight:700;padding:12px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center;box-shadow:var(--shadow-lg)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-@media (prefers-color-scheme: dark){.toast{background:#EDEEFF;color:#1D1D6B}}
-.report-total{display:flex;justify-content:space-between;align-items:center;background:var(--teal-deep);color:#EDEEFF;border-radius:var(--r-lg);padding:14px 18px;margin-bottom:14px;gap:14px;flex-wrap:wrap}
-.report-total small{color:#A9ACF2;font-size:11.5px;display:block}
+.report-total{display:flex;justify-content:space-between;align-items:center;background:var(--teal-deep);color:#FFFFFF;border-radius:var(--r-lg);padding:14px 18px;margin-bottom:14px;gap:14px;flex-wrap:wrap}
+.report-total small{color:#BBBBBB;font-size:11.5px;display:block}
 .report-total b{font-size:18px}
 .about-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px;align-items:start}
 /* Tentang: kartu ERD berkelompok + alur relasi visual + riwayat revisi. */
@@ -307,21 +291,21 @@ button.card:hover{border-color:var(--teal)}
 .erd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .erd-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--shadow)}
 .erd-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
-.erd-name{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;font-weight:800}
+.erd-name{font-size:14px;font-weight:800}
 .erd-badge{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--teal-soft);color:var(--teal);white-space:nowrap}
-.erd-badge.trans{background:rgba(227,187,69,.14);color:var(--gold)}
+.erd-badge.trans{background:#F0F0F0;color:#111111}
 .erd-badge.det{background:var(--surface-2);color:var(--muted)}
 .erd-desc{font-size:12.5px;color:var(--muted);margin:0 0 10px}
 .erd-cols{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
-.erd-cols code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+.erd-cols code{font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
 .erd-cols code.pk{color:var(--gold);border-color:rgba(227,187,69,.4)}
 .erd-links{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:11.5px;color:var(--muted)}
 .erd-links b{font-weight:700}
-.erd-links i{font-style:normal;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--teal)}
+.erd-links i{font-style:normal;font-size:11px;color:var(--teal)}
 .flow-strip{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow)}
 .flow-label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}
-.flow-chip{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:5px 10px}
-.flow-chip.ok{background:#123324;color:#7BDFA4;border-color:#1E4A32}
+.flow-chip{font-size:12px;font-weight:700;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+.flow-chip.ok{background:#111111;color:#FFFFFF;border-color:#111111}
 .flow-arrow{color:var(--muted);font-size:14px}
 .flow-note{font-size:12.5px;color:var(--muted);margin-top:4px}
 .changelog{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 16px;box-shadow:var(--shadow)}
@@ -368,7 +352,7 @@ button.card:hover{border-color:var(--teal)}
   table.data tbody tr{padding:10px 4px;border-bottom:1px solid var(--line)}
   table.data tbody tr:last-child{border-bottom:none}
   table.data tbody td{border-bottom:none;padding:5px 16px;display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:right}
-  table.data tbody td::before{content:attr(data-label);font-size:11px;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--muted);text-align:left;flex:none}
+  table.data tbody td::before{content:attr(data-label);font-size:11px;font-weight:700;color:var(--muted);text-align:left;flex:none}
   table.data tbody td.td-main{display:block;text-align:left}
   table.data tbody td.td-main::before{display:block;margin-bottom:2px}
   .stockbar{width:90px;margin-left:auto}
@@ -396,18 +380,12 @@ button.card:hover{border-color:var(--teal)}
     </div>
     <form class="login-body" id="loginForm">
       <h2>Masuk ke sistem</h2>
-      <p class="sub">Pilih peran, lalu masuk ke dashboard inventory.</p>
-      <p class="role-label">Masuk sebagai peran</p>
-      <div class="role-grid" id="roleGrid">
-        <button type="button" class="role-btn" data-role="Inventory" aria-pressed="true"><b>Inventory</b></button>
-        <button type="button" class="role-btn" data-role="Produksi" aria-pressed="false"><b>Produksi</b></button>
-        <button type="button" class="role-btn" data-role="Owner" aria-pressed="false"><b>Owner</b></button>
-      </div>
-      <div class="field"><label for="loginName">Nama</label><input id="loginName" type="text" value="Rani Prameswari" autocomplete="name" /></div>
-      <div class="field"><label for="loginPass">Kata sandi</label><input id="loginPass" type="password" value="" placeholder="Password user peran ini" autocomplete="new-password" required /></div>
+      <p class="sub">Masuk dengan email terdaftar — peran dibaca otomatis dari akun.</p>
+      <div class="field"><label for="loginEmail">Email</label><input id="loginEmail" type="email" value="rina@damayauraabadi.id" autocomplete="email" required /></div>
+      <div class="field"><label for="loginPass">Kata sandi</label><input id="loginPass" type="password" value="" placeholder="Kata sandi akun" autocomplete="current-password" required /></div>
       <button class="btn btn-primary btn-lg btn-block" type="submit" id="btnLogin" disabled>Memuat data dari database…</button>
       <div class="note-box" id="apiError" style="display:none;border-color:#e5484d;background:#fef2f2;text-align:left"></div>
-      <p class="login-note">Password harus cocok dengan password user peran ini (diatur Owner saat tambah pengguna).</p>
+      <p class="login-note"><button type="button" class="link-btn" id="forgotLink">Lupa password?</button></p>
     </form>
   </div>
 </section>
@@ -463,10 +441,10 @@ button.card:hover{border-color:var(--teal)}
       <section class="screen" data-screen="dashboard">
         <div class="scr-head"><div><h2>Dashboard</h2><p>Ringkasan stok, antrean persetujuan, dan aktivitas operasional hari ini.</p></div><button class="btn btn-primary page-action" id="dashBtnPengajuan" data-goto="pengajuan" data-open-form="pengajuan">+ Buat pengajuan</button></div>
         <div class="kpi-grid">
-          <div class="kpi"><div class="ic" style="background:var(--teal-soft);color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div><b id="kpiBahan">8</b><span>Jenis bahan baku</span></div>
-          <div class="kpi alert"><div class="ic" style="background:#fff3;color:var(--gold-deep)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><b id="kpiMenipis">3</b><span>Bahan baku di bawah stok minimal</span></div>
-          <div class="kpi"><div class="ic" style="background:var(--amber-soft);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 13h4"/><path d="M10 17h4"/></svg></div><b id="kpiPengajuan">2</b><span>Pengajuan menunggu persetujuan</span></div>
-          <div class="kpi"><div class="ic" style="background:var(--blue-soft);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div><b id="kpiBatch">3</b><span>Pengeluaran bahan baku</span></div>
+          <div class="kpi" data-goto="bahan" role="button" tabindex="0" title="Buka menu Bahan Baku"><div class="ic" style="background:var(--teal-soft);color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div><b id="kpiBahan">8</b><span>Jenis bahan baku</span></div>
+          <div class="kpi alert" data-goto="bahan" role="button" tabindex="0" title="Buka menu Bahan Baku — lihat stok menipis"><div class="ic" style="background:var(--amber-soft);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><b id="kpiMenipis">3</b><span>Bahan baku di bawah stok minimal</span></div>
+          <div class="kpi" data-goto="pengajuan" role="button" tabindex="0" title="Buka menu Pengajuan"><div class="ic" style="background:var(--amber-soft);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 13h4"/><path d="M10 17h4"/></svg></div><b id="kpiPengajuan">2</b><span>Pengajuan menunggu persetujuan</span></div>
+          <div class="kpi" data-goto="produksi" role="button" tabindex="0" title="Buka menu Pengeluaran"><div class="ic" style="background:var(--blue-soft);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div><b id="kpiBatch">3</b><span>Pengeluaran bahan baku</span></div>
         </div>
 
         <div class="quick-grid" style="margin-bottom:16px">
@@ -521,7 +499,10 @@ button.card:hover{border-color:var(--teal)}
           <button class="tab" data-f="Menunggu" aria-selected="false">Menunggu</button>
           <button class="tab" data-f="Disetujui" aria-selected="false">Disetujui</button>
           <button class="tab" data-f="Ditolak" aria-selected="false">Ditolak</button>
-        </div></div>
+        </div>
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="pengajuanSearch" type="search" placeholder="Cari ID, pengaju, bahan, status…" aria-label="Cari pengajuan" /></div>
+          <select id="pengajuanSort" aria-label="Urutkan pengajuan"><option value="baru">Terbaru</option><option value="lama">Terlama</option><option value="status">Status (A–Z)</option></select>
+        </div>
         <div id="pengajuanList"></div>
       </section>
 
@@ -539,7 +520,7 @@ button.card:hover{border-color:var(--teal)}
 
       <!-- PENGGUNA (khusus Owner) -->
       <section class="screen" data-screen="pengguna">
-        <div class="scr-head"><div><h2>Pengguna</h2><p>Hanya Owner yang bisa menambah pengguna baru dan melihat password user (tombol Lihat per baris; password tidak tampil di halaman lain).</p></div><button class="btn btn-primary page-action" id="btnAddPengguna">+ Tambah pengguna</button></div>
+        <div class="scr-head"><div><h2>Pengguna</h2><p>Hanya Owner yang bisa menambah pengguna baru, mengubah email, dan mereset password (tombol Ubah / Reset password per baris; password hanya tampil di sini lewat tombol Lihat).</p></div><button class="btn btn-primary page-action" id="btnAddPengguna">+ Tambah pengguna</button></div>
         <div class="toolbar"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="penggunaSearch" type="search" placeholder="Cari nama / peran…" aria-label="Cari pengguna" /></div></div>
         <div id="penggunaList"></div>
       </section>
@@ -589,14 +570,14 @@ button.card:hover{border-color:var(--teal)}
         <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Sepuluh tabel relasional, dikelompokkan menurut fungsinya. Kolom persis mengikuti skema SQL proyek.</p>
         <div class="erd-group">Data master</div>
         <div class="erd-grid">
-          <div class="erd-card"><div class="erd-head"><span class="erd-name">pengguna</span><span class="erd-badge">Master</span></div><p class="erd-desc">Akun user + peran (Inventory / Produksi / Owner).</p><div class="erd-cols"><code class="pk">id_pengguna</code><code>nama</code><code>peran</code><code>telepon</code><code>password*</code><code>created_at</code></div><div class="erd-links"><b>Terhubung:</b><i>pengajuan_pengadaan</i><i>pemesanan_pembelian</i><i>pengeluaran_bahan_baku</i></div></div>
+          <div class="erd-card"><div class="erd-head"><span class="erd-name">pengguna</span><span class="erd-badge">Master</span></div><p class="erd-desc">Akun user + peran (Inventory / Produksi / Owner).</p><div class="erd-cols"><code class="pk">id_pengguna</code><code>nama</code><code>peran</code><code>telepon</code><code>password*</code><code>email*</code><code>kode_reset*</code><code>kode_reset_kedaluwarsa*</code><code>created_at</code></div><div class="erd-links"><b>Terhubung:</b><i>pengajuan_pengadaan</i><i>pemesanan_pembelian</i><i>pengeluaran_bahan_baku</i></div></div>
           <div class="erd-card"><div class="erd-head"><span class="erd-name">supplier</span><span class="erd-badge">Master</span></div><p class="erd-desc">Master supplier.</p><div class="erd-cols"><code class="pk">id_supplier</code><code>nama_supplier</code><code>kontak</code><code>alamat</code><code>created_at</code></div><div class="erd-links"><b>Terhubung:</b><i>pemesanan_pembelian</i></div></div>
           <div class="erd-card"><div class="erd-head"><span class="erd-name">bahan_baku</span><span class="erd-badge">Master</span></div><p class="erd-desc">Master bahan baku + stok (batas minimal memicu peringatan).</p><div class="erd-cols"><code class="pk">id_bahan_baku</code><code>nama_bahan_baku</code><code>satuan</code><code>stok_saat_ini</code><code>stok_minimal</code><code>updated_at</code></div><div class="erd-links"><b>Terhubung:</b><i>detail_pengajuan</i><i>detail_pemesanan_pembelian</i><i>detail_pengeluaran_bahan_baku</i></div></div>
           <div class="erd-card"><div class="erd-head"><span class="erd-name">barang_jadi</span><span class="erd-badge">Master</span></div><p class="erd-desc">Master barang jadi + stok gudang.</p><div class="erd-cols"><code class="pk">id_barang_jadi</code><code>nama_barang_jadi</code><code>satuan</code><code>stok_saat_ini</code><code>updated_at</code></div><div class="erd-links"><b>Terhubung:</b><i>pengeluaran_bahan_baku</i></div></div>
         </div>
         <div class="erd-group">Dokumen transaksi</div>
         <div class="erd-grid">
-          <div class="erd-card"><div class="erd-head"><span class="erd-name">pengajuan_pengadaan</span><span class="erd-badge trans">Transaksi</span></div><p class="erd-desc">Dokumen pengajuan · status: Menunggu / Disetujui / Ditolak · satu PO aktif per pengajuan.</p><div class="erd-cols"><code class="pk">id_pengajuan</code><code>id_pengaju</code><code>id_penyetuju</code><code>tanggal_pengajuan</code><code>status_pengajuan</code><code>created_at</code></div><div class="erd-links"><b>Terhubung:</b><i>pengguna</i><i>detail_pengajuan</i><i>pemesanan_pembelian</i></div></div>
+          <div class="erd-card"><div class="erd-head"><span class="erd-name">pengajuan_pengadaan</span><span class="erd-badge trans">Transaksi</span></div><p class="erd-desc">Dokumen pengajuan · status: Menunggu / Disetujui / Ditolak · satu PO aktif per pengajuan.</p><div class="erd-cols"><code class="pk">id_pengajuan</code><code>id_pengaju</code><code>id_penyetuju</code><code>tanggal_pengajuan</code><code>status_pengajuan</code><code>catatan*</code><code>created_at</code></div><div class="erd-links"><b>Terhubung:</b><i>pengguna</i><i>detail_pengajuan</i><i>pemesanan_pembelian</i></div></div>
           <div class="erd-card"><div class="erd-head"><span class="erd-name">pemesanan_pembelian</span><span class="erd-badge trans">Transaksi</span></div><p class="erd-desc">PO ke supplier · status: Diproses / Diterima / Dibatalkan · pembayaran: Belum Bayar / Lunas.</p><div class="erd-cols"><code class="pk">id_po</code><code>id_pengajuan</code><code>id_supplier</code><code>id_karyawan_inventory</code><code>no_nota_supplier</code><code>tanggal_terima</code><code>status_po</code><code>status_pembayaran</code><code>catatan_pemeriksaan</code><code>created_at</code></div><div class="erd-links"><b>Terhubung:</b><i>pengajuan_pengadaan</i><i>supplier</i><i>pengguna</i><i>detail_pemesanan_pembelian</i></div></div>
           <div class="erd-card"><div class="erd-head"><span class="erd-name">pengeluaran_bahan_baku</span><span class="erd-badge trans">Transaksi</span></div><p class="erd-desc">Pengeluaran bahan per batch produksi.</p><div class="erd-cols"><code class="pk">id_pengeluaran</code><code>no_batch_produksi</code><code>id_barang_jadi</code><code>jumlah_target_produksi</code><code>id_karyawan_produksi</code><code>id_karyawan_inventory</code><code>tanggal_keluar</code><code>created_at</code></div><div class="erd-links"><b>Terhubung:</b><i>barang_jadi</i><i>pengguna</i><i>detail_pengeluaran_bahan_baku</i></div></div>
         </div>
@@ -606,7 +587,7 @@ button.card:hover{border-color:var(--teal)}
           <div class="erd-card"><div class="erd-head"><span class="erd-name">detail_pemesanan_pembelian</span><span class="erd-badge det">Detail</span></div><p class="erd-desc">Baris bahan di tiap PO · harga hasil negosiasi · kondisi: Sesuai / Rusak / Kurang.</p><div class="erd-cols"><code class="pk">id_detail_po</code><code>id_po</code><code>id_bahan_baku</code><code>jumlah_dipesan</code><code>jumlah_diterima</code><code>harga_satuan</code><code>kondisi</code></div><div class="erd-links"><b>Terhubung:</b><i>pemesanan_pembelian</i><i>bahan_baku</i></div></div>
           <div class="erd-card"><div class="erd-head"><span class="erd-name">detail_pengeluaran_bahan_baku</span><span class="erd-badge det">Detail</span></div><p class="erd-desc">Baris bahan di tiap pengeluaran.</p><div class="erd-cols"><code class="pk">id_detail_pengeluaran</code><code>id_pengeluaran</code><code>id_bahan_baku</code><code>jumlah</code><code>harga_satuan_bahan</code></div><div class="erd-links"><b>Terhubung:</b><i>pengeluaran_bahan_baku</i><i>bahan_baku</i></div></div>
         </div>
-        <p style="font-size:12.5px;color:var(--muted);margin-top:10px">*Kolom password di tabel pengguna adalah tambahan di luar diagram ERD — ditambah supaya Owner bisa melihat kata sandi user. Stok tidak punya riwayat tersendiri: stok_saat_ini berubah langsung saat penerimaan atau pengeluaran tercatat.</p>
+        <p style="font-size:12.5px;color:var(--muted);margin-top:10px">*Kolom bertanda bintang adalah tambahan di luar diagram ERD: password di tabel pengguna (supaya Owner bisa melihat kata sandi user), email + kode_reset + kode_reset_kedaluwarsa di tabel pengguna (login pakai email &amp; lupa kata sandi, P9), dan catatan di tabel pengajuan_pengadaan (alasan penolakan dari Owner, P9). Stok tidak punya riwayat tersendiri: stok_saat_ini berubah langsung saat penerimaan atau pengeluaran tercatat.</p>
         <div class="sec-title"><h3>Alur relasi antar tabel</h3></div>
         <div class="flow-strip"><span class="flow-label">Pengadaan</span><span class="flow-chip">pengajuan_pengadaan</span><span class="flow-arrow">→</span><span class="flow-chip">detail_pengajuan</span><span class="flow-arrow">→</span><span class="flow-chip">pemesanan_pembelian</span><span class="flow-arrow">→</span><span class="flow-chip">detail_pemesanan_pembelian</span><span class="flow-arrow">→</span><span class="flow-chip ok">stok bahan baku +</span></div>
         <div class="flow-strip"><span class="flow-label">Produksi</span><span class="flow-chip">pengeluaran_bahan_baku</span><span class="flow-arrow">→</span><span class="flow-chip">detail_pengeluaran_bahan_baku</span><span class="flow-arrow">→</span><span class="flow-chip">barang_jadi</span><span class="flow-arrow">→</span><span class="flow-chip ok">stok gudang +</span></div>
@@ -624,18 +605,32 @@ button.card:hover{border-color:var(--teal)}
         </tbody></table></div>
         <div class="sec-title"><h3>Menu sidebar per peran (pengguna.peran)</h3></div>
         <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Menu yang tampil setelah login mengikuti nilai peran — halaman di luar hak peran tidak bisa dibuka. Tentang Proyek bisa dibuka semua peran.</p>
-        <div class="table-wrap"><table class="data"><thead><tr><th>peran</th><th>Menu yang tampil</th><th>Tugas di proses bisnis</th></tr></thead><tbody>
-          <tr style="cursor:default"><td class="td-main" data-label="peran"><span class="t-title">Inventory</span></td><td data-label="Menu">Dashboard · Bahan Baku · Pengajuan · Supplier · Pemesanan · Pengeluaran · Barang Jadi · Laporan · Tentang Proyek</td><td data-label="Tugas">Membuat pengajuan_pengadaan (id_pengaju), membuat &amp; menerima pemesanan_pembelian (id_karyawan_inventory), mencatat pengeluaran_bahan_baku</td></tr>
-          <tr style="cursor:default"><td class="td-main" data-label="peran"><span class="t-title">Produksi</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat stok_saat_ini) · Pengeluaran · Barang Jadi (lihat) · Tentang Proyek</td><td data-label="Tugas">Membuat pengeluaran_bahan_baku per no_batch_produksi (id_karyawan_produksi, id_barang_jadi, jumlah_target_produksi)</td></tr>
-          <tr style="cursor:default"><td class="td-main" data-label="peran"><span class="t-title">Owner</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat) · Barang Jadi (lihat stok gudang) · Pengajuan · Pemesanan (lihat) · Pengguna (tambah pengguna) · Laporan · Tentang Proyek</td><td data-label="Tugas">Menyetujui / menolak pengajuan_pengadaan (id_penyetuju), menambah pengguna (tabel pengguna), memantau stok barang_jadi di gudang &amp; Laporan Stok</td></tr>
+        <div class="table-wrap"><table class="data"><thead><tr><th>Peran</th><th>Menu yang tampil</th><th>Tugas di proses bisnis</th></tr></thead><tbody>
+          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Inventory</span></td><td data-label="Menu">Dashboard · Bahan Baku · Pengajuan · Supplier · Pemesanan · Pengeluaran · Barang Jadi · Laporan · Tentang Proyek</td><td data-label="Tugas">Membuat pengajuan_pengadaan (id_pengaju), membuat &amp; menerima pemesanan_pembelian (id_karyawan_inventory), mencatat pengeluaran_bahan_baku</td></tr>
+          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Produksi</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat stok_saat_ini) · Pengeluaran · Barang Jadi (lihat) · Tentang Proyek</td><td data-label="Tugas">Membuat pengeluaran_bahan_baku per no_batch_produksi (id_karyawan_produksi, id_barang_jadi, jumlah_target_produksi)</td></tr>
+          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Owner</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat) · Barang Jadi (lihat stok gudang) · Pengajuan · Pemesanan (lihat) · Pengguna (tambah pengguna) · Laporan · Tentang Proyek</td><td data-label="Tugas">Menyetujui / menolak pengajuan_pengadaan (id_penyetuju), menambah pengguna (tabel pengguna), memantau stok barang_jadi di gudang &amp; Laporan Stok</td></tr>
         </tbody></table></div>
         <div class="sec-title"><h3>Data pengguna · tabel pengguna</h3></div>
-        <div class="table-wrap"><table class="data"><thead><tr><th>id_pengguna</th><th>nama</th><th>peran</th><th>telepon</th><th>created_at</th></tr></thead><tbody id="tentangPenggunaBody">
+        <div class="table-wrap"><table class="data"><thead><tr><th>ID Pengguna</th><th>Nama</th><th>Peran</th><th>Telepon</th><th>Email</th><th>Dibuat</th></tr></thead><tbody id="tentangPenggunaBody">
         </tbody></table></div>
         <div class="sec-title"><h3>Riwayat revisi</h3></div>
+        <details class="changelog"><summary>16 Nov 2026 · 10 perubahan (Catatan P9 dari dosen)</summary>
+          <ul>
+            <li>Login memakai email + kata sandi; tombol peran dihapus — peran dibaca otomatis dari data pengguna</li>
+            <li>Fitur lupa kata sandi (kode reset 6 digit, berlaku 15 menit) + Owner bisa reset kata sandi pengguna</li>
+            <li>Penolakan pengajuan wajib disertai catatan Owner; pengajuan yang ditolak bisa diajukan ulang</li>
+            <li>Pengajuan bisa dicari (ID / pengaju / bahan / status) dan diurutkan (terbaru / terlama / status)</li>
+            <li>Tanggal pengajuan kini menampilkan jam, bukan hanya hari</li>
+            <li>Harga tampil format Rupiah (Rp 20.000) di total dan pratinjau input</li>
+            <li>Kartu dashboard bisa diklik — mengarah ke menu terkait (stok menipis → Bahan Baku)</li>
+            <li>Font Poppins; header tabel memakai bahasa Indonesia formal</li>
+            <li>Tema hitam-putih terang; mode gelap dihapus</li>
+            <li>Satuan bahan tampil di form catat pengeluaran</li>
+          </ul>
+        </details>
         <details class="changelog"><summary>14 Nov 2026 · 14 perubahan</summary>
           <ul>
-            <li>Login kini memeriksa nama + peran (pengguna baru bisa login; pencatatan memakai user yang login)</li>
+            <li>Login memeriksa nama + peran (saat itu; kini sudah memakai email — lihat revisi 16 Nov)</li>
             <li>Perbaikan scroll yang nge-freeze saat kursor di atas tabel</li>
             <li>Halaman Tentang dirombak: ERD jadi kartu berkelompok + alur relasi visual</li>
             <li>Deskripsi layar dipangkas, animasi berhasil login ditambah &amp; penjelasan ERD pindah ke halaman ini</li>
@@ -670,7 +665,7 @@ button.card:hover{border-color:var(--teal)}
    dijangkau, tampilkan pesan error yang jelas di layar login dan JANGAN
    pakai data demo sebagai fallback. */
 var state = {
-  role: "Inventory", userId: null, stokTab: "bahan", pengajuanFilter: "Semua",
+  role: "Inventory", userId: null, stokTab: "bahan", pengajuanFilter: "Semua", pengajuanSearch: "", pengajuanSort: "baru",
   pengguna: [], bahan: [], jadi: [], supplier: [],
   pengajuan: [], po: [], produksi: [], aktivitas: []
 };
@@ -707,6 +702,10 @@ function currentUserName(){
   if(state.userId){ var me = penggunaById(state.userId); if(me) return me.nama; }
   var u = state.pengguna.filter(function(x){ return x.peran === state.role; })[0];
   return u ? u.nama : roleNames[state.role];
+}
+function currentUserEmail(){
+  var u = state.pengguna.filter(function(x){ return x.peran === state.role; })[0];
+  return (u && u.email) || "";
 }
 
 /* Aktivitas terakhir dihitung dari data asli (pengajuan / PO / pengeluaran
@@ -758,14 +757,23 @@ async function refreshData(){
 function renderTentangPengguna(){
   var tb = document.getElementById("tentangPenggunaBody"); if(!tb) return;
   tb.innerHTML = state.pengguna.map(function(u){
-    return '<tr style="cursor:default"><td data-label="id_pengguna"><span class="num">' + u.id_pengguna + '</span></td><td class="td-main" data-label="nama"><span class="t-title">' + u.nama + '</span></td><td data-label="peran">' + u.peran + '</td><td data-label="telepon">' + (u.telepon || "—") + '</td><td data-label="created_at">' + (u.created_at || "—") + '</td></tr>';
+    return '<tr style="cursor:default"><td data-label="ID Pengguna"><span class="num">' + u.id_pengguna + '</span></td><td class="td-main" data-label="Nama"><span class="t-title">' + u.nama + '</span></td><td data-label="Peran">' + u.peran + '</td><td data-label="Telepon">' + (u.telepon || "—") + '</td><td data-label="Email">' + (u.email || "—") + '</td><td data-label="Dibuat">' + (u.created_at || "—") + '</td></tr>';
   }).join("");
 }
 function $(s, r){ return (r||document).querySelector(s); }
 function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
 function rp(n){ return "Rp " + n.toLocaleString("id-ID"); }
+/* Preview harga terformat (Rp 20.000) di bawah input harga — P9. */
+document.addEventListener("input", function(e){
+  var t = e.target; if(!t || t.getAttribute("data-harga")!=="1") return;
+  var pv = t.parentNode.querySelector("[data-harga-preview]");
+  if(!pv) return;
+  var v = parseFloat(t.value);
+  pv.textContent = (v > 0) ? rp(v) : "";
+});
 function fmt(n){ return Number(n).toLocaleString("id-ID",{maximumFractionDigits:2}); }
 function fmtTgl(s){ var m = String(s||"").match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return s||""; var bln=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"]; return parseInt(m[3],10)+" "+bln[parseInt(m[2],10)-1]+" "+m[1]; }
+function fmtTglJam(s){ var m = String(s||"").match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}))?/); if(!m) return s||""; var bln=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"]; var t = parseInt(m[3],10)+" "+bln[parseInt(m[2],10)-1]+" "+m[1]; return m[4] ? t+" \u00b7 "+m[4]+":"+m[5] : t; }
 function chipFor(status){
   var map = {"Menunggu":"chip-wait","Disetujui":"chip-ok","Ditolak":"chip-bad","Diproses":"chip-info","Diterima":"chip-ok","Dibatalkan":"chip-bad","Lunas":"chip-ok","Belum Bayar":"chip-wait","Sesuai":"chip-ok","Kurang":"chip-wait","Rusak":"chip-bad","Selesai":"chip-ok"};
   return map[status] || "chip-mut";
@@ -846,19 +854,21 @@ document.addEventListener("click", function(e){
   var n = e.target.closest("[data-nav]");
   if(n) go(n.getAttribute("data-nav"));
 });
+/* Keyboard: Enter/Spasi pada kartu dashboard yang bisa diklik (P9). */
+document.addEventListener("keydown", function(e){
+  if(e.key!=="Enter" && e.key!==" ") return;
+  var g = e.target.closest ? e.target.closest("[data-goto]") : null;
+  if(!g || g.tagName==="BUTTON" || g.tagName==="A" || g.tagName==="SELECT" || g.tagName==="INPUT" || g.tagName==="TEXTAREA") return;
+  e.preventDefault();
+  g.click();
+});
 
 /* LOGIN */
 var roleNames = {Inventory:"Rani Prameswari", Produksi:"Bima Aditama", Owner:"Damay Saputra"}; /* nama cadangan bila tabel pengguna kosong */
-$("#roleGrid").addEventListener("click", function(e){
-  var b = e.target.closest("[data-role]"); if(!b) return;
-  state.role = b.getAttribute("data-role");
-  $$("#roleGrid .role-btn").forEach(function(x){ x.setAttribute("aria-pressed", x===b ? "true":"false"); });
-  $("#loginName").value = currentUserName();
-});
 function enterApp(){
   $("#screen-login").style.display = "none";
   $("#app").classList.add("on");
-  var name = $("#loginName").value.trim() || currentUserName();
+  var name = namaPengguna(state.userId) || currentUserName();
   $("#userTx").textContent = name;
   $("#avatarTx").textContent = name.charAt(0).toUpperCase();
   $("#rolePill").textContent = "Peran: " + state.role;
@@ -867,22 +877,22 @@ function enterApp(){
   applyRoleUI();
   go("dashboard"); updateBadges();
 }
-/* LOGIN: password diverifikasi lawan kolom password di tabel pengguna
-   (kolom di luar ERD, 14 Nov 2026). User yang dicek adalah user dengan
-   NAMA yang diketik + peran terpilih (bukan lagi user pertama per peran —
-   itu yang bikin pengguna baru tidak bisa login). Kalau user itu belum
-   punya password tersimpan (kolom kosong), login tetap dibuka (kompatibel
-   dengan user lama); kalau sudah ada passwordnya, yang salah ditolak.
-   ID user yang login disimpan di state.userId untuk pencatatan. */
+/* LOGIN (P9): masuk pakai EMAIL + password. Peran tidak lagi dipilih di
+   depan — sistem membaca peran dari data user (redirect otomatis sesuai
+   peran). User dicari dari email yang diketik (trim + case-insensitive);
+   kalau user itu belum punya password tersimpan (kolom kosong), login
+   tetap dibuka (kompatibel dengan user lama); kalau sudah ada
+   passwordnya, yang salah ditolak. ID + peran user disimpan di state. */
 $("#loginForm").addEventListener("submit", function(e){
   e.preventDefault();
   if(!dataLoaded){ toast("Data belum dimuat dari database — periksa koneksi ke api.php."); return; }
-  var nm = ($("#loginName").value || "").trim();
-  if(!nm){ toast("Isi nama pengguna dulu — login gagal."); return; }
-  var u = state.pengguna.find(function(p){ return p.peran === state.role && (p.nama || "").trim().toLowerCase() === nm.toLowerCase(); });
-  if(!u){ toast("Pengguna \"" + nm + "\" tidak ditemukan untuk peran " + state.role + " — login gagal."); return; }
+  var em = ($("#loginEmail").value || "").trim().toLowerCase();
+  if(!em){ toast("Isi email dulu — login gagal."); return; }
+  var u = state.pengguna.find(function(p){ return (p.email || "").trim().toLowerCase() === em; });
+  if(!u){ toast("Email tidak terdaftar — login gagal."); return; }
   if(u.password && $("#loginPass").value !== u.password){ toast("Password salah — login gagal."); return; }
   state.userId = u.id_pengguna;
+  state.role = u.peran;
   /* Kosongkan field begitu lolos — supaya password tidak tertinggal di layar
      login (dan tidak diisi-ulang otomatis browser saat kembali ke login). */
   $("#loginPass").value = "";
@@ -890,6 +900,45 @@ $("#loginForm").addEventListener("submit", function(e){
   $("#screen-login").classList.add("leaving");
   setTimeout(function(){ showLoginSuccess(); }, 450);
 });
+function validEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s||""); }
+/* LUPA PASSWORD (P9): kode reset 6 digit, berlaku 15 menit. Tidak ada server
+   email di hosting gratis, jadi kode dikembalikan API dan ditampilkan di
+   layar (di produksi kode dikirim ke email). */
+function openForgotSheet(){
+  openSheet('<h3>Lupa password</h3><p class="sheet-sub">Masukkan email terdaftar — sistem akan memberi kode reset 6 digit yang berlaku 15 menit.</p>'
+    + '<div style="margin-top:14px"><div class="field"><label for="frEmail">Email</label><input id="frEmail" type="email" placeholder="email terdaftar" /></div></div>'
+    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="button" class="btn btn-primary" id="btnKirimKode">Kirim kode reset</button></div>');
+  $("#btnKirimKode").addEventListener("click", async function(e){
+    var em = ($("#frEmail").value || "").trim().toLowerCase();
+    if(!validEmail(em)){ toast("Format email tidak valid."); return; }
+    if(!lockBtn(e.currentTarget)) return;
+    try {
+      var r = await apiCall("request_reset", {email: em});
+      openForgotStep2(em, r.kode);
+    } catch(err){ unlockBtn(e.currentTarget); toast("Gagal meminta kode reset: " + err.message); }
+  });
+}
+function openForgotStep2(em, kode){
+  openSheet('<h3>Atur ulang password</h3><p class="sheet-sub">Kode reset untuk <b>'+em+'</b> — berlaku 15 menit.</p>'
+    + '<div class="note-box" style="margin-top:12px">Kode reset: <b style="font-size:16px;letter-spacing:2px">'+kode+'</b><br><span style="font-size:12px">Kode ditampilkan di sini karena server email belum tersedia; di sistem produksi kode dikirim ke email.</span></div>'
+    + '<div style="margin-top:12px"><div class="field"><label for="frKode">Kode reset (6 digit)</label><input id="frKode" type="text" inputmode="numeric" maxlength="6" placeholder="cth: 123456" /></div><div class="field"><label for="frPassBaru">Kata sandi baru</label><input id="frPassBaru" type="password" minlength="4" placeholder="Min. 4 karakter" /></div><div class="field"><label for="frPassKonf">Ulangi kata sandi baru</label><input id="frPassKonf" type="password" minlength="4" /></div></div>'
+    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="button" class="btn btn-primary" id="btnResetPass">Atur ulang password</button></div>');
+  $("#btnResetPass").addEventListener("click", async function(e){
+    var k = ($("#frKode").value || "").trim();
+    var p1 = $("#frPassBaru").value, p2 = $("#frPassKonf").value;
+    if(p1.length < 4){ toast("Kata sandi baru minimal 4 karakter."); return; }
+    if(p1!==p2){ toast("Konfirmasi kata sandi tidak sama."); return; }
+    if(!lockBtn(e.currentTarget)) return;
+    try {
+      await apiCall("reset_password", {email: em, kode: k, password_baru: p1});
+      var u = state.pengguna.find(function(x){ return (x.email||"").trim().toLowerCase()===em; });
+      if(u) u.password = p1;
+      closeSheet(); $("#loginEmail").value = em; $("#loginPass").value = "";
+      toast("Password berhasil diatur ulang — silakan masuk dengan password baru.");
+    } catch(err){ unlockBtn(e.currentTarget); toast("Gagal mengatur ulang password: " + err.message); }
+  });
+}
+$("#forgotLink").addEventListener("click", openForgotSheet);
 /* SPLASH berhasil login: centang menggambar diri + sapaan, lalu overlay
    terangkat membuka aplikasi. Ketuk untuk lewati. */
 var _loginSuccessDone = false;
@@ -898,7 +947,7 @@ function showLoginSuccess(){
   if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){ enterApp(); return; }
   _loginSuccessDone = false;
   var spl = $("#loginSuccess");
-  spl.querySelector(".ls-role").textContent = state.role + " · " + ($("#loginName").value || "").trim();
+  spl.querySelector(".ls-role").textContent = state.role + " · " + namaPengguna(state.userId);
   spl.classList.remove("lift");
   $("#screen-login").style.display = "none";
   spl.style.display = "flex";
@@ -945,8 +994,7 @@ function doLogout(){
      masih menyisakan peran dan nama pemakai sebelumnya */
   state.role = "Inventory";
   state.userId = null;
-  $$("#roleGrid .role-btn").forEach(function(x){ x.setAttribute("aria-pressed", x.getAttribute("data-role")==="Inventory" ? "true":"false"); });
-  $("#loginName").value = currentUserName();
+  var fe = currentUserEmail(); if(fe) $("#loginEmail").value = fe;
   $("#loginPass").value = "";
   toast("Sampai jumpa!");
 }
@@ -969,9 +1017,9 @@ function updateBadges(){
 var actColors = {teal:["var(--teal-soft)","var(--teal)"], amber:["var(--amber-soft)","var(--amber)"], blue:["var(--blue-soft)","var(--blue)"], green:["var(--green-soft)","var(--green)"], red:["var(--red-soft)","var(--red)"]};
 function renderDashboard(){
   updateBadges();
-  $("#dashLowStock").innerHTML = '<div class="table-wrap" style="box-shadow:none"><table class="data"><thead><tr><th>id_bahan_baku</th><th>nama_bahan_baku</th><th>satuan</th><th>stok_saat_ini</th><th>stok_minimal</th><th>Status</th></tr></thead><tbody>'
+  $("#dashLowStock").innerHTML = '<div class="table-wrap" style="box-shadow:none"><table class="data"><thead><tr><th>ID Bahan</th><th>Nama Bahan</th><th>Satuan</th><th>Stok Saat Ini</th><th>Stok Minimal</th><th>Status</th></tr></thead><tbody>'
     + lowStockItems().map(function(it){
-      return '<tr data-goto-stok><td data-label="id_bahan_baku"><span class="num">'+it.id_bahan_baku+'</span></td><td class="td-main" data-label="nama_bahan_baku"><span class="t-title">'+it.nama_bahan_baku+'</span></td><td data-label="satuan">'+it.satuan+'</td><td data-label="stok_saat_ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span></td><td data-label="stok_minimal">'+fmt(it.stok_minimal)+'</td><td data-label="Status">'+stockChip(it)+'</td></tr>';
+      return '<tr data-goto-stok><td data-label="ID Bahan"><span class="num">'+it.id_bahan_baku+'</span></td><td class="td-main" data-label="Nama Bahan"><span class="t-title">'+it.nama_bahan_baku+'</span></td><td data-label="Satuan">'+it.satuan+'</td><td data-label="Stok Saat Ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span></td><td data-label="Stok Minimal">'+fmt(it.stok_minimal)+'</td><td data-label="Status">'+stockChip(it)+'</td></tr>';
     }).join("") + '</tbody></table></div>';
   $$("#dashLowStock [data-goto-stok]").forEach(function(el){ el.addEventListener("click", function(){ go("stok"); }); });
   $("#dashActivity").innerHTML = state.aktivitas.map(function(a){
@@ -1016,20 +1064,20 @@ function renderStok(){
   var box = $("#stokList"), html = "";
   if(state.stokTab==="supplier"){
     var list = state.supplier.filter(function(s){ return s.nama_supplier.toLowerCase().indexOf(q)>-1; });
-    html = '<div class="table-wrap"><table class="data"><thead><tr><th>id_supplier</th><th>nama_supplier</th><th>kontak</th><th>alamat</th><th>created_at</th></tr></thead><tbody>'
-      + list.map(function(s){ return '<tr data-supplier="'+s.id_supplier+'"><td data-label="id_supplier"><span class="num">'+s.id_supplier+'</span></td><td class="td-main" data-label="nama_supplier"><span class="t-title">'+s.nama_supplier+'</span></td><td data-label="kontak"><span class="num">'+s.kontak+'</span></td><td data-label="alamat">'+s.alamat+'</td><td data-label="created_at">'+s.created_at+'</td></tr>'; }).join("")
+    html = '<div class="table-wrap"><table class="data"><thead><tr><th>ID Supplier</th><th>Nama Supplier</th><th>Kontak</th><th>Alamat</th><th>Dibuat</th></tr></thead><tbody>'
+      + list.map(function(s){ return '<tr data-supplier="'+s.id_supplier+'"><td data-label="ID Supplier"><span class="num">'+s.id_supplier+'</span></td><td class="td-main" data-label="Nama Supplier"><span class="t-title">'+s.nama_supplier+'</span></td><td data-label="Kontak"><span class="num">'+s.kontak+'</span></td><td data-label="Alamat">'+s.alamat+'</td><td data-label="Dibuat">'+s.created_at+'</td></tr>'; }).join("")
       + '</tbody></table></div>';
     if(!list.length) html = '<div class="empty">Tidak ada hasil untuk pencarian ini.</div>';
   } else if(state.stokTab==="bahan"){
     var list2 = state.bahan.filter(function(i){ return i.nama_bahan_baku.toLowerCase().indexOf(q)>-1; });
-    html = '<div class="table-wrap"><table class="data"><thead><tr><th>id_bahan_baku</th><th>nama_bahan_baku</th><th>satuan</th><th>stok_saat_ini</th><th>stok_minimal</th><th>updated_at</th><th>indikator: stok_saat_ini vs stok_minimal</th></tr></thead><tbody>'
-      + list2.map(function(it){ return '<tr data-item="bahan:'+it.id_bahan_baku+'"><td data-label="id_bahan_baku"><span class="num">'+it.id_bahan_baku+'</span></td><td class="td-main" data-label="nama_bahan_baku"><span class="t-title">'+it.nama_bahan_baku+'</span></td><td data-label="satuan">'+it.satuan+'</td><td data-label="stok_saat_ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span>'+stockBar(it)+'</td><td data-label="stok_minimal">'+fmt(it.stok_minimal)+'</td><td data-label="updated_at">'+it.updated_at+'</td><td data-label="indikator: stok_saat_ini vs stok_minimal">'+stockChip(it)+'</td></tr>'; }).join("")
+    html = '<div class="table-wrap"><table class="data"><thead><tr><th>ID Bahan</th><th>Nama Bahan</th><th>Satuan</th><th>Stok Saat Ini</th><th>Stok Minimal</th><th>Terakhir Diperbarui</th><th>Status</th></tr></thead><tbody>'
+      + list2.map(function(it){ return '<tr data-item="bahan:'+it.id_bahan_baku+'"><td data-label="ID Bahan"><span class="num">'+it.id_bahan_baku+'</span></td><td class="td-main" data-label="Nama Bahan"><span class="t-title">'+it.nama_bahan_baku+'</span></td><td data-label="Satuan">'+it.satuan+'</td><td data-label="Stok Saat Ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span>'+stockBar(it)+'</td><td data-label="Stok Minimal">'+fmt(it.stok_minimal)+'</td><td data-label="Terakhir Diperbarui">'+it.updated_at+'</td><td data-label="Status">'+stockChip(it)+'</td></tr>'; }).join("")
       + '</tbody></table></div>';
     if(!list2.length) html = '<div class="empty">Tidak ada hasil untuk pencarian ini.</div>';
   } else {
     var list3 = state.jadi.filter(function(i){ return i.nama_barang_jadi.toLowerCase().indexOf(q)>-1; });
-    html = '<div class="table-wrap"><table class="data"><thead><tr><th>id_barang_jadi</th><th>nama_barang_jadi</th><th>satuan</th><th>stok_saat_ini</th><th>updated_at</th><th>indikator: stok_saat_ini</th></tr></thead><tbody>'
-      + list3.map(function(it){ return '<tr data-item="jadi:'+it.id_barang_jadi+'"><td data-label="id_barang_jadi"><span class="num">'+it.id_barang_jadi+'</span></td><td class="td-main" data-label="nama_barang_jadi"><span class="t-title">'+it.nama_barang_jadi+'</span></td><td data-label="satuan">'+it.satuan+'</td><td data-label="stok_saat_ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span></td><td data-label="updated_at">'+it.updated_at+'</td><td data-label="indikator: stok_saat_ini">'+stockChip(it)+'</td></tr>'; }).join("")
+    html = '<div class="table-wrap"><table class="data"><thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Satuan</th><th>Stok Saat Ini</th><th>Terakhir Diperbarui</th><th>Status</th></tr></thead><tbody>'
+      + list3.map(function(it){ return '<tr data-item="jadi:'+it.id_barang_jadi+'"><td data-label="ID Barang"><span class="num">'+it.id_barang_jadi+'</span></td><td class="td-main" data-label="Nama Barang"><span class="t-title">'+it.nama_barang_jadi+'</span></td><td data-label="Satuan">'+it.satuan+'</td><td data-label="Stok Saat Ini"><span class="num">'+fmt(it.stok_saat_ini)+'</span></td><td data-label="Terakhir Diperbarui">'+it.updated_at+'</td><td data-label="Status">'+stockChip(it)+'</td></tr>'; }).join("")
       + '</tbody></table></div>';
     if(!list3.length) html = '<div class="empty">Tidak ada hasil untuk pencarian ini.</div>';
     /* Ringkasan gudang: total stok_saat_ini barang_jadi dihitung dari tabel
@@ -1077,20 +1125,22 @@ $("#penggunaSearch").addEventListener("input", renderPengguna);
 $("#btnAddPengguna").addEventListener("click", function(){ openPenggunaForm(); });
 function renderPengguna(){
   var q = ($("#penggunaSearch").value || "").toLowerCase();
-  var list = state.pengguna.filter(function(u){ return u.nama.toLowerCase().indexOf(q)>-1 || u.peran.toLowerCase().indexOf(q)>-1; });
+  var list = state.pengguna.filter(function(u){ return u.nama.toLowerCase().indexOf(q)>-1 || u.peran.toLowerCase().indexOf(q)>-1 || (u.email||"").toLowerCase().indexOf(q)>-1; });
   if(!list.length){ $("#penggunaList").innerHTML = '<div class="empty">Tidak ada pengguna yang cocok.</div>'; return; }
-  $("#penggunaList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>id_pengguna</th><th>nama</th><th>peran</th><th>telepon</th><th>password</th><th>created_at</th></tr></thead><tbody>'
-    + list.map(function(u){ var pwCell = u.password ? '<span class="pw-val" data-pw-id="'+u.id_pengguna+'">••••••</span> <button type="button" class="btn btn-ghost btn-sm pw-toggle" data-pw-toggle="'+u.id_pengguna+'">Lihat</button>' : '<span style="color:var(--muted)">—</span>'; return '<tr style="cursor:default"><td data-label="id_pengguna"><span class="num">'+u.id_pengguna+'</span></td><td class="td-main" data-label="nama"><span class="t-title">'+u.nama+'</span></td><td data-label="peran">'+u.peran+'</td><td data-label="telepon">'+(u.telepon || "—")+'</td><td data-label="password">'+pwCell+'</td><td data-label="created_at">'+u.created_at+'</td></tr>'; }).join("")
+  $("#penggunaList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>ID Pengguna</th><th>Nama</th><th>Peran</th><th>Telepon</th><th>Email</th><th>Kata Sandi</th><th>Dibuat</th><th>Aksi</th></tr></thead><tbody>'
+    + list.map(function(u){ var pwCell = u.password ? '<span class="pw-val" data-pw-id="'+u.id_pengguna+'">••••••</span> <button type="button" class="btn btn-ghost btn-sm pw-toggle" data-pw-toggle="'+u.id_pengguna+'">Lihat</button>' : '<span style="color:var(--muted)">—</span>'; return '<tr style="cursor:default"><td data-label="ID Pengguna"><span class="num">'+u.id_pengguna+'</span></td><td class="td-main" data-label="Nama"><span class="t-title">'+u.nama+'</span></td><td data-label="Peran">'+u.peran+'</td><td data-label="Telepon">'+(u.telepon || "—")+'</td><td data-label="Email">'+(u.email || "—")+'</td><td data-label="Kata Sandi">'+pwCell+'</td><td data-label="Dibuat">'+u.created_at+'</td><td data-label="Aksi"><button type="button" class="btn btn-ghost btn-sm" data-ubah-pengguna="'+u.id_pengguna+'">Ubah</button> <button type="button" class="btn btn-ghost btn-sm" data-reset-pw="'+u.id_pengguna+'">Reset password</button></td></tr>'; }).join("")
     + '</tbody></table></div>';
   /* Tombol Lihat: hanya Owner yang membuka layar ini, jadi hanya Owner yang
      bisa melihat password. Nilai ditampilkan lewat textContent (bukan
      innerHTML) supaya karakter khusus di password tidak merusak tabel. */
   $$("#penggunaList [data-pw-toggle]").forEach(function(btn){ btn.addEventListener("click", function(){ var id = +btn.getAttribute("data-pw-toggle"); var u = penggunaById(id); var sp = document.querySelector('[data-pw-id="'+id+'"]'); if(!u || !sp) return; var shown = btn.getAttribute("data-shown")==="1"; sp.textContent = shown ? "••••••" : (u.password || "—"); btn.textContent = shown ? "Lihat" : "Sembunyikan"; btn.setAttribute("data-shown", shown ? "0" : "1"); }); });
+  $$("#penggunaList [data-ubah-pengguna]").forEach(function(btn){ btn.addEventListener("click", function(){ openUbahPengguna(+btn.getAttribute("data-ubah-pengguna")); }); });
+  $$("#penggunaList [data-reset-pw]").forEach(function(btn){ btn.addEventListener("click", function(){ openResetPassword(+btn.getAttribute("data-reset-pw")); }); });
 }
 function openPenggunaForm(){
   if($("#sheetWrap").classList.contains("open") && $("#formPengguna")) return;
-  openSheet('<h3>Tambah pengguna</h3><p class="sheet-sub">Pengguna baru — kata sandi diisi di sini dan bisa dilihat di tabel Pengguna (tombol Lihat).</p>'
-    + '<form id="formPengguna" style="margin-top:14px"><div class="field"><label for="fuNama">Nama</label><input id="fuNama" type="text" placeholder="cth: Siti Rahma" required /></div><div class="form-grid"><div class="field"><label for="fuPeran">Peran</label><select id="fuPeran"><option value="Inventory">Inventory</option><option value="Produksi">Produksi</option><option value="Owner">Owner</option></select></div><div class="field"><label for="fuTelepon">Telepon</label><input id="fuTelepon" type="text" placeholder="08xx-xxxx-xxxx" /></div></div><div class="field"><label for="fuPassword">Kata sandi</label><input id="fuPassword" type="password" minlength="4" placeholder="Min. 4 karakter" required /></div>'
+  openSheet('<h3>Tambah pengguna</h3><p class="sheet-sub">Pengguna baru — email dipakai untuk login; kata sandi bisa dilihat di tabel Pengguna (tombol Lihat).</p>'
+    + '<form id="formPengguna" style="margin-top:14px"><div class="field"><label for="fuNama">Nama</label><input id="fuNama" type="text" placeholder="cth: Siti Rahma" required /></div><div class="field"><label for="fuEmail">Email (dipakai untuk login)</label><input id="fuEmail" type="email" placeholder="cth: siti@damayauraabadi.id" required /></div><div class="form-grid"><div class="field"><label for="fuPeran">Peran</label><select id="fuPeran"><option value="Inventory">Inventory</option><option value="Produksi">Produksi</option><option value="Owner">Owner</option></select></div><div class="field"><label for="fuTelepon">Telepon</label><input id="fuTelepon" type="text" placeholder="08xx-xxxx-xxxx" /></div></div><div class="field"><label for="fuPassword">Kata sandi</label><input id="fuPassword" type="password" minlength="4" placeholder="Min. 4 karakter" required /></div>'
     + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Simpan Pengguna</button></div></form>');
   $("#formPengguna").addEventListener("submit", async function(e){
     e.preventDefault();
@@ -1100,13 +1150,52 @@ function openPenggunaForm(){
     var peranU = $("#fuPeran").value;
     var pwU = $("#fuPassword").value;
     if(pwU.length < 4){ toast("password minimal 4 karakter — pengguna tidak disimpan."); return; }
+    var emU = $("#fuEmail").value.trim().toLowerCase();
+    if(!validEmail(emU)){ toast("email tidak valid — pengguna tidak disimpan."); return; }
     var sb = e.target.querySelector('button[type="submit"]');
     if(!lockBtn(sb)) return; /* sudah terkirim — abaikan klik/Enter kedua */
     try {
-      var r = await apiCall("create_pengguna", {role:state.role, user_id:uid, nama:namaU, peran:peranU, telepon:$("#fuTelepon").value.trim(), password:pwU});
+      var r = await apiCall("create_pengguna", {role:state.role, user_id:uid, nama:namaU, peran:peranU, telepon:$("#fuTelepon").value.trim(), password:pwU, email:emU});
       await refreshData();
       closeSheet(); go("pengguna"); toast(namaU+" ("+peranU+") ditambahkan sebagai pengguna.");
     } catch(err){ unlockBtn(sb); toast("Gagal menambah pengguna: " + err.message); }
+  });
+}
+
+/* Ubah email/telepon user (Owner) + reset password user (Owner) — P9. */
+function openUbahPengguna(id){
+  var u = penggunaById(id); if(!u) return;
+  openSheet('<h3>Ubah pengguna</h3><p class="sheet-sub">'+u.nama+' ('+u.peran+') — email dipakai untuk login.</p>'
+    + '<div style="margin-top:14px"><div class="field"><label for="euEmail">Email</label><input id="euEmail" type="email" value="'+(u.email||"")+'" /></div><div class="field"><label for="euTelepon">Telepon</label><input id="euTelepon" type="text" value="'+(u.telepon||"")+'" /></div></div>'
+    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="button" class="btn btn-primary" id="btnSimpanUbah">Simpan perubahan</button></div>');
+  $("#btnSimpanUbah").addEventListener("click", async function(e){
+    var em = ($("#euEmail").value || "").trim().toLowerCase();
+    if(!validEmail(em)){ toast("Format email tidak valid."); return; }
+    var uid = currentUserId(); if(uid===null){ toast("Tidak ada pengguna dengan peran "+state.role+"."); return; }
+    if(!lockBtn(e.currentTarget)) return;
+    try {
+      await apiCall("update_pengguna", {role:state.role, user_id:uid, id_pengguna:id, email:em, telepon:($("#euTelepon").value || "").trim()});
+      u.email = em; u.telepon = ($("#euTelepon").value || "").trim();
+      closeSheet(); renderPengguna(); renderTentangPengguna(); toast("Data "+u.nama+" diperbarui.");
+    } catch(err){ unlockBtn(e.currentTarget); toast("Gagal mengubah pengguna: " + err.message); }
+  });
+}
+function openResetPassword(id){
+  var u = penggunaById(id); if(!u) return;
+  openSheet('<h3>Reset password</h3><p class="sheet-sub">'+u.nama+' ('+u.peran+') — Owner mengatur password baru untuk user ini.</p>'
+    + '<div style="margin-top:14px"><div class="field"><label for="rpBaru">Kata sandi baru</label><input id="rpBaru" type="password" minlength="4" placeholder="Min. 4 karakter" /></div><div class="field"><label for="rpKonf">Ulangi kata sandi baru</label><input id="rpKonf" type="password" minlength="4" /></div></div>'
+    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="button" class="btn btn-primary" id="btnSimpanReset">Simpan password baru</button></div>');
+  $("#btnSimpanReset").addEventListener("click", async function(e){
+    var p1 = $("#rpBaru").value, p2 = $("#rpKonf").value;
+    if(p1.length < 4){ toast("Kata sandi baru minimal 4 karakter."); return; }
+    if(p1!==p2){ toast("Konfirmasi kata sandi tidak sama."); return; }
+    var uid = currentUserId(); if(uid===null){ toast("Tidak ada pengguna dengan peran "+state.role+"."); return; }
+    if(!lockBtn(e.currentTarget)) return;
+    try {
+      await apiCall("admin_reset_password", {role:state.role, user_id:uid, id_pengguna:id, password_baru:p1});
+      u.password = p1;
+      closeSheet(); renderPengguna(); toast("Password "+u.nama+" berhasil diatur ulang.");
+    } catch(err){ unlockBtn(e.currentTarget); toast("Gagal mereset password: " + err.message); }
   });
 }
 
@@ -1118,11 +1207,22 @@ $("#pengajuanFilter").addEventListener("click", function(e){
   renderPengajuan();
 });
 $("#btnAddPengajuan").addEventListener("click", function(){ openPengajuanForm(); });
+$("#pengajuanSearch").addEventListener("input", function(){ state.pengajuanSearch = $("#pengajuanSearch").value; renderPengajuan(); });
+$("#pengajuanSort").addEventListener("change", function(){ state.pengajuanSort = $("#pengajuanSort").value; renderPengajuan(); });
 function renderPengajuan(){
-  var list = state.pengajuan.filter(function(p){ return state.pengajuanFilter==="Semua" || p.status_pengajuan===state.pengajuanFilter; });
-  if(!list.length){ $("#pengajuanList").innerHTML = '<div class="empty">Tidak ada pengajuan pada filter ini.</div>'; return; }
-  $("#pengajuanList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>id_pengajuan</th><th>id_pengaju</th><th>id_penyetuju</th><th>tanggal_pengajuan</th><th>status_pengajuan</th><th>created_at</th><th>detail_pengajuan</th></tr></thead><tbody>'
-    + list.map(function(p){ return '<tr data-pgj="'+p.id_pengajuan+'"><td data-label="id_pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="id_pengaju">'+idCell(p.id_pengaju, namaPengguna(p.id_pengaju))+'</td><td data-label="id_penyetuju">'+(p.id_penyetuju==null ? '<span style="color:var(--muted)">—</span>' : idCell(p.id_penyetuju, namaPengguna(p.id_penyetuju)))+'</td><td data-label="tanggal_pengajuan">'+p.tanggal_pengajuan+'</td><td data-label="status_pengajuan">'+chip(p.status_pengajuan)+'</td><td data-label="created_at">'+p.created_at+'</td><td data-label="detail_pengajuan">'+p.detail.map(function(d){ return "id_bahan_baku "+d.id_bahan_baku+" ("+namaBahan(d.id_bahan_baku)+") · jumlah "+fmt(d.jumlah); }).join("<br />")+((p.status_pengajuan==="Menunggu" || (p.status_pengajuan==="Disetujui" && !state.po.some(function(x){ return x.id_pengajuan===p.id_pengajuan; }))) ? '<br /><span class="chip chip-info">Tawar-menawar harga · klik baris</span>' : '')+'</td></tr>'; }).join("")
+  var q = (state.pengajuanSearch || "").toLowerCase();
+  var list = state.pengajuan.filter(function(p){
+    if(state.pengajuanFilter!=="Semua" && p.status_pengajuan!==state.pengajuanFilter) return false;
+    if(!q) return true;
+    var hay = ("#" + p.id_pengajuan + " " + namaPengguna(p.id_pengaju) + " " + p.status_pengajuan + " " + p.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return b ? b.nama_bahan_baku : ""; }).join(" ")).toLowerCase();
+    return hay.indexOf(q) > -1;
+  });
+  if(state.pengajuanSort==="lama") list.sort(function(a,b){ return a.id_pengajuan - b.id_pengajuan; });
+  else if(state.pengajuanSort==="status") list.sort(function(a,b){ return a.status_pengajuan < b.status_pengajuan ? -1 : (a.status_pengajuan > b.status_pengajuan ? 1 : b.id_pengajuan - a.id_pengajuan); });
+  else list.sort(function(a,b){ return b.id_pengajuan - a.id_pengajuan; });
+  if(!list.length){ $("#pengajuanList").innerHTML = '<div class="empty">Tidak ada pengajuan yang cocok.</div>'; return; }
+  $("#pengajuanList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>ID Pengajuan</th><th>Diajukan Oleh</th><th>Ditinjau Oleh</th><th>Tanggal Pengajuan</th><th>Status</th><th>Bahan yang Diajukan</th></tr></thead><tbody>'
+    + list.map(function(p){ return '<tr data-pgj="'+p.id_pengajuan+'"><td data-label="ID Pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="Diajukan Oleh">'+idCell(p.id_pengaju, namaPengguna(p.id_pengaju))+'</td><td data-label="Ditinjau Oleh">'+(p.id_penyetuju==null ? '<span style="color:var(--muted)">—</span>' : idCell(p.id_penyetuju, namaPengguna(p.id_penyetuju)))+'</td><td data-label="Tanggal Pengajuan">'+fmtTglJam(p.created_at)+'</td><td data-label="Status">'+chip(p.status_pengajuan)+'</td><td data-label="Bahan yang Diajukan">'+p.detail.map(function(d){ return "id_bahan_baku "+d.id_bahan_baku+" ("+namaBahan(d.id_bahan_baku)+") · jumlah "+fmt(d.jumlah); }).join("<br />")+((p.status_pengajuan==="Menunggu" || (p.status_pengajuan==="Disetujui" && !state.po.some(function(x){ return x.id_pengajuan===p.id_pengajuan; }))) ? '<br /><span class="chip chip-info">Tawar-menawar harga · klik baris</span>' : '')+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   $$("#pengajuanList [data-pgj]").forEach(function(el){ el.addEventListener("click", function(){ openPengajuanDetail(+el.getAttribute("data-pgj")); }); });
 }
@@ -1142,8 +1242,8 @@ function openPengajuanDetail(id){
   var poForDetail = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; })[0];
   var negoMap = getNego(p.id_pengajuan);
   if(poForDetail){ poForDetail.detail.forEach(function(d){ negoMap[d.id_bahan_baku] = d.harga_satuan; }); }
-  var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>id_detail_pengajuan</th><th>id_bahan_baku</th><th>jumlah</th><th>harga_satuan (nego)</th></tr></thead><tbody>'
-    + p.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return '<tr style="cursor:default"><td data-label="id_detail_pengajuan"><span class="num">'+d.id_detail_pengajuan+'</span></td><td data-label="id_bahan_baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="jumlah"><span class="num">'+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</span></td><td data-label="harga_satuan (nego)">'+(negoMap[d.id_bahan_baku] ? rp(negoMap[d.id_bahan_baku]) : '<span style="color:var(--muted)">— (belum diisi)</span>')+'</td></tr>'; }).join("")
+  var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>ID Detail</th><th>Bahan Baku</th><th>Jumlah</th><th>Harga Satuan (Negosiasi)</th></tr></thead><tbody>'
+    + p.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return '<tr style="cursor:default"><td data-label="ID Detail"><span class="num">'+d.id_detail_pengajuan+'</span></td><td data-label="Bahan Baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="Jumlah"><span class="num">'+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</span></td><td data-label="Harga Satuan (Negosiasi)">'+(negoMap[d.id_bahan_baku] ? rp(negoMap[d.id_bahan_baku]) : '<span style="color:var(--muted)">— (belum diisi)</span>')+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   var actions = "";
   var negoPanel = "";
@@ -1159,7 +1259,7 @@ function openPengajuanDetail(id){
         : "Tawar-menawar harga dengan supplier";
       negoPanel = '<h4 style="margin:16px 0 4px">'+negoTitle+'</h4>'
         + '<div class="note-box">'+negoNote+'</div>'
-        + p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); var v = nego[d.id_bahan_baku]; return '<div class="field"><label for="negoHarga'+idx+'">Harga — '+(b ? b.nama_bahan_baku : "Bahan #"+d.id_bahan_baku)+' · jumlah '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="negoHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(v ? v : "")+'" placeholder="Ketik harga hasil negosiasi" /></div>'; }).join("")
+        + p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); var v = nego[d.id_bahan_baku]; return '<div class="field"><label for="negoHarga'+idx+'">Harga — '+(b ? b.nama_bahan_baku : "Bahan #"+d.id_bahan_baku)+' · jumlah '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="negoHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(v ? v : "")+'" placeholder="Ketik harga hasil negosiasi" data-harga="1" /><span class="harga-preview" data-harga-preview>'+(v > 0 ? rp(v) : "")+'</span></div>'; }).join("")
         + '<div class="sheet-actions" style="justify-content:flex-start"><button class="btn btn-primary" id="btnSimpanNego">Simpan harga negosiasi</button></div>';
     } else if(!exPO){
       var ada = p.detail.filter(function(d){ return nego[d.id_bahan_baku]; });
@@ -1183,24 +1283,51 @@ function openPengajuanDetail(id){
         ? '<div class="note-box">Pengajuan sudah <b>Disetujui</b> — langkah berikutnya: buat <b>PO</b> dari pengajuan ini.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button><button class="btn btn-primary" id="btnBuatPO">Buat PO</button></div>'
         : '<div class="note-box">Pengajuan sudah <b>Disetujui</b> — PO dibuat oleh peran Inventory dari pengajuan ini.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>';
   } else {
-    actions = '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>';
+    actions = '<div class="note-box">Pengajuan ini <b>ditolak</b>' + (p.catatan ? ' — catatan Owner: "'+p.catatan+'"' : '') + '. Pengajuan yang ditolak tetap tersimpan sebagai riwayat; ajukan ulang untuk membuat pengajuan baru dengan bahan yang sama.</div>'
+      + '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>'
+      + (state.role==="Inventory" ? '<button class="btn btn-primary" id="btnAjukanUlang">Ajukan ulang</button>' : '')
+      + '</div>';
   }
   openSheet('<div class="sheet-head"><h3>Pengajuan #'+p.id_pengajuan+'</h3>'+chip(p.status_pengajuan)+'</div>'
     + '<div class="kv" style="margin-top:10px"><span>ID</span><b>'+p.id_pengajuan+'</b></div>'
     + '<div class="kv"><span>Diajukan oleh</span><b>'+namaPengguna(p.id_pengaju)+'</b></div>'
-    + '<div class="kv"><span>Disetujui oleh</span><b>'+(p.id_penyetuju==null ? "— (belum ditinjau)" : namaPengguna(p.id_penyetuju))+'</b></div>'
-    + '<div class="kv"><span>Tanggal pengajuan</span><b>'+fmtTgl(p.tanggal_pengajuan)+'</b></div>'
+    + '<div class="kv"><span>Ditinjau oleh</span><b>'+(p.id_penyetuju==null ? "— (belum ditinjau)" : namaPengguna(p.id_penyetuju))+'</b></div>'
+    + '<div class="kv"><span>Tanggal pengajuan</span><b>'+fmtTglJam(p.created_at)+'</b></div>'
     + '<div class="kv"><span>Status</span><b>'+p.status_pengajuan+'</b></div>'
-    + '<div class="kv"><span>Dibuat</span><b>'+p.created_at+'</b></div>'
+    + '<div class="kv"><span>Dibuat</span><b>'+fmtTglJam(p.created_at)+'</b></div>'
     + '<h4 style="margin:16px 0 4px">Bahan yang diajukan</h4>' + items
     + negoPanel
     + (p.catatan ? '<div class="note-box"><b>Catatan peninjau:</b> '+p.catatan+'</div>' : '')
     + actions);
   var bs = $("#btnSetuju"), bt = $("#btnTolak");
   if(bs) bs.addEventListener("click", async function(e){ if(!lockBtn(e.currentTarget)) return; var uid = currentUserId(); if(uid===null){ unlockBtn(e.currentTarget); toast("Tidak ada pengguna dengan peran Owner."); return; } try { await apiCall("decide_pengajuan", {role:state.role, user_id:uid, id_pengajuan:p.id_pengajuan, keputusan:"Disetujui"}); await refreshData(); closeSheet(); toast("Pengajuan #"+p.id_pengajuan+" disetujui — lanjut ke PO."); } catch(err){ unlockBtn(e.currentTarget); toast("Gagal menyetujui: " + err.message); } });
-  if(bt) bt.addEventListener("click", async function(e){ if(!lockBtn(e.currentTarget)) return; var uid = currentUserId(); if(uid===null){ unlockBtn(e.currentTarget); toast("Tidak ada pengguna dengan peran Owner."); return; } try { await apiCall("decide_pengajuan", {role:state.role, user_id:uid, id_pengajuan:p.id_pengajuan, keputusan:"Ditolak"}); localStorage.removeItem("nego_" + p.id_pengajuan); await refreshData(); closeSheet(); toast("Pengajuan #"+p.id_pengajuan+" ditolak."); } catch(err){ unlockBtn(e.currentTarget); toast("Gagal menolak: " + err.message); } });
+  if(bt) bt.addEventListener("click", function(){
+    var acts = bt.closest(".sheet-actions");
+    if(acts) acts.outerHTML = '<div class="field" style="margin-top:14px"><label for="tolakCatatan">Alasan penolakan (dari Owner)</label><textarea id="tolakCatatan" rows="3" placeholder="cth: Stok masih cukup untuk minggu ini — ajukan lagi bulan depan."></textarea></div>'
+      + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="button" class="btn btn-danger-ghost" id="btnKirimTolak">Kirim penolakan</button></div>';
+    $("#btnKirimTolak").addEventListener("click", async function(e){
+      var alasan = ($("#tolakCatatan").value || "").trim();
+      if(!alasan){ toast("Tulis alasan penolakan dulu."); return; }
+      if(!lockBtn(e.currentTarget)) return;
+      var uid = currentUserId(); if(uid===null){ unlockBtn(e.currentTarget); toast("Tidak ada pengguna dengan peran Owner."); return; }
+      try {
+        await apiCall("decide_pengajuan", {role:state.role, user_id:uid, id_pengajuan:p.id_pengajuan, keputusan:"Ditolak", catatan:alasan});
+        localStorage.removeItem("nego_" + p.id_pengajuan);
+        await refreshData(); closeSheet(); toast("Pengajuan #"+p.id_pengajuan+" ditolak.");
+      } catch(err){ unlockBtn(e.currentTarget); toast("Gagal menolak: " + err.message); }
+    });
+  });
   var bp = $("#btnBuatPO");
   if(bp) bp.addEventListener("click", function(){ openPOForm(p.id_pengajuan); });
+  var bu = $("#btnAjukanUlang");
+  if(bu) bu.addEventListener("click", async function(e){
+    if(!lockBtn(e.currentTarget)) return;
+    var uid = currentUserId(); if(uid===null){ unlockBtn(e.currentTarget); toast("Tidak ada pengguna dengan peran Inventory."); return; }
+    try {
+      var r = await apiCall("create_pengajuan", {role:state.role, user_id:uid, detail:p.detail.map(function(d){ return {id_bahan_baku:d.id_bahan_baku, jumlah:d.jumlah}; })});
+      await refreshData(); closeSheet(); toast("Pengajuan #"+r.id_pengajuan+" dibuat — status: Menunggu.");
+    } catch(err){ unlockBtn(e.currentTarget); toast("Gagal mengajukan ulang: " + err.message); }
+  });
   var bn = $("#btnSimpanNego");
   if(bn) bn.addEventListener("click", function(){
     var obj = {};
@@ -1217,7 +1344,7 @@ function openPOForm(pengajuanId){
   var newPoId = nextId(state.po, "id_po");
   var nego = getNego(p.id_pengajuan);
   var supOpts = state.supplier.map(function(s){ return '<option value="'+s.id_supplier+'">'+s.id_supplier+' — '+s.nama_supplier+'</option>'; }).join("");
-  var hargaRows = p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); return '<div class="field"><label for="poHarga'+idx+'">Harga (hasil negosiasi dengan supplier) — '+(b ? b.nama_bahan_baku : "Bahan #"+d.id_bahan_baku)+' · jumlah dipesan '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="poHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(nego[d.id_bahan_baku] ? nego[d.id_bahan_baku] : "")+'" placeholder="Ketik harga hasil negosiasi" required /></div>'; }).join("");
+  var hargaRows = p.detail.map(function(d, idx){ var b = bahanById(d.id_bahan_baku); return '<div class="field"><label for="poHarga'+idx+'">Harga (hasil negosiasi dengan supplier) — '+(b ? b.nama_bahan_baku : "Bahan #"+d.id_bahan_baku)+' · jumlah dipesan '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</label><input id="poHarga'+idx+'" type="number" min="0.01" step="0.01" value="'+(nego[d.id_bahan_baku] ? nego[d.id_bahan_baku] : "")+'" placeholder="Ketik harga hasil negosiasi" required data-harga="1" /><span class="harga-preview" data-harga-preview>'+(nego[d.id_bahan_baku] > 0 ? rp(nego[d.id_bahan_baku]) : "")+'</span></div>'; }).join("");
   openSheet('<h3>Buat PO</h3><p class="sheet-sub">PO baru dari pengajuan #'+p.id_pengajuan+' — status awal Diproses, pembayaran Belum Bayar.</p>'
     + '<form id="formPO" style="margin-top:14px"><div class="form-grid"><div class="field"><label for="poSupplier">Supplier</label><select id="poSupplier">'+supOpts+'</select></div><div class="field"><label for="poNota">No. nota supplier</label><input id="poNota" type="text" value="INV/DEMO/'+newPoId+'" required /></div></div>'
     + hargaRows
@@ -1242,8 +1369,8 @@ function openPOForm(pengajuanId){
 
 /* PO */
 function renderPO(){
-  $("#poList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>id_po</th><th>id_pengajuan</th><th>id_supplier</th><th>id_karyawan_inventory</th><th>no_nota_supplier</th><th>tanggal_terima</th><th>status_po</th><th>status_pembayaran</th><th>created_at</th></tr></thead><tbody>'
-    + state.po.map(function(p){ var sup = supplierById(p.id_supplier); return '<tr data-po="'+p.id_po+'"><td data-label="id_po"><span class="num">'+p.id_po+'</span></td><td data-label="id_pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="id_supplier">'+idCell(p.id_supplier, sup ? sup.nama_supplier : "")+'</td><td data-label="id_karyawan_inventory">'+idCell(p.id_karyawan_inventory, namaPengguna(p.id_karyawan_inventory))+'</td><td data-label="no_nota_supplier">'+p.no_nota_supplier+'</td><td data-label="tanggal_terima">'+(p.tanggal_terima || '<span style="color:var(--muted)">—</span>')+'</td><td data-label="status_po">'+chip(p.status_po)+'</td><td data-label="status_pembayaran">'+chip(p.status_pembayaran)+'</td><td data-label="created_at">'+p.created_at+'</td></tr>'; }).join("")
+  $("#poList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>ID PO</th><th>ID Pengajuan</th><th>Supplier</th><th>Petugas Inventory</th><th>No. Nota Supplier</th><th>Tanggal Terima</th><th>Status PO</th><th>Pembayaran</th><th>Dibuat</th></tr></thead><tbody>'
+    + state.po.map(function(p){ var sup = supplierById(p.id_supplier); return '<tr data-po="'+p.id_po+'"><td data-label="ID PO"><span class="num">'+p.id_po+'</span></td><td data-label="ID Pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="Supplier">'+idCell(p.id_supplier, sup ? sup.nama_supplier : "")+'</td><td data-label="Petugas Inventory">'+idCell(p.id_karyawan_inventory, namaPengguna(p.id_karyawan_inventory))+'</td><td data-label="No. Nota Supplier">'+p.no_nota_supplier+'</td><td data-label="Tanggal Terima">'+(p.tanggal_terima || '<span style="color:var(--muted)">—</span>')+'</td><td data-label="Status PO">'+chip(p.status_po)+'</td><td data-label="Pembayaran">'+chip(p.status_pembayaran)+'</td><td data-label="Dibuat">'+p.created_at+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   $$("#poList [data-po]").forEach(function(el){ el.addEventListener("click", function(){ openPODetail(+el.getAttribute("data-po")); }); });
 }
@@ -1254,11 +1381,11 @@ function openPODetail(id){
   var rows = p.detail.map(function(d, idx){
     var b = bahanById(d.id_bahan_baku);
     var mid = isOpen
-      ? '<td data-label="jumlah_diterima"><input type="number" min="0" step="0.01" value="'+d.jumlah_dipesan+'" id="rcvQty'+idx+'" style="width:84px;border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--surface-2)" /></td><td data-label="kondisi"><select id="rcvKondisi'+idx+'" style="border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--surface-2)"><option>Sesuai</option><option>Rusak</option><option>Kurang</option></select></td>'
-      : '<td data-label="jumlah_diterima"><span class="num">'+fmt(d.jumlah_diterima)+'</span></td><td data-label="kondisi">'+(d.kondisi ? chip(d.kondisi) : "—")+'</td>';
-    return '<tr style="cursor:default"><td data-label="id_detail_po"><span class="num">'+d.id_detail_po+'</span></td><td data-label="id_bahan_baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="jumlah_dipesan">'+fmt(d.jumlah_dipesan)+'</td>' + mid + '<td data-label="harga_satuan">'+rp(d.harga_satuan)+'</td></tr>';
+      ? '<td data-label="Jumlah Diterima"><input type="number" min="0" step="0.01" value="'+d.jumlah_dipesan+'" id="rcvQty'+idx+'" style="width:84px;border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--surface-2)" /></td><td data-label="Kondisi"><select id="rcvKondisi'+idx+'" style="border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--surface-2)"><option>Sesuai</option><option>Rusak</option><option>Kurang</option></select></td>'
+      : '<td data-label="Jumlah Diterima"><span class="num">'+fmt(d.jumlah_diterima)+'</span></td><td data-label="Kondisi">'+(d.kondisi ? chip(d.kondisi) : "—")+'</td>';
+    return '<tr style="cursor:default"><td data-label="ID Detail"><span class="num">'+d.id_detail_po+'</span></td><td data-label="Bahan Baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="Jumlah Dipesan">'+fmt(d.jumlah_dipesan)+'</td>' + mid + '<td data-label="Harga Satuan">'+rp(d.harga_satuan)+'</td></tr>';
   }).join("");
-  var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>id_detail_po</th><th>id_bahan_baku</th><th>jumlah_dipesan</th><th>jumlah_diterima</th><th>kondisi</th><th>harga_satuan</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>ID Detail</th><th>Bahan Baku</th><th>Jumlah Dipesan</th><th>Jumlah Diterima</th><th>Kondisi</th><th>Harga Satuan</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
   var canReceive = isOpen && state.role==="Inventory";
   var canPay = p.status_po==="Diterima" && p.status_pembayaran==="Belum Bayar" && state.role==="Inventory";
   var actions = canReceive
@@ -1281,8 +1408,8 @@ function openPODetail(id){
     + '<div class="kv"><span>Tanggal terima</span><b>'+(p.tanggal_terima ? fmtTgl(p.tanggal_terima) : "—")+'</b></div>'
     + '<div class="kv"><span>Status PO</span><b>'+p.status_po+'</b></div>'
     + '<div class="kv"><span>Pembayaran</span><b>'+p.status_pembayaran+'</b></div>'
-    + '<div class="kv"><span>Dibuat</span><b>'+p.created_at+'</b></div>'
-    + '<h4 style="margin:16px 0 4px">Barang yang dipesan</h4>' + items
+    + '<div class="kv"><span>Dibuat</span><b>'+fmtTglJam(p.created_at)+'</b></div>'
+    + '<h4 style="margin:16px 0 4px">Barang yang dipesan</h4>' + items + '<div class="kv"><span>Total pemesanan</span><b>'+rp(p.detail.reduce(function(a,d){ return a + (+d.jumlah_dipesan||0)*(+d.harga_satuan||0); }, 0))+'</b></div>'
     + (p.catatan_pemeriksaan ? '<div class="note-box"><b>Catatan pemeriksaan:</b> '+p.catatan_pemeriksaan+'</div>' : '')
     + actions);
   var b = $("#btnTerimaPO");
@@ -1326,16 +1453,16 @@ function openPODetail(id){
 /* PRODUKSI */
 $("#btnAddProduksi").addEventListener("click", function(){ openProduksiForm(); });
 function renderProduksi(){
-  $("#produksiList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>id_pengeluaran</th><th>no_batch_produksi</th><th>id_barang_jadi</th><th>jumlah_target_produksi</th><th>id_karyawan_produksi</th><th>id_karyawan_inventory</th><th>tanggal_keluar</th><th>created_at</th></tr></thead><tbody>'
-    + state.produksi.map(function(p){ var bj = jadiById(p.id_barang_jadi); return '<tr data-prod="'+p.id_pengeluaran+'"><td data-label="id_pengeluaran"><span class="num">'+p.id_pengeluaran+'</span></td><td data-label="no_batch_produksi">'+p.no_batch_produksi+'</td><td data-label="id_barang_jadi">'+idCell(p.id_barang_jadi, bj ? bj.nama_barang_jadi : "")+'</td><td data-label="jumlah_target_produksi"><span class="num">'+fmt(p.jumlah_target_produksi)+'</span></td><td data-label="id_karyawan_produksi">'+idCell(p.id_karyawan_produksi, namaPengguna(p.id_karyawan_produksi))+'</td><td data-label="id_karyawan_inventory">'+idCell(p.id_karyawan_inventory, namaPengguna(p.id_karyawan_inventory))+'</td><td data-label="tanggal_keluar">'+p.tanggal_keluar+'</td><td data-label="created_at">'+p.created_at+'</td></tr>'; }).join("")
+  $("#produksiList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>ID Pengeluaran</th><th>No. Batch Produksi</th><th>Barang Jadi</th><th>Target Produksi</th><th>Petugas Produksi</th><th>Petugas Inventory</th><th>Tanggal Keluar</th><th>Dibuat</th></tr></thead><tbody>'
+    + state.produksi.map(function(p){ var bj = jadiById(p.id_barang_jadi); return '<tr data-prod="'+p.id_pengeluaran+'"><td data-label="ID Pengeluaran"><span class="num">'+p.id_pengeluaran+'</span></td><td data-label="No. Batch Produksi">'+p.no_batch_produksi+'</td><td data-label="Barang Jadi">'+idCell(p.id_barang_jadi, bj ? bj.nama_barang_jadi : "")+'</td><td data-label="Target Produksi"><span class="num">'+fmt(p.jumlah_target_produksi)+'</span></td><td data-label="Petugas Produksi">'+idCell(p.id_karyawan_produksi, namaPengguna(p.id_karyawan_produksi))+'</td><td data-label="Petugas Inventory">'+idCell(p.id_karyawan_inventory, namaPengguna(p.id_karyawan_inventory))+'</td><td data-label="Tanggal Keluar">'+p.tanggal_keluar+'</td><td data-label="Dibuat">'+p.created_at+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   $$("#produksiList [data-prod]").forEach(function(el){ el.addEventListener("click", function(){ openProduksiDetail(+el.getAttribute("data-prod")); }); });
 }
 function openProduksiDetail(id){
   var p = state.produksi.filter(function(x){ return x.id_pengeluaran===id; })[0]; if(!p) return;
   var bj = jadiById(p.id_barang_jadi);
-  var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>id_detail_pengeluaran</th><th>id_bahan_baku</th><th>jumlah</th><th>harga_satuan_bahan</th></tr></thead><tbody>'
-    + p.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return '<tr style="cursor:default"><td data-label="id_detail_pengeluaran"><span class="num">'+d.id_detail_pengeluaran+'</span></td><td data-label="id_bahan_baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="jumlah"><span class="num">− '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</span></td><td data-label="harga_satuan_bahan">'+rp(d.harga_satuan_bahan)+'</td></tr>'; }).join("")
+  var items = '<div class="table-wrap" style="box-shadow:none;margin-top:4px"><table class="data"><thead><tr><th>ID Detail</th><th>Bahan Baku</th><th>Jumlah</th><th>Harga Satuan Bahan</th></tr></thead><tbody>'
+    + p.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return '<tr style="cursor:default"><td data-label="ID Detail"><span class="num">'+d.id_detail_pengeluaran+'</span></td><td data-label="Bahan Baku">'+idCell(d.id_bahan_baku, b ? b.nama_bahan_baku : "")+'</td><td data-label="Jumlah"><span class="num">− '+fmt(d.jumlah)+' '+(b ? b.satuan : "")+'</span></td><td data-label="Harga Satuan Bahan">'+rp(d.harga_satuan_bahan)+'</td></tr>'; }).join("")
     + '</tbody></table></div>';
   openSheet('<h3>Pengeluaran #'+p.id_pengeluaran+'</h3><p class="sheet-sub">Batch '+p.no_batch_produksi+'</p>'
     + '<div class="kv" style="margin-top:10px"><span>ID</span><b>'+p.id_pengeluaran+'</b></div>'
@@ -1345,8 +1472,8 @@ function openProduksiDetail(id){
     + '<div class="kv"><span>Petugas produksi</span><b>'+namaPengguna(p.id_karyawan_produksi)+'</b></div>'
     + '<div class="kv"><span>Petugas inventory</span><b>'+namaPengguna(p.id_karyawan_inventory)+'</b></div>'
     + '<div class="kv"><span>Tanggal keluar</span><b>'+fmtTgl(p.tanggal_keluar)+'</b></div>'
-    + '<div class="kv"><span>Dibuat</span><b>'+p.created_at+'</b></div>'
-    + '<h4 style="margin:14px 0 2px">Bahan yang dikeluarkan</h4>' + items
+    + '<div class="kv"><span>Dibuat</span><b>'+fmtTglJam(p.created_at)+'</b></div>'
+    + '<h4 style="margin:14px 0 2px">Bahan yang dikeluarkan</h4>' + items + '<div class="kv"><span>Total nilai bahan</span><b>'+rp(p.detail.reduce(function(a,d){ return a + (+d.jumlah||0)*(+d.harga_satuan_bahan||0); }, 0))+'</b></div>'
     + '<div class="note-box">Stok bahan baku <b>berkurang otomatis</b>; hasil produksi <b>menambah stok barang jadi</b>.</div>'
     + '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>');
 }
@@ -1373,8 +1500,8 @@ function renderLaporan(){
     ["Pengeluaran bahan baku tercatat", state.produksi.length + " baris", "chip-info"],
     ["Jenis barang jadi", state.jadi.length + " baris", "chip-ok"]
   ];
-  $("#laporanList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>Ringkasan</th><th>jumlah baris</th></tr></thead><tbody>'
-    + rows.map(function(r){ return '<tr style="cursor:default"><td class="td-main" data-label="Ringkasan"><span class="t-title" style="font-size:13px">'+r[0]+'</span></td><td data-label="jumlah baris"><span class="chip '+r[2]+'">'+r[1]+'</span></td></tr>'; }).join("")
+  $("#laporanList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>Ringkasan</th><th>Jumlah Baris</th></tr></thead><tbody>'
+    + rows.map(function(r){ return '<tr style="cursor:default"><td class="td-main" data-label="Ringkasan"><span class="t-title" style="font-size:13px">'+r[0]+'</span></td><td data-label="Jumlah Baris"><span class="chip '+r[2]+'">'+r[1]+'</span></td></tr>'; }).join("")
     + '</tbody></table></div>';
 }
 $("#downloadCsv").addEventListener("click", function(){
@@ -1397,7 +1524,7 @@ function openPengajuanForm(preselectId){
   openSheet('<h3>Buat pengajuan</h3><p class="sheet-sub">Pengajuan baru — status awal Menunggu.</p>'
     + '<form id="formPengajuan" style="margin-top:16px"><div class="field"><label for="fpBahan">Bahan baku</label><select id="fpBahan">'+bahanOptions(preselectId)+'</select></div>'
     + '<div class="field"><label for="fpQty">Jumlah</label><input id="fpQty" type="number" min="0.01" step="0.01" value="50" required /></div>'
-    + '<div class="field"><label for="fpHarga">Harga satuan (hasil negosiasi dengan supplier — opsional)</label><input id="fpHarga" type="number" min="0.01" step="0.01" value="" placeholder="Ketik harga hasil negosiasi" /></div>'
+    + '<div class="field"><label for="fpHarga">Harga satuan (hasil negosiasi dengan supplier — opsional)</label><input id="fpHarga" type="number" min="0.01" step="0.01" value="" placeholder="Ketik harga hasil negosiasi" data-harga="1" /><span class="harga-preview" data-harga-preview></span></div>'
     + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Kirim — status_pengajuan: Menunggu</button></div></form>');
   $("#formPengajuan").addEventListener("submit", async function(e){
     e.preventDefault();
@@ -1428,9 +1555,11 @@ function openProduksiForm(){
     var wrap = $("#fdBahanRows");
     var row = document.createElement("div");
     row.className = "fd-row";
-    row.style.cssText = "display:grid;grid-template-columns:minmax(0,1fr) 100px 110px 38px;gap:8px;align-items:end;margin-bottom:8px";
-    row.innerHTML = '<div class="field" style="margin-bottom:0"><label>Bahan baku</label><select class="fdBahan">'+bahanOptions()+'</select></div><div class="field" style="margin-bottom:0"><label>Jumlah</label><input class="fdQty" type="number" min="0.01" step="0.01" value="10" required /></div><div class="field" style="margin-bottom:0"><label>harga_satuan_bahan</label><input class="fdHarga" type="number" min="0" step="0.01" value="" placeholder="opsional" /></div><button type="button" class="btn btn-danger-ghost btn-sm fdDel" aria-label="Hapus baris bahan" style="padding:8px 0">✕</button>';
+    row.style.cssText = "display:grid;grid-template-columns:minmax(0,1fr) 100px 70px 110px 38px;gap:8px;align-items:end;margin-bottom:8px";
+    row.innerHTML = '<div class="field" style="margin-bottom:0"><label>Bahan baku</label><select class="fdBahan">'+bahanOptions()+'</select></div><div class="field" style="margin-bottom:0"><label>Jumlah</label><input class="fdQty" type="number" min="0.01" step="0.01" value="10" required /></div><div class="field" style="margin-bottom:0"><label>Satuan</label><input class="fdSatuan" type="text" readonly tabindex="-1" value="" /></div><div class="field" style="margin-bottom:0"><label>Harga satuan (Rp)</label><input class="fdHarga" type="number" min="0" step="0.01" value="" placeholder="opsional" /></div><button type="button" class="btn btn-danger-ghost btn-sm fdDel" aria-label="Hapus baris bahan" style="padding:8px 0">✕</button>';
     wrap.appendChild(row);
+    var syncSatuan = function(){ var b = bahanById(+row.querySelector(".fdBahan").value); row.querySelector(".fdSatuan").value = b ? (b.satuan || "") : ""; };
+    row.querySelector(".fdBahan").addEventListener("change", syncSatuan); syncSatuan();
     row.querySelector(".fdDel").addEventListener("click", function(){ if(wrap.querySelectorAll(".fd-row").length>1) row.remove(); else toast("Minimal satu bahan baku — baris terakhir tidak bisa dihapus."); });
   };
   addRow();
@@ -1517,7 +1646,7 @@ function openSupplierForm(){
   var btn = document.getElementById("btnLogin");
   loadData().then(function(){
     if(btn){ btn.disabled = false; btn.textContent = "Masuk ke Dashboard"; }
-    $("#loginName").value = currentUserName();
+    var fe = currentUserEmail(); if(fe) $("#loginEmail").value = fe;
     renderDashboard(); renderStok(); renderPengajuan(); renderPO(); renderProduksi(); renderLaporan();
   }).catch(function(err){
     var el = document.getElementById("apiError");

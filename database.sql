@@ -13,6 +13,12 @@
 -- kolom tambahan 'password' (VARCHAR(255)) di luar ERD — Owner mengisinya
 -- saat menambah pengguna dan bisa melihatnya; login memverifikasi password
 -- sejak revisi 14 Nov 2026. Password demo disimpan apa adanya (bukan hash).
+-- PENGECUALIAN (16 Nov 2026, Catatan P9 dari dosen): tabel pengguna punya
+-- kolom tambahan 'email' (VARCHAR(100), UNIQUE) — dipakai sebagai username
+-- login (peran tidak lagi dipilih di depan; sistem membaca peran dari data
+-- user), serta 'kode_reset' + 'kode_reset_kedaluwarsa' untuk fitur lupa
+-- password. Tabel pengajuan_pengadaan punya kolom tambahan 'catatan' (TEXT)
+-- untuk alasan penolakan dari Owner. Semua di luar diagram ERD.
 -- Data INSERT di bawah ini HANYA CONTOH (DEMO) untuk pengujian,
 -- bukan data asli perusahaan.
 -- Cara pakai: buka phpMyAdmin -> BUKA database tujuan yang sudah dibuat
@@ -34,6 +40,9 @@ CREATE TABLE pengguna (
   peran ENUM('Inventory','Produksi','Owner') NOT NULL,
   telepon VARCHAR(20),
   password VARCHAR(255),
+  email VARCHAR(100) UNIQUE,
+  kode_reset VARCHAR(6),
+  kode_reset_kedaluwarsa DATETIME,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -80,6 +89,7 @@ CREATE TABLE pengajuan_pengadaan (
   id_penyetuju INT,
   tanggal_pengajuan DATE NOT NULL,
   status_pengajuan ENUM('Menunggu','Disetujui','Ditolak') NOT NULL DEFAULT 'Menunggu',
+  catatan TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (id_pengaju) REFERENCES pengguna (id_pengguna),
   FOREIGN KEY (id_penyetuju) REFERENCES pengguna (id_pengguna)
@@ -165,11 +175,11 @@ CREATE TABLE detail_pengeluaran_bahan_baku (
 -- DATA CONTOH (DEMO) — hanya untuk pengujian, bukan data asli perusahaan
 -- ============================================================================
 
-INSERT INTO pengguna (id_pengguna, nama, peran, telepon, password) VALUES
-(1, 'Rina', 'Inventory', '081200000001', 'rina1234'),
-(2, 'Budi', 'Produksi', '081200000002', 'budi1234'),
-(3, 'Sari', 'Inventory', '081200000003', 'sari1234'),
-(4, 'Damay Saputra', 'Owner', '081200000004', 'damay1234');
+INSERT INTO pengguna (id_pengguna, nama, peran, telepon, password, email) VALUES
+(1, 'Rina', 'Inventory', '081200000001', 'rina1234', 'rina@damayauraabadi.id'),
+(2, 'Budi', 'Produksi', '081200000002', 'budi1234', 'budi@damayauraabadi.id'),
+(3, 'Sari', 'Inventory', '081200000003', 'sari1234', 'sari@damayauraabadi.id'),
+(4, 'Damay Saputra', 'Owner', '081200000004', 'damay1234', 'damay@damayauraabadi.id');
 
 INSERT INTO supplier (id_supplier, nama_supplier, kontak, alamat) VALUES
 (1, 'PT Kain Jaya Tekstil', '021-5550101', 'Tangerang'),

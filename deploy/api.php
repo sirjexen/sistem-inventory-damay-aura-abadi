@@ -250,7 +250,7 @@ function castProduksi(array $r): array
 // ---------------------------------------------------------------------------
 if ($action === 'init') {
     try {
-        $pengguna = $pdo->query('SELECT id_pengguna, nama, peran, telepon, password, created_at FROM pengguna ORDER BY id_pengguna')
+        $pengguna = $pdo->query('SELECT id_pengguna, nama, peran, telepon, password, email, created_at FROM pengguna ORDER BY id_pengguna')
             ->fetchAll();
         foreach ($pengguna as &$u) {
             $u['id_pengguna'] = (int) $u['id_pengguna'];
@@ -273,7 +273,7 @@ if ($action === 'init') {
         )->fetchAll());
 
         $pengajuanRows = $pdo->query(
-            'SELECT id_pengajuan, id_pengaju, id_penyetuju, tanggal_pengajuan, status_pengajuan, created_at '
+            'SELECT id_pengajuan, id_pengaju, id_penyetuju, tanggal_pengajuan, status_pengajuan, catatan, created_at '
             . 'FROM pengajuan_pengadaan ORDER BY id_pengajuan'
         )->fetchAll();
         $detailPengajuan = $pdo->query(
@@ -356,13 +356,31 @@ switch ($action) {
     // tanggal_pengajuan = tanggal hari ini, 1 baris detail_pengajuan.
     case 'create_pengajuan': {
         $user = requireRole($pdo, $body, ['Inventory'], $PERAN_VALID);
-        $idBahan = (int) reqField($body, 'id_bahan_baku');
-        $jumlah  = reqNumber($body, 'jumlah', false);
+        // P9: terima 'detail' (array [{id_bahan_baku, jumlah}]) untuk
+        // ajukan-ulang multi-bahan; form lama tetap pakai id_bahan_baku
+        // + jumlah tunggal.
+        $items = [];
+        if (isset($body['detail']) && is_array($body['detail']) && count($body['detail']) > 0) {
+            foreach ($body['detail'] as $d) {
+                $idB = (int) ($d['id_bahan_baku'] ?? 0);
+                $jm  = (float) ($d['jumlah'] ?? 0);
+                if ($idB <= 0 || !($jm > 0)) {
+                    fail('detail pengajuan tidak valid (id_bahan_baku dan jumlah > 0 wajib).');
+                }
+                $items[] = [$idB, $jm];
+            }
+        } else {
+            $idBahan = (int) reqField($body, 'id_bahan_baku');
+            $jumlah  = reqNumber($body, 'jumlah', false);
+            $items[] = [$idBahan, $jumlah];
+        }
 
-        $st = $pdo->prepare('SELECT id_bahan_baku FROM bahan_baku WHERE id_bahan_baku = ?');
-        $st->execute([$idBahan]);
-        if (!$st->fetch()) {
-            fail('id_bahan_baku tidak ditemukan.');
+        foreach ($items as $it) {
+            $st = $pdo->prepare('SELECT id_bahan_baku FROM bahan_baku WHERE id_bahan_baku = ?');
+            $st->execute([$it[0]]);
+            if (!$st->fetch()) {
+                fail('id_bahan_baku ' . $it[0] . ' tidak ditemukan.');
+            }
         }
 
         try {
@@ -375,7 +393,9 @@ switch ($action) {
             $idPengajuan = (int) $pdo->lastInsertId();
 
             $st = $pdo->prepare('INSERT INTO detail_pengajuan (id_pengajuan, id_bahan_baku, jumlah) VALUES (?, ?, ?)');
-            $st->execute([$idPengajuan, $idBahan, $jumlah]);
+            foreach ($items as $it) {
+                $st->execute([$idPengajuan, $it[0], $it[1]]);
+            }
             $pdo->commit();
         } catch (PDOException $e) {
             $pdo->rollBack();
@@ -385,17 +405,21 @@ switch ($action) {
     }
 
     // -- Setujui / tolak pengajuan (hanya Owner) ----------------------------
-    // Body: { role, user_id, id_pengajuan, keputusan: "Disetujui"|"Ditolak" }
+    // Body: { role, user_id, id_pengajuan, keputusan: "Disetujui"|"Ditolak",
+    //         catatan? } — catatan WAJIB bila keputusan "Ditolak" (P9:
+    //         kolom `catatan` di pengajuan_pengadaan, di luar diagram ERD).
     // Sama seperti prototipe: hanya bila status masih "Menunggu";
     // id_penyetuju diisi id_pengguna Owner yang menyetujui/menolak.
-    // (Kolom `catatan` TIDAK ada di ERD pengajuan_pengadaan, jadi alasan
-    //  penolakan tidak disimpan — sesuai aturan nama/kolom persis ERD.)
     case 'decide_pengajuan': {
         $user = requireRole($pdo, $body, ['Owner'], $PERAN_VALID);
         $id   = (int) reqField($body, 'id_pengajuan');
         $keputusan = reqField($body, 'keputusan');
         if (!in_array($keputusan, ['Disetujui', 'Ditolak'], true)) {
             fail('keputusan harus "Disetujui" atau "Ditolak".');
+        }
+        $catatan = isset($body['catatan']) ? trim((string) $body['catatan']) : '';
+        if ($keputusan === 'Ditolak' && $catatan === '') {
+            fail('Penolakan wajib disertai catatan dari Owner.');
         }
 
         $st = $pdo->prepare('SELECT id_pengajuan, status_pengajuan FROM pengajuan_pengadaan WHERE id_pengajuan = ?');
@@ -408,8 +432,8 @@ switch ($action) {
             fail('Pengajuan ini sudah ' . $row['status_pengajuan'] . ' — tidak bisa diubah lagi.');
         }
 
-        $st = $pdo->prepare('UPDATE pengajuan_pengadaan SET status_pengajuan = ?, id_penyetuju = ? WHERE id_pengajuan = ?');
-        $st->execute([$keputusan, (int) $user['id_pengguna'], $id]);
+        $st = $pdo->prepare('UPDATE pengajuan_pengadaan SET status_pengajuan = ?, id_penyetuju = ?, catatan = ? WHERE id_pengajuan = ?');
+        $st->execute([$keputusan, (int) $user['id_pengguna'], $keputusan === 'Ditolak' ? $catatan : null, $id]);
         ok(['id_pengajuan' => $id, 'status_pengajuan' => $keputusan]);
     }
 
@@ -877,6 +901,10 @@ switch ($action) {
         if (strlen($password) < 4) {
             fail('password minimal 4 karakter.');
         }
+        $email = strtolower(trim((string) reqField($body, 'email')));
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            fail('Format email tidak valid.');
+        }
         $telepon = isset($body['telepon']) ? trim((string) $body['telepon']) : '';
 
         $st = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE LOWER(nama) = LOWER(?)');
@@ -884,12 +912,101 @@ switch ($action) {
         if ($st->fetch()) {
             fail('nama itu sudah ada di tabel pengguna — baris ganda dicegah.');
         }
+        $st = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE LOWER(email) = LOWER(?)');
+        $st->execute([$email]);
+        if ($st->fetch()) {
+            fail('email itu sudah terdaftar sebagai pengguna.');
+        }
 
         $st = $pdo->prepare(
-            'INSERT INTO pengguna (nama, peran, telepon, password, created_at) VALUES (?, ?, ?, ?, NOW())'
+            'INSERT INTO pengguna (nama, peran, telepon, password, email, created_at) VALUES (?, ?, ?, ?, ?, NOW())'
         );
-        $st->execute([$nama, $peran, $telepon, $password]);
+        $st->execute([$nama, $peran, $telepon, $password, $email]);
         ok(['id_pengguna' => (int) $pdo->lastInsertId()]);
+    }
+
+    // -- Lupa password: minta kode reset (P9) --------------------------------
+    // Body: { email }. Kode 6 digit berlaku 15 menit.
+    // MODE DEMO: tidak ada server email di hosting gratis, jadi kode
+    // dikembalikan di respons dan ditampilkan di layar (di produksi kode
+    // ini dikirim lewat email, bukan dikembalikan ke client).
+    case 'request_reset': {
+        $email = strtolower(trim((string) reqField($body, 'email')));
+        $st = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE LOWER(email) = LOWER(?)');
+        $st->execute([$email]);
+        $row = $st->fetch();
+        if (!$row) {
+            fail('Email tidak terdaftar sebagai pengguna.');
+        }
+        $kode = (string) random_int(100000, 999999);
+        $st = $pdo->prepare('UPDATE pengguna SET kode_reset = ?, kode_reset_kedaluwarsa = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE id_pengguna = ?');
+        $st->execute([$kode, (int) $row['id_pengguna']]);
+        ok(['kode' => $kode, 'berlaku_menit' => 15]);
+    }
+
+    // -- Lupa password: pakai kode untuk set password baru (P9) ---------------
+    // Body: { email, kode, password_baru }.
+    case 'reset_password': {
+        $email = strtolower(trim((string) reqField($body, 'email')));
+        $kode  = trim((string) reqField($body, 'kode'));
+        $baru  = (string) reqField($body, 'password_baru');
+        if (strlen($baru) < 4) {
+            fail('password baru minimal 4 karakter.');
+        }
+        $st = $pdo->prepare('SELECT id_pengguna, kode_reset, kode_reset_kedaluwarsa FROM pengguna WHERE LOWER(email) = LOWER(?)');
+        $st->execute([$email]);
+        $row = $st->fetch();
+        if (!$row || $row['kode_reset'] === null || $row['kode_reset'] !== $kode) {
+            fail('Kode reset salah atau sudah tidak berlaku.');
+        }
+        if (strtotime((string) $row['kode_reset_kedaluwarsa']) < time()) {
+            fail('Kode reset sudah kedaluwarsa (berlaku 15 menit) — minta kode baru.');
+        }
+        $st = $pdo->prepare('UPDATE pengguna SET password = ?, kode_reset = NULL, kode_reset_kedaluwarsa = NULL WHERE id_pengguna = ?');
+        $st->execute([$baru, (int) $row['id_pengguna']]);
+        ok(['id_pengguna' => (int) $row['id_pengguna']]);
+    }
+
+    // -- Owner reset password user lain (P9) ----------------------------------
+    // Body: { role, user_id, id_pengguna, password_baru }.
+    case 'admin_reset_password': {
+        requireRole($pdo, $body, ['Owner'], $PERAN_VALID);
+        $id   = (int) reqField($body, 'id_pengguna');
+        $baru = (string) reqField($body, 'password_baru');
+        if (strlen($baru) < 4) {
+            fail('password baru minimal 4 karakter.');
+        }
+        $st = $pdo->prepare('UPDATE pengguna SET password = ?, kode_reset = NULL, kode_reset_kedaluwarsa = NULL WHERE id_pengguna = ?');
+        $st->execute([$baru, $id]);
+        if ($st->rowCount() === 0) {
+            fail('id_pengguna tidak ditemukan.');
+        }
+        ok(['id_pengguna' => $id]);
+    }
+
+    // -- Owner ubah email/telepon user (P9; untuk migrasi user lama) ----------
+    // Body: { role, user_id, id_pengguna, email, telepon }.
+    case 'update_pengguna': {
+        requireRole($pdo, $body, ['Owner'], $PERAN_VALID);
+        $id      = (int) reqField($body, 'id_pengguna');
+        $email   = strtolower(trim((string) reqField($body, 'email')));
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            fail('Format email tidak valid.');
+        }
+        $telepon = isset($body['telepon']) ? trim((string) $body['telepon']) : '';
+        $st = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE LOWER(email) = LOWER(?) AND id_pengguna <> ?');
+        $st->execute([$email, $id]);
+        if ($st->fetch()) {
+            fail('email itu sudah dipakai pengguna lain.');
+        }
+        $st = $pdo->prepare('UPDATE pengguna SET email = ?, telepon = ? WHERE id_pengguna = ?');
+        $st->execute([$email, $telepon, $id]);
+        $cek = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE id_pengguna = ?');
+        $cek->execute([$id]);
+        if (!$cek->fetch()) {
+            fail('id_pengguna tidak ditemukan.');
+        }
+        ok(['id_pengguna' => $id]);
     }
 
     default:
