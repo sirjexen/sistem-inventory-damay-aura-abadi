@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light" />
 <link rel="icon" href="data:," />
 <title>Sistem Inventory — Damay Aura Abadi</title>
-<!-- REV 2026-11-16 P9 + polish visual: sidebar terang, ID nama-dulu di tabel, tanggal format Indonesia -->
+<!-- REV 2026-11-17 P9 final: formalisasi sisa (tombol/bar/tabel peran), urut pengajuan pakai tanggal -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -610,15 +610,15 @@ button.card:hover{border-color:var(--teal)}
         <div class="sec-title"><h3>Menu sidebar per peran (pengguna.peran)</h3></div>
         <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Menu yang tampil setelah login mengikuti nilai peran — halaman di luar hak peran tidak bisa dibuka. Tentang Proyek bisa dibuka semua peran.</p>
         <div class="table-wrap"><table class="data"><thead><tr><th>Peran</th><th>Menu yang tampil</th><th>Tugas di proses bisnis</th></tr></thead><tbody>
-          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Inventory</span></td><td data-label="Menu">Dashboard · Bahan Baku · Pengajuan · Supplier · Pemesanan · Pengeluaran · Barang Jadi · Laporan · Tentang Proyek</td><td data-label="Tugas">Membuat pengajuan_pengadaan (id_pengaju), membuat &amp; menerima pemesanan_pembelian (id_karyawan_inventory), mencatat pengeluaran_bahan_baku</td></tr>
-          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Produksi</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat stok_saat_ini) · Pengeluaran · Barang Jadi (lihat) · Tentang Proyek</td><td data-label="Tugas">Membuat pengeluaran_bahan_baku per no_batch_produksi (id_karyawan_produksi, id_barang_jadi, jumlah_target_produksi)</td></tr>
-          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Owner</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat) · Barang Jadi (lihat stok gudang) · Pengajuan · Pemesanan (lihat) · Pengguna (tambah pengguna) · Laporan · Tentang Proyek</td><td data-label="Tugas">Menyetujui / menolak pengajuan_pengadaan (id_penyetuju), menambah pengguna (tabel pengguna), memantau stok barang_jadi di gudang &amp; Laporan Stok</td></tr>
+          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Inventory</span></td><td data-label="Menu">Dashboard · Bahan Baku · Pengajuan · Supplier · Pemesanan · Pengeluaran · Barang Jadi · Laporan · Tentang Proyek</td><td data-label="Tugas">Membuat pengajuan pengadaan, membuat &amp; menerima pemesanan pembelian, mencatat pengeluaran bahan baku</td></tr>
+          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Produksi</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat stok) · Pengeluaran · Barang Jadi (lihat) · Tentang Proyek</td><td data-label="Tugas">Membuat pengeluaran bahan baku per nomor batch produksi</td></tr>
+          <tr style="cursor:default"><td class="td-main" data-label="Peran"><span class="t-title">Owner</span></td><td data-label="Menu">Dashboard · Bahan Baku (lihat) · Barang Jadi (lihat stok gudang) · Pengajuan · Pemesanan (lihat) · Pengguna (tambah pengguna) · Laporan · Tentang Proyek</td><td data-label="Tugas">Menyetujui / menolak pengajuan pengadaan, menambah pengguna, memantau stok barang jadi di gudang &amp; Laporan Stok</td></tr>
         </tbody></table></div>
         <div class="sec-title"><h3>Data pengguna · tabel pengguna</h3></div>
         <div class="table-wrap"><table class="data"><thead><tr><th>ID Pengguna</th><th>Nama</th><th>Peran</th><th>Telepon</th><th>Email</th><th>Dibuat</th></tr></thead><tbody id="tentangPenggunaBody">
         </tbody></table></div>
         <div class="sec-title"><h3>Riwayat revisi</h3></div>
-        <details class="changelog"><summary>16 Nov 2026 · 11 perubahan (Catatan P9 dari dosen)</summary>
+        <details class="changelog"><summary>16–17 Nov 2026 · 12 perubahan (Catatan P9 dari dosen)</summary>
           <ul>
             <li>Login memakai email + kata sandi; tombol peran dihapus — peran dibaca otomatis dari data pengguna</li>
             <li>Fitur lupa kata sandi (kode reset 6 digit, berlaku 15 menit) + Owner bisa reset kata sandi pengguna</li>
@@ -631,6 +631,7 @@ button.card:hover{border-color:var(--teal)}
             <li>Tema hitam-putih terang; mode gelap dihapus</li>
             <li>Satuan bahan tampil di form catat pengeluaran</li>
             <li>Polish visual: sidebar terang, nama tampil dulu baru ID di tabel, semua tanggal format Indonesia, kartu peringatan oranye, judul ganda dihapus</li>
+            <li>Formalisasi sisa: tombol aksi, bar ringkasan gudang, dan tabel peran di Tentang kini bahasa formal; urutan Terbaru/Terlama memakai tanggal pengajuan</li>
           </ul>
         </details>
         <details class="changelog"><summary>14 Nov 2026 · 14 perubahan</summary>
@@ -1089,7 +1090,7 @@ function renderStok(){
        pencariannya, supaya Owner langsung melihat isi gudang. */
     var totJadi = state.jadi.reduce(function(a,x){ return a + (+x.stok_saat_ini || 0); }, 0);
     var habisJadi = state.jadi.filter(function(x){ return (+x.stok_saat_ini || 0) <= 0; }).length;
-    html = '<div class="report-total"><div><small>Σ stok_saat_ini · barang_jadi di gudang</small><b>'+fmt(totJadi)+'</b></div><div><small>Jenis barang_jadi</small><b>'+state.jadi.length+'</b></div><div style="text-align:right"><small>Jenis habis (stok_saat_ini = 0)</small><b style="font-size:14px">'+habisJadi+'</b></div></div>' + html;
+    html = '<div class="report-total"><div><small>Total stok barang jadi di gudang</small><b>'+fmt(totJadi)+'</b></div><div><small>Jenis barang jadi</small><b>'+state.jadi.length+'</b></div><div style="text-align:right"><small>Jenis habis (stok 0)</small><b style="font-size:14px">'+habisJadi+'</b></div></div>' + html;
   }
   box.innerHTML = html;
   $$("#stokList [data-item]").forEach(function(el){ el.addEventListener("click", function(){ openItemDetail(el.getAttribute("data-item")); }); });
@@ -1221,9 +1222,9 @@ function renderPengajuan(){
     var hay = ("#" + p.id_pengajuan + " " + namaPengguna(p.id_pengaju) + " " + p.status_pengajuan + " " + p.detail.map(function(d){ var b = bahanById(d.id_bahan_baku); return b ? b.nama_bahan_baku : ""; }).join(" ")).toLowerCase();
     return hay.indexOf(q) > -1;
   });
-  if(state.pengajuanSort==="lama") list.sort(function(a,b){ return a.id_pengajuan - b.id_pengajuan; });
+  if(state.pengajuanSort==="lama") list.sort(function(a,b){ return (a.created_at < b.created_at ? -1 : (a.created_at > b.created_at ? 1 : a.id_pengajuan - b.id_pengajuan)); });
   else if(state.pengajuanSort==="status") list.sort(function(a,b){ return a.status_pengajuan < b.status_pengajuan ? -1 : (a.status_pengajuan > b.status_pengajuan ? 1 : b.id_pengajuan - a.id_pengajuan); });
-  else list.sort(function(a,b){ return b.id_pengajuan - a.id_pengajuan; });
+  else list.sort(function(a,b){ return (a.created_at < b.created_at ? 1 : (a.created_at > b.created_at ? -1 : b.id_pengajuan - a.id_pengajuan)); });
   if(!list.length){ $("#pengajuanList").innerHTML = '<div class="empty">Tidak ada pengajuan yang cocok.</div>'; return; }
   $("#pengajuanList").innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>ID Pengajuan</th><th>Diajukan Oleh</th><th>Ditinjau Oleh</th><th>Tanggal Pengajuan</th><th>Status</th><th>Bahan yang Diajukan</th></tr></thead><tbody>'
     + list.map(function(p){ return '<tr data-pgj="'+p.id_pengajuan+'"><td data-label="ID Pengajuan"><span class="num">'+p.id_pengajuan+'</span></td><td data-label="Diajukan Oleh">'+idCell(p.id_pengaju, namaPengguna(p.id_pengaju))+'</td><td data-label="Ditinjau Oleh">'+(p.id_penyetuju==null ? '<span style="color:var(--muted)">—</span>' : idCell(p.id_penyetuju, namaPengguna(p.id_penyetuju)))+'</td><td data-label="Tanggal Pengajuan">'+fmtTglJam(p.created_at)+'</td><td data-label="Status">'+chip(p.status_pengajuan)+'</td><td data-label="Bahan yang Diajukan">'+p.detail.map(function(d){ return namaBahan(d.id_bahan_baku)+" (ID "+d.id_bahan_baku+") · jumlah "+fmt(d.jumlah); }).join("<br />")+((p.status_pengajuan==="Menunggu" || (p.status_pengajuan==="Disetujui" && !state.po.some(function(x){ return x.id_pengajuan===p.id_pengajuan; }))) ? '<br /><span class="chip chip-info">Tawar-menawar harga · klik baris</span>' : '')+'</td></tr>'; }).join("")
@@ -1277,7 +1278,7 @@ function openPengajuanDetail(id){
   }
   if(p.status_pengajuan==="Menunggu"){
     actions = canDecide
-      ? '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Nanti</button><button class="btn btn-danger-ghost" id="btnTolak">Tolak</button><button class="btn btn-primary" id="btnSetuju">Setujui — ubah status_pengajuan</button></div>'
+      ? '<div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Nanti</button><button class="btn btn-danger-ghost" id="btnTolak">Tolak</button><button class="btn btn-primary" id="btnSetuju">Setujui</button></div>'
       : '<div class="note-box">Pengajuan masih <b>Menunggu</b> — hanya peran <b>Owner</b> yang bisa menyetujui atau menolak.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>';
   } else if(p.status_pengajuan==="Disetujui"){
     var existingPO = state.po.filter(function(x){ return x.id_pengajuan===p.id_pengajuan; })[0];
@@ -1352,7 +1353,7 @@ function openPOForm(pengajuanId){
   openSheet('<h3>Buat PO</h3><p class="sheet-sub">PO baru dari pengajuan #'+p.id_pengajuan+' — status awal Diproses, pembayaran Belum Bayar.</p>'
     + '<form id="formPO" style="margin-top:14px"><div class="form-grid"><div class="field"><label for="poSupplier">Supplier</label><select id="poSupplier">'+supOpts+'</select></div><div class="field"><label for="poNota">No. nota supplier</label><input id="poNota" type="text" value="INV/DEMO/'+newPoId+'" required /></div></div>'
     + hargaRows
-    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Simpan — status_po: Diproses</button></div></form>');
+    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Simpan PO</button></div></form>');
   $("#formPO").addEventListener("submit", async function(e){
     e.preventDefault();
     var uid = currentUserId(); if(uid===null){ toast("Tidak ada pengguna dengan peran "+state.role+"."); return; }
@@ -1397,7 +1398,7 @@ function openPODetail(id){
     : isOpen
       ? '<div class="note-box">PO masih <b>Diproses</b> — penerimaan barang dicatat oleh peran Inventory.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button></div>'
       : (p.status_po==="Diterima" && state.role==="Owner")
-        ? '<div class="field" style="margin-top:14px"><label for="poBayar">Status pembayaran</label><select id="poBayar" style="border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface-2)"><option'+(p.status_pembayaran==="Belum Bayar"?' selected':'')+'>Belum Bayar</option><option'+(p.status_pembayaran==="Lunas"?' selected':'')+'>Lunas</option></select></div><div class="note-box">Peran Owner bisa mengatur status_pembayaran (Lunas / Belum Bayar) setelah barang Diterima.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button><button class="btn btn-primary" id="btnSimpanBayar">Simpan status_pembayaran</button></div>'
+        ? '<div class="field" style="margin-top:14px"><label for="poBayar">Status pembayaran</label><select id="poBayar" style="border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface-2)"><option'+(p.status_pembayaran==="Belum Bayar"?' selected':'')+'>Belum Bayar</option><option'+(p.status_pembayaran==="Lunas"?' selected':'')+'>Lunas</option></select></div><div class="note-box">Peran Owner bisa mengatur status_pembayaran (Lunas / Belum Bayar) setelah barang Diterima.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button><button class="btn btn-primary" id="btnSimpanBayar">Simpan status pembayaran</button></div>'
         : canPay
         ? '<div class="note-box">Barang sudah <b>Diterima</b> dan pembayaran masih <b>Belum Bayar</b>.</div><div class="sheet-actions"><button class="btn btn-ghost" onclick="closeSheet()">Tutup</button><button class="btn btn-primary" id="btnLunas">Tandai Lunas</button></div>'
         : p.status_pembayaran==="Lunas"
@@ -1529,7 +1530,7 @@ function openPengajuanForm(preselectId){
     + '<form id="formPengajuan" style="margin-top:16px"><div class="field"><label for="fpBahan">Bahan baku</label><select id="fpBahan">'+bahanOptions(preselectId)+'</select></div>'
     + '<div class="field"><label for="fpQty">Jumlah</label><input id="fpQty" type="number" min="0.01" step="0.01" value="50" required /></div>'
     + '<div class="field"><label for="fpHarga">Harga satuan (hasil negosiasi dengan supplier — opsional)</label><input id="fpHarga" type="number" min="0.01" step="0.01" value="" placeholder="Ketik harga hasil negosiasi" data-harga="1" /><span class="harga-preview" data-harga-preview></span></div>'
-    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Kirim — status_pengajuan: Menunggu</button></div></form>');
+    + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="submit" class="btn btn-primary">Kirim pengajuan</button></div></form>');
   $("#formPengajuan").addEventListener("submit", async function(e){
     e.preventDefault();
     var uid = currentUserId(); if(uid===null){ toast("Tidak ada pengguna dengan peran "+state.role+"."); return; }
