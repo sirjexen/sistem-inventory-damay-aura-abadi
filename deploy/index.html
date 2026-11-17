@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light" />
 <link rel="icon" href="data:," />
 <title>Sistem Inventory — Damay Aura Abadi</title>
-<!-- REV 2026-11-17 P9 final: formalisasi sisa (tombol/bar/tabel peran), urut pengajuan pakai tanggal -->
+<!-- REV 2026-11-17 P9 final + peran di Ubah pengguna: form Ubah kini bisa ganti peran (akun sendiri dikunci) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -524,7 +524,7 @@ button.card:hover{border-color:var(--teal)}
 
       <!-- PENGGUNA (khusus Owner) -->
       <section class="screen" data-screen="pengguna">
-        <div class="scr-head"><div><h2>Pengguna</h2><p>Hanya Owner yang bisa menambah pengguna baru, mengubah email, dan mereset password (tombol Ubah / Reset password per baris; password hanya tampil di sini lewat tombol Lihat).</p></div><button class="btn btn-primary page-action" id="btnAddPengguna">+ Tambah pengguna</button></div>
+        <div class="scr-head"><div><h2>Pengguna</h2><p>Hanya Owner yang bisa menambah pengguna baru, mengubah email dan peran, serta mereset password (tombol Ubah / Reset password per baris; password hanya tampil di sini lewat tombol Lihat).</p></div><button class="btn btn-primary page-action" id="btnAddPengguna">+ Tambah pengguna</button></div>
         <div class="toolbar"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="penggunaSearch" type="search" placeholder="Cari nama / peran…" aria-label="Cari pengguna" /></div></div>
         <div id="penggunaList"></div>
       </section>
@@ -618,6 +618,11 @@ button.card:hover{border-color:var(--teal)}
         <div class="table-wrap"><table class="data"><thead><tr><th>ID Pengguna</th><th>Nama</th><th>Peran</th><th>Telepon</th><th>Email</th><th>Dibuat</th></tr></thead><tbody id="tentangPenggunaBody">
         </tbody></table></div>
         <div class="sec-title"><h3>Riwayat revisi</h3></div>
+        <details class="changelog"><summary>17 Nov 2026 · Peran bisa diubah dari form Ubah pengguna</summary>
+          <ul>
+            <li>Form Ubah pengguna (Owner) kini punya pilihan Peran — email, telepon, dan peran diatur dalam sekali simpan; peran akun sendiri tidak bisa diubah supaya Owner tidak terkunci keluar</li>
+          </ul>
+        </details>
         <details class="changelog"><summary>16–17 Nov 2026 · 12 perubahan (Catatan P9 dari dosen)</summary>
           <ul>
             <li>Login memakai email + kata sandi; tombol peran dihapus — peran dibaca otomatis dari data pengguna</li>
@@ -1167,11 +1172,12 @@ function openPenggunaForm(){
   });
 }
 
-/* Ubah email/telepon user (Owner) + reset password user (Owner) — P9. */
+/* Ubah email/telepon/peran user (Owner) + reset password user (Owner) — P9. */
 function openUbahPengguna(id){
   var u = penggunaById(id); if(!u) return;
+  var isSelf = (id === currentUserId());
   openSheet('<h3>Ubah pengguna</h3><p class="sheet-sub">'+u.nama+' ('+u.peran+') — email dipakai untuk login.</p>'
-    + '<div style="margin-top:14px"><div class="field"><label for="euEmail">Email</label><input id="euEmail" type="email" value="'+(u.email||"")+'" /></div><div class="field"><label for="euTelepon">Telepon</label><input id="euTelepon" type="text" value="'+(u.telepon||"")+'" /></div></div>'
+    + '<div style="margin-top:14px"><div class="field"><label for="euEmail">Email</label><input id="euEmail" type="email" value="'+(u.email||"")+'" /></div><div class="field"><label for="euTelepon">Telepon</label><input id="euTelepon" type="text" value="'+(u.telepon||"")+'" /></div><div class="field"><label for="euPeran">Peran</label><select id="euPeran"'+(isSelf?' disabled':'')+'><option value="Inventory"'+(u.peran==="Inventory"?' selected':'')+'>Inventory</option><option value="Produksi"'+(u.peran==="Produksi"?' selected':'')+'>Produksi</option><option value="Owner"'+(u.peran==="Owner"?' selected':'')+'>Owner</option></select>'+(isSelf?'<small style="color:var(--muted)">Peran akun sendiri tidak bisa diubah.</small>':'')+'</div></div>'
     + '<div class="sheet-actions"><button type="button" class="btn btn-ghost" onclick="closeSheet()">Batal</button><button type="button" class="btn btn-primary" id="btnSimpanUbah">Simpan perubahan</button></div>');
   $("#btnSimpanUbah").addEventListener("click", async function(e){
     var em = ($("#euEmail").value || "").trim().toLowerCase();
@@ -1179,8 +1185,8 @@ function openUbahPengguna(id){
     var uid = currentUserId(); if(uid===null){ toast("Tidak ada pengguna dengan peran "+state.role+"."); return; }
     if(!lockBtn(e.currentTarget)) return;
     try {
-      await apiCall("update_pengguna", {role:state.role, user_id:uid, id_pengguna:id, email:em, telepon:($("#euTelepon").value || "").trim()});
-      u.email = em; u.telepon = ($("#euTelepon").value || "").trim();
+      await apiCall("update_pengguna", {role:state.role, user_id:uid, id_pengguna:id, email:em, telepon:($("#euTelepon").value || "").trim(), peran:$("#euPeran").value});
+      u.email = em; u.telepon = ($("#euTelepon").value || "").trim(); if(!isSelf){ u.peran = $("#euPeran").value; }
       closeSheet(); renderPengguna(); renderTentangPengguna(); toast("Data "+u.nama+" diperbarui.");
     } catch(err){ unlockBtn(e.currentTarget); toast("Gagal mengubah pengguna: " + err.message); }
   });

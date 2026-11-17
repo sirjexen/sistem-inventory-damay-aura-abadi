@@ -994,13 +994,27 @@ switch ($action) {
             fail('Format email tidak valid.');
         }
         $telepon = isset($body['telepon']) ? trim((string) $body['telepon']) : '';
+        $peran = isset($body['peran']) ? trim((string) $body['peran']) : '';
+        if ($peran !== '') {
+            if (!in_array($peran, $PERAN_VALID, true)) {
+                fail('Peran tidak valid. Peran yang dikenal: Inventory, Produksi, Owner.');
+            }
+            if ((int) ($body['user_id'] ?? 0) === $id && $peran !== 'Owner') {
+                fail('Tidak bisa mengubah peran akun sendiri.');
+            }
+        }
         $st = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE LOWER(email) = LOWER(?) AND id_pengguna <> ?');
         $st->execute([$email, $id]);
         if ($st->fetch()) {
             fail('email itu sudah dipakai pengguna lain.');
         }
-        $st = $pdo->prepare('UPDATE pengguna SET email = ?, telepon = ? WHERE id_pengguna = ?');
-        $st->execute([$email, $telepon, $id]);
+        if ($peran !== '') {
+            $st = $pdo->prepare('UPDATE pengguna SET email = ?, telepon = ?, peran = ? WHERE id_pengguna = ?');
+            $st->execute([$email, $telepon, $peran, $id]);
+        } else {
+            $st = $pdo->prepare('UPDATE pengguna SET email = ?, telepon = ? WHERE id_pengguna = ?');
+            $st->execute([$email, $telepon, $id]);
+        }
         $cek = $pdo->prepare('SELECT id_pengguna FROM pengguna WHERE id_pengguna = ?');
         $cek->execute([$id]);
         if (!$cek->fetch()) {
